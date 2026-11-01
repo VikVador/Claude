@@ -32,11 +32,12 @@ Every report has the same structure and the same look, in every project, so that
    and grey;
    the name links to the GitHub repository of the project when it is known (otherwise plain text);
    then the title (a short name, 2 to 4 words); then one or two sentences saying what the report studies and why.
-2. **Résumé**: a box with a thin orange border and a very light orange inside, "Résumé" set in a gap of its top
-   border (`<fieldset>` and `<legend>`), holding 3 or 4 bullets; each opens with its topic in semibold, then the
+2. **Résumé**: a violet box (thin border, very light inside, "Résumé" set in a gap of its top border:
+   `<fieldset class="box summary">` and `<legend>`), holding 3 or 4 bullets; each opens with its topic in semibold, then the
    result and the number that shows it.
 3. **One section per message**: the title states the finding, then its figure, its caption, and 2 to 3 lines.
-4. **Mes conclusions et la suite**: my own recommendations, numbered, with why.
+4. **Conclusion**: the same kind of box in orange (`<fieldset class="box conclusion">`), always after the last
+   section: my own conclusions and recommendations, numbered, with why. The orange box is always the conclusion.
 5. **Ce qui n'est pas vérifié**: assumptions, estimates, open questions.
 6. **Sources**: only when literature or external pages were used.
 

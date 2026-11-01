@@ -2,7 +2,7 @@
    onto the page, so their white background takes the colour of the page.
    One typeface (Inter), two weights (400, 600), four sizes (34, 20, 16, 14 px), two text colours; monospace for code only. */
 :root {
-  --bg: #f7f7f5; --ink: #111111; --ink-2: #555555; --rule: #dddddd; --accent: #0b6e79; --warning: #b97800; --orange: #e8710a;
+  --bg: #f7f7f5; --ink: #111111; --ink-2: #555555; --rule: #dddddd; --accent: #0b6e79; --warning: #b97800; --orange: #e8710a; --violet: #6f4bd8;
   --code-bg: #ececea; color-scheme: light;
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -22,8 +22,10 @@ header { display: grid; gap: 10px; }
 .langs button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 .langs button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 body:not(.en) main [lang="en"], body.en main [lang="fr"] { display: none; }
-.summary { border: 1px solid var(--orange); background: rgba(245, 140, 30, 0.10); border-radius: 6px; margin: 0; padding: 4px 18px 16px; min-width: 0; }
-.summary legend { padding: 0 6px; font-weight: 600; color: var(--orange); }
+.box { border: 1px solid var(--c); background: color-mix(in srgb, var(--c) 9%, transparent); border-radius: 6px; margin: 0; padding: 4px 18px 16px; min-width: 0; }
+.box legend { padding: 0 6px; font-weight: 600; color: var(--c); }
+.summary { --c: var(--violet); }
+.conclusion { --c: var(--orange); }
 h1, h2 { font-weight: 600; margin: 0; text-wrap: balance; }
 h1 { font-size: 34px; line-height: 1.15; }
 h2 { font-size: 20px; line-height: 1.3; }
