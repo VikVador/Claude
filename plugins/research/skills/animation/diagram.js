@@ -77,12 +77,13 @@ const Diagram = (() => {
   const arrow = (parent, points, head = true) =>
     el("polyline", { points: points.map((p) => p.join(",")).join(" "), fill: "none", stroke: COLORS.line, "stroke-width": 1.4, ...(head ? { "marker-end": "url(#arrow)" } : {}) }, parent);
 
-  // Legend of the dimensions: one line per symbol, "symbol: meaning, size" (a "_x" in the symbol is a subscript)
-  const legend = (parent, x, y, items, title = "Dimensions") => {
+  // Legend of the dimensions: one short line per symbol, "symbol: meaning", in two columns (a "_x" is a subscript)
+  const legend = (parent, x, y, items, { title = "Dimensions", width = 340 } = {}) => {
     const g = el("g", {}, parent);
     el("text", { x, y, "font-size": 12.5, "font-weight": 600, fill: COLORS.line }, g).textContent = title;
+    const rows = Math.ceil(items.length / 2);
     items.forEach(([symbol, meaning], i) => {
-      const t = el("text", { x, y: y + 17 * (i + 1), "font-size": 12.5, fill: "#444" }, g);
+      const t = el("text", { x: x + Math.floor(i / rows) * width, y: y + 18 * ((i % rows) + 1), "font-size": 12.5, fill: "#444" }, g);
       // Symbols in italic serif, words (such as "Attention") in the text font
       symbol.split(", ").forEach((part, k) => {
         const word = part.replace(/_.*/, "").length > 2;
@@ -103,8 +104,8 @@ const Diagram = (() => {
   // Show a group fully, or faded when it is not part of the current step
   const show = (g, on) => g.setAttribute("opacity", on ? 1 : COLORS.faded);
 
-  // Step-by-step player: a progress bar over the steps, previous and next, and two pauses: one for going through
-  // the steps, one for the animation inside the current step. Autoplay unless the reader prefers reduced motion.
+  // Step-by-step player: a progress bar over the steps, previous and next, two pauses (one for going through the
+  // steps, one for the animation inside the current step) and a restart, which plays everything from the first step. Autoplay unless the reader prefers reduced motion.
   // steps: [{ text: "<span lang='fr'>…</span><span lang='en'>…</span>", draw: (tick) => {} }]; draw is called
   // with tick = 0, 1, 2, … every `beat` ms while the inner animation plays; a step lasts `perStep` beats.
   const player = (container, steps, { beat = 900, perStep = 6 } = {}) => {
@@ -114,10 +115,12 @@ const Diagram = (() => {
     bar.innerHTML = '<button type="button" data-a="prev" aria-label="Previous step">‹</button>'
       + `<input type="range" min="0" max="${steps.length - 1}" step="1" value="0" aria-label="Step">`
       + '<button type="button" data-a="next" aria-label="Next step">›</button><span class="count"></span>'
-      + '<button type="button" data-a="steps"></button><button type="button" data-a="anim"></button>';
+      + '<button type="button" data-a="steps"></button><button type="button" data-a="anim"></button>'
+      + `<button type="button" data-a="reset">${words("recommencer", "restart")}</button>`;
     const caption = document.createElement("p");
     caption.className = "step-text";
-    container.append(bar, caption);
+    // Controls and the text of the step above the drawing, so that the caption of the figure follows it directly
+    container.prepend(bar, caption);
     const range = bar.querySelector("input");
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let step = 0, tick = 0, elapsed = 0, stepsOn = !reduce, animOn = !reduce;
@@ -144,6 +147,7 @@ const Diagram = (() => {
       if (a === "next") { stepsOn = false; go(step + 1); }
       if (a === "steps") { stepsOn = !stepsOn; elapsed = 0; render(); }
       if (a === "anim") { animOn = !animOn; render(); }
+      if (a === "reset") { stepsOn = true; animOn = true; go(0); }
     });
     go(0);
     return { go };

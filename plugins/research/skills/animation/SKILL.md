@@ -64,8 +64,8 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 | Joint, 2D      | a heat map of the joint, its two marginals drawn along the axes                                    |
 
 - **Toy sizes are drawn**: 4 to 8 tokens and channels, enough to see the mechanism.
-- **Every diagram explains its dimensions** in a short legend on the drawing (`Diagram.legend`): one line per
-  symbol, a few plain words each, and the shape of the main tensors. For example:
+- **Every diagram explains its dimensions** in a short legend at the bottom of the drawing (`Diagram.legend`, two
+  columns): one line per symbol, a few plain words each, and the shape of the main tensors. For example:
   `D: channels of a token · N: tokens · X, Q, K, V: D × N · Attention: N × N`.
   Nothing more: no project, no long explanation; the text of the step says the rest. The book's names (D for
   channels, N for tokens) are kept.
@@ -82,8 +82,11 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 - **Inside a step**, a short loop may sweep one element at a time (one query column, one output cell, the kernel
   sliding), to show that the same operation repeats.
 - Each step has a text of one or two sentences: what is computed, its shape, why. Bilingual in a report.
-- Controls (`Diagram.player`): a progress bar to jump to any step, previous and next, and two separate pauses: one
-  for going through the steps, one for the animation inside the current step. It plays by itself, unless the reader
+- **Layout, top to bottom**: the controls, the text of the current step (set apart in a shaded box), the drawing
+  with the legend of the dimensions at its bottom (two columns), then directly the caption of the figure.
+- Controls (`Diagram.player`): a progress bar to jump to any step, previous and next, two separate pauses (one
+  for going through the steps, one for the animation inside the current step), and a restart that plays everything
+  again from the first step. It plays by itself, unless the reader
   prefers reduced motion; moving the bar or clicking previous or next pauses the going through the steps.
 - Hand-written inline SVG drawn by a small script, no library, no external image: `diagram.js` gives the pieces.
   The drawing is at least 600 px wide: on a phone, it scrolls sideways rather than shrinking below legibility.
