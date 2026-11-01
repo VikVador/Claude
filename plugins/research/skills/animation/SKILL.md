@@ -64,8 +64,8 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 | Joint, 2D      | a heat map of the joint, its two marginals drawn along the axes                                    |
 
 - **Toy sizes are drawn**: 4 to 8 tokens and channels, enough to see the mechanism.
-- **Every diagram explains its dimensions** in a short legend at the bottom of the drawing (`Diagram.legend`, two
-  columns): one line per symbol, a few plain words each, and the shape of the main tensors. For example:
+- **Every diagram explains its dimensions** in a short legend at the bottom of the drawing (`Diagram.legend`: a
+  title, a thin rule, then the items one after the other over the width, wrapping only when a line is full): one item per symbol, a few plain words each, and the shape of the main tensors. For example:
   `D`: channels of a token · `N`: tokens · `X, Q, K, V`: `D × N` · Attention: `N × N` (all in LaTeX).
   Nothing more: no project, no long explanation; the text of the step says the rest. The book's names (D for
   channels, N for tokens) are kept.
@@ -86,7 +86,8 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
   sliding), to show that the same operation repeats.
 - Each step has a text of one or two sentences: what is computed, its shape, why. Bilingual in a report.
 - **Layout, top to bottom**, in one light frame: the controls, the text of the current step (on a light shade),
-  the drawing with the legend of the dimensions at its bottom (two columns); then, below the frame, the caption.
+  a rule under the controls, the drawing with the legend of the dimensions at its bottom; then, below the frame,
+  the caption.
 - Controls (`Diagram.player`), as icons with a tooltip: previous, a progress bar to jump to any step, next, a
   toggle for going through the steps (dark when on), play / pause of the animation inside the current step, and a
   restart that plays everything again from the first step. It plays by itself, unless the reader

@@ -109,14 +109,20 @@ const Diagram = (() => {
   const arrow = (parent, points, head = true) =>
     el("polyline", { points: points.map((p) => p.join(",")).join(" "), fill: "none", stroke: COLORS.line, "stroke-width": 1.4, ...(head ? { "marker-end": "url(#arrow)" } : {}) }, parent);
 
-  // Legend of the dimensions, in two columns: each item is [LaTeX symbol, words] or a line mixing words and $…$
-  const legend = (parent, x, y, items, { title = "Dimensions", width = 340 } = {}) => {
+  // Legend of the dimensions: a title, a thin rule, then the items one after the other over the whole width,
+  // going to the next line only when the line is full. Each item is [LaTeX symbol, words] or a line with $…$
+  const legend = (parent, x, y, items, { title = "Legend", width = 640 } = {}) => {
     const g = el("g", {}, parent);
     el("text", { x, y, "font-size": 12.5, "font-weight": 600, fill: COLORS.line }, g).textContent = title;
-    const rows = Math.ceil(items.length / 2);
-    items.forEach((item, i) => {
+    el("line", { x1: x, x2: x + width, y1: y + 9, y2: y + 9, stroke: COLORS.line, "stroke-opacity": 0.3 }, g);
+    let cx = x, row = 0;
+    items.forEach((item) => {
       const line = typeof item === "string" ? item : `$${item[0]}$: ${item[1]}`;
-      rich(g, x + Math.floor(i / rows) * width, y + 20 * ((i % rows) + 1), line, { anchor: "start", size: 12.5, fill: "#444" });
+      const node = rich(g, 0, y + 30, line, { anchor: "start", size: 12.5, fill: "#444" });
+      const w = node.getBBox().width;
+      if (cx > x && cx + w > x + width) { cx = x; row += 1; }
+      node.setAttribute("transform", `translate(${cx}, ${row * 20})`);
+      cx += w + 28;
     });
     return g;
   };

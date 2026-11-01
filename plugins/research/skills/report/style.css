@@ -86,7 +86,7 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space:
 svg.diagram { display: block; width: 100%; min-width: 600px; height: auto; font-family: var(--font); }
 /* An animation: controls, text of the step and drawing held together in a light frame */
 .plate.anim { border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 8px; padding: 12px; }
-.player { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 13px; color: var(--ink-2); }
+.player { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); font-size: 13px; color: var(--ink-2); }
 .player button { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 1px solid var(--rule); border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; }
 .player button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .player button:focus-visible, .player input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
