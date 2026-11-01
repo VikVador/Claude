@@ -37,10 +37,12 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 
 ## 1. BEFORE DRAWING
 
-1. Write down the mechanism as equations, with the shape of every tensor (e.g. `Q = β_q 1ᵀ + Ω_q X`, shape
-   `D × N`). If a shape is unknown, find it before drawing.
+1. Write down the mechanism as equations, with the shape of every tensor (e.g. `\mathbf{Q} = \boldsymbol\beta_q
+   \mathbf{1}^T + \boldsymbol\Omega_q\mathbf{X}`, of shape `D \times N`). If a shape is unknown, find it before drawing.
 2. Open the closest examples of `examples.md` with the Read tool: `TransformerBlockSA.png` (matrix form of
-   attention), `Conv2D.png` (grids and sliding), `ConvNetworkRF.png` (receptive fields across layers).
+   attention), `Conv2D.png` (grids and sliding), `ConvNetworkRF.png` (receptive fields across layers),
+   `FlowIntro.png` (a density through a map), `DiffusionDensity.png` (a density over time), `AppJointMarg.png`
+   (a joint and its marginals).
 3. Decide the steps: one operation per step, in the order of the computation.
 
 ## 2. STYLE (FROM THE BOOK)
@@ -48,15 +50,15 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 | Element        | How                                                                                                |
 | -------------- | -------------------------------------------------------------------------------------------------- |
 | Tensor         | a grid of white cells with thin black lines, one column per token (shape `D × N`, as in the book)  |
-| Dimensions     | the symbols of the shape on the grid: `N` above, `D` on the left, in italic serif                  |
-| Name, equation | under each tensor: its name, then its equation in semibold (`Q = β_q 1ᵀ + Ω_q X`)                  |
+| Dimensions     | the symbols of the shape on the grid, in LaTeX: `N` above, `D` on the left                         |
+| Name, equation | under each tensor: its name, then its equation in LaTeX, matrices in bold                          |
 | Module         | the operation inside a rounded pale teal panel, its name in the top right ("Cross-attention")     |
 | Arrows         | thin black lines turning at right angles, from the tensor used to the tensor computed             |
 | Weights        | attention weights or kernel values as a white-to-brown heat map                                    |
 | Focus          | the elements used at this step in light grey-blue or orange; the rest of the diagram faded         |
-| Neurons, nodes | circles, with their name inside when useful (`x₁₁`, `h₂₃`); layers as orange columns of circles    |
+| Neurons, nodes | circles, with their name inside when useful (`$x_{11}$`, `$h_{23}$`); layers as columns of circles |
 | Receptive field| a light grey wedge from the field in one layer to the unit it feeds in the next                     |
-| Symbols        | ⊗ for a product, ⊕ for a sum, at the place where the operation happens                             |
+| Symbols        | `$\otimes$` for a product, `$\oplus$` for a sum, at the place where the operation happens         |
 | Densities      | filled curves on a shared axis: teal for the base or source, orange for the target or model        |
 | Samples        | small arrows or points on the axis, followed through the map that moves them                       |
 | Time           | downwards, as in the diffusion figures; paths as thin coloured lines, one colour per sample        |
@@ -64,11 +66,12 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 | Joint, 2D      | a heat map of the joint, its two marginals drawn along the axes                                    |
 
 - **Toy sizes are drawn**: 4 to 8 tokens and channels, enough to see the mechanism.
-- **Every diagram explains its dimensions** in a short legend at the bottom of the drawing (`Diagram.legend`: a
-  title, a thin rule, then the items one after the other over the width, wrapping only when a line is full): one item per symbol, a few plain words each, and the shape of the main tensors. For example:
-  `D`: channels of a token · `N`: tokens · `X, Q, K, V`: `D × N` · Attention: `N × N` (all in LaTeX).
-  Nothing more: no project, no long explanation; the text of the step says the rest. The book's names (D for
-  channels, N for tokens) are kept.
+- **Every diagram explains its dimensions** in a legend at the bottom of the drawing (`Diagram.legend`): the title
+  "Legend", a thin rule, then the items one after the other over the width, wrapping only when a line is full. One
+  item per symbol, a few plain words each, and the shapes of the main tensors, all mathematics in LaTeX, e.g.
+  `["D", "channels of a token"]`, `["N", "tokens"]`, `"$\\mathbf{X}$, $\\mathbf{Q}$: $D \\times N$"`.
+  Nothing more: no project, no long explanation; the text of the step says the rest. The book's names are kept (D
+  for channels, N for tokens).
 - **General, never tied to a project**: the instructions and the examples of this skill stay general; a diagram made
   for a project names its own tensors, but the drawing explains the mechanism, not the project.
 - Same tensor, same position and same name in every step; same colour for the same role in the whole report.
@@ -84,13 +87,13 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
   not used at this step is faded, not hidden, so that the whole mechanism stays in view.
 - **Inside a step**, a short loop may sweep one element at a time (one query column, one output cell, the kernel
   sliding), to show that the same operation repeats.
-- Each step has a text of one or two sentences: what is computed, its shape, why. Bilingual in a report.
-- **Layout, top to bottom**, in one light frame: the controls, the text of the current step (on a light shade),
-  a rule under the controls, the drawing with the legend of the dimensions at its bottom; then, below the frame,
-  the caption.
-- Controls (`Diagram.player`), as icons with a tooltip: previous, a progress bar to jump to any step, next, a
-  toggle for going through the steps (dark when on), play / pause of the animation inside the current step, and a
-  restart that plays everything again from the first step. It plays by itself, unless the reader
+- Each step has a text: a short title in semibold, then one or two sentences on what is computed, its shape, why;
+  mathematics in LaTeX (`\\( … \\)`); bilingual in a report.
+- **Layout, top to bottom**, in one light frame: the controls, a thin rule, the text of the current step on a light
+  shade, then the drawing with its legend at the bottom. Below the frame, directly, the caption of the figure.
+- **Controls** (`Diagram.player`), icons with a tooltip, no words: previous, a progress bar to jump to any step,
+  next, a toggle for going through the steps, play / pause of the animation inside the current step, and a restart
+  that plays everything again from the first step. A toggle is dark when on. It plays by itself, unless the reader
   prefers reduced motion; moving the bar or clicking previous or next pauses the going through the steps.
 - Hand-written inline SVG drawn by a small script, no library, no external image: `diagram.js` gives the pieces.
   The drawing is at least 600 px wide: on a phone, it scrolls sideways rather than shrinking below legibility.
@@ -106,8 +109,10 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
   Diagram.panel(s, 150, 20, 410, 400, "Self-attention");
   const X = Diagram.grid(s, { x: 30, y: 70, rows: 4, cols: 6, top: "N", left: "D" });
   Diagram.label(s, X.x + X.w / 2, X.y + X.h + 20, ["Input,", "$\\mathbf{X}$"]);
-  Diagram.legend(s, 30, 450, [["D", "channels of a token"], ["N", "tokens"], ["\\mathbf{X}: D \\times N", ""]]);
-  Diagram.player(document.getElementById("anim"), [{ text: "… \\(\\mathbf{Q} = \\boldsymbol\\Omega_q\\mathbf{X}\\) …", draw: (tick) => {} }]);
+  Diagram.legend(s, 30, 450, [["D", "channels of a token"], ["N", "tokens"], "$\\mathbf{X}$: $D \\times N$"]);
+  Diagram.player(document.getElementById("anim"), [
+    { text: "<strong>Queries.</strong> … \\(\\mathbf{Q} = \\boldsymbol\\Omega_q\\mathbf{X}\\) …", draw: (tick) => {} },
+  ]);
   });
 </script>
 ```

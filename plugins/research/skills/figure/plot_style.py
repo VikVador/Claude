@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 
 # fmt: off
 #
-# ----- Colours: colourblind-safe groups, then train / validation / test
+# ----- Colours: colourblind-safe groups (blue, amber, green, vermilion: the same names as the colour classes of the
+#       report captions), the train / validation / test splits in that order, and grey for a reference
 #
-GROUPS = ["#0072B2", "#E69F00", "#009E73", "#D55E00"]  # blue, amber, green, vermilion: same names in the report
-SPLITS = {"train": "#2a78d6", "validation": "#eb6834", "test": "#1baf7a"}
+GROUPS = ["#0072B2", "#E69F00", "#009E73", "#D55E00"]
+SPLITS = {"train": GROUPS[0], "validation": GROUPS[1], "test": GROUPS[2]}
 MUTED  = "#9a9a9a"
 # fmt: on
 

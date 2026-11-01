@@ -149,7 +149,6 @@ These are examples: take the true unit from the metadata of the dataset.
   outer panels, x on the bottom row and y on the first column. It removes repeated text and shows at once that the
   panels are aligned. To share an x axis between runs of different lengths, use a common scale (e.g. a fraction of
   the schedule) when it does not squeeze the information.
-
 - **Caption**: first what the figure shows, in a few words (in semibold in a report); then how to read it: x axis,
   y axis, what each curve or colour is; then period, zone, depth, number of samples or members, colour limits.
 - **Show the uncertainty**: a mean alone hides the data. Show the points with the mean and its interval.
@@ -159,6 +158,9 @@ These are examples: take the true unit from the metadata of the dataset.
 - Remove what no one reads: background, top and right frames, and **no grid** unless asked for.
 - **Let it breathe**: one font size for titles, labels and legends (ticks one point smaller), space between ticks
   and axis labels and between panels. `plot_style.py` sets all of this.
+- **Text of figures in English**, made once, even in a French report.
+- **In a report**, a figure takes the width of the text column (960 px): a `figsize` about 10 to 11 inches wide,
+  saved as PNG at `dpi=110` or more, with no title of its own (the caption says what is shown).
 
 ---
 
@@ -317,7 +319,8 @@ def plot_zones(ax: plt.Axes, extent: list[float], zones: dict[str, list[float]])
 - [ ] Can the message of each figure be said in one sentence? Is it the title (slide) or the opening of the caption (report)?
 - [ ] Is there a map of all the zones named in the text?
 - [ ] Do all the axes and colorbars have a quantity and a unit in `[]`?
-- [ ] Are the quantities spelled out, with `[-]` when they have no unit, and no "(log scale)" in a label?
+- [ ] Are the quantities spelled out, with `[$-$]` when they have no unit, and no "(log scale)" in a label?
+- [ ] Is all the mathematics in LaTeX (`$…$`), and is the text of the figure in English?
 - [ ] Do panels of the same quantity share their axes, labelled only on the outer panels? Is there no grid?
 - [ ] Is each colorbar exactly the size of its axis?
 - [ ] Are the limits the 2% and 98% quantiles, or the full range for an extreme event? Does the caption say so?

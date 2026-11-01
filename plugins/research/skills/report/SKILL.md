@@ -23,7 +23,7 @@ on a phone. **Every figure follows the `figure` skill**, and **every diagram or 
 | -------------------- | -------------------------------------------------------------------------------------------- |
 | `body-template.html` | skeleton of a report, bilingual, with every element below: copy it and fill                  |
 | `style.css`          | the look of every report: never restyle a report by hand                                     |
-| `build.py`           | `python build.py body.html report.html`: adds style, title, fonts, FR / EN toggle, images    |
+| `build.py`           | `python build.py body.html report.html`: style, title, fonts, MathJax, FR / EN toggle, images and scripts inlined |
 
 **Contents**
 

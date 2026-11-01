@@ -1,11 +1,12 @@
 // Helpers to draw mechanisms in the style of Understanding Deep Learning (Prince, 2023), as inline SVG.
-// Tensors are grids with their dimensions, modules are teal panels, arrows turn at right angles,
-// weights are a white-to-brown heat map. Load it with a script tag pointing to this file: build.py inlines it.
+// Tensors are grids with their dimensions, modules are pale teal panels, arrows turn at right angles, weights are a
+// white-to-brown heat map, mathematics is LaTeX rendered by MathJax, and a player goes through the steps.
+// Load it with a script tag pointing to this file: build.py of the report skill inlines it.
 const Diagram = (() => {
   const NS = "http://www.w3.org/2000/svg";
   const COLORS = {
     panel: "#e3f1ef", panelLine: "#7db7af", line: "#1a1a1a", faded: 0.15,
-    focus: "#c3cad6", query: "#e8710a", layer: "#d98a5f",
+    focus: "#c3cad6", query: "#e8710a",
   };
 
   // Create an SVG element with its attributes, appended to a parent when given
@@ -45,8 +46,8 @@ const Diagram = (() => {
       }
     }
     el("rect", { x, y, width: cols * cell, height: rows * cell, fill: "none", stroke: COLORS.line, "stroke-width": 1.4 }, g);
-    if (top) math(g, x + (cols * cell) / 2, y - 10, top, "middle");
-    if (left) math(g, x - 6, y + (rows * cell) / 2 + 5, left, "end");
+    if (top) tex(g, x + (cols * cell) / 2, y - 10, top, "middle");
+    if (left) tex(g, x - 6, y + (rows * cell) / 2 + 5, left, "end");
     return { g, cells, x, y, w: cols * cell, h: rows * cell, rows, cols, cell };
   };
 
@@ -81,7 +82,6 @@ const Diagram = (() => {
     node.dataset.width = w;
     return node;
   };
-  const math = tex;
 
   // A line mixing words and $…$ LaTeX, its baseline at (x, y), aligned as a whole
   const rich = (parent, x, y, line, { anchor = "middle", size = 13.5, weight = 400, fill = COLORS.line } = {}) => {
@@ -205,5 +205,5 @@ const Diagram = (() => {
     return { go };
   };
 
-  return { el, svg, panel, grid, tex, math, rich, label, legend, arrow, heat, show, ready, player, COLORS };
+  return { el, svg, panel, grid, tex, rich, label, legend, arrow, heat, show, ready, player, COLORS };
 })();
