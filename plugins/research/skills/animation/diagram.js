@@ -4,7 +4,7 @@
 const Diagram = (() => {
   const NS = "http://www.w3.org/2000/svg";
   const COLORS = {
-    panel: "#a9dbd6", panelLine: "#2e7d75", line: "#1a1a1a", faded: 0.15,
+    panel: "#e3f1ef", panelLine: "#7db7af", line: "#1a1a1a", faded: 0.15,
     focus: "#c3cad6", query: "#e8710a", layer: "#d98a5f",
   };
 
@@ -28,7 +28,7 @@ const Diagram = (() => {
   // A module: teal rounded panel with its name in the top right corner
   const panel = (parent, x, y, w, h, title) => {
     const g = el("g", {}, parent);
-    el("rect", { x, y, width: w, height: h, rx: 18, fill: COLORS.panel, stroke: COLORS.panelLine, "stroke-width": 1.2 }, g);
+    el("rect", { x, y, width: w, height: h, rx: 14, fill: COLORS.panel, stroke: COLORS.panelLine, "stroke-width": 1 }, g);
     el("text", { x: x + w - 14, y: y + 22, "text-anchor": "end", "font-size": 14, fill: COLORS.line }, g).textContent = title;
     return g;
   };

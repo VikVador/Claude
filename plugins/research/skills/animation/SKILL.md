@@ -20,6 +20,11 @@ how, step by step. Simplify the sizes, never the mechanism. The model to follow 
 Understanding Deep Learning** (MIT Press, 2023), whose figures are clear and precise: always look at its examples
 first, and credit it when a diagram follows one of its figures.
 
+This is **the default for explaining an architecture** to a reader with a background in deep learning and
+mathematics: show the tensors and how they are computed. **Follow the book's way of showing, not its exact look**:
+the colours are lighter and cleaner here (a pale teal panel, the palette of the report), and another style is welcome
+when it explains a point better (a map for a spatial mechanism, a timeline for a pipeline).
+
 | File          | What                                                                                     |
 | ------------- | ---------------------------------------------------------------------------------------- |
 | `examples.md` | the figures of the book kept as examples (images in `examples/`), what each one teaches  |
@@ -45,7 +50,7 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 | Tensor         | a grid of white cells with thin black lines, one column per token (shape `D × N`, as in the book)  |
 | Dimensions     | the symbols of the shape on the grid: `N` above, `D` on the left, in italic serif                  |
 | Name, equation | under each tensor: its name, then its equation in semibold (`Q = β_q 1ᵀ + Ω_q X`)                  |
-| Module         | the operation inside a rounded teal panel, its name in the top right ("Cross-attention")          |
+| Module         | the operation inside a rounded pale teal panel, its name in the top right ("Cross-attention")     |
 | Arrows         | thin black lines turning at right angles, from the tensor used to the tensor computed             |
 | Weights        | attention weights or kernel values as a white-to-brown heat map                                    |
 | Focus          | the elements used at this step in light grey-blue or orange; the rest of the diagram faded         |
