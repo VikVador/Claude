@@ -19,8 +19,6 @@ Read this file **before drawing any figure**, for a report or on its own. The st
 `report` skill. Common matplotlib style and colours: `plot_style.py`, next to this file.
 Examples of good figures, with what each does well: `examples.md` (images in `examples/`); open the matching
 images when choosing a plot or checking one.
-Examples of good and bad figures, with what to learn from each: `examples.md` (images in `examples/`); open
-the matching images when choosing a plot or checking one.
 
 **Last checked: 2026-10-30** (every link below was opened and verified on that day).
 
@@ -313,7 +311,7 @@ def plot_zones(ax: plt.Axes, extent: list[float], zones: dict[str, list[float]])
 
 ## 9. BEFORE DELIVERING
 
-- [ ] Can the message of each figure be said in one sentence? Is it its title?
+- [ ] Can the message of each figure be said in one sentence? Is it the title (slide) or the opening of the caption (report)?
 - [ ] Is there a map of all the zones named in the text?
 - [ ] Do all the axes and colorbars have a quantity and a unit in `[]`?
 - [ ] Are the quantities spelled out, with `[-]` when they have no unit, and no "(log scale)" in a label?

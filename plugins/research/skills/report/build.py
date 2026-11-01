@@ -2,8 +2,9 @@ r"""Turn a report written as plain HTML into a single self-contained page.
 
 Usage: python build.py body.html report.html
 
-The body holds the content of <main> only (header, sections). This script adds the title, the fonts and the
-shared style and the French / English toggle, and embeds every image referenced as src="figure.png" (path relative to the body) as base64.
+The body holds the content of <main> only (header, boxes, sections). This script adds the title, the fonts, the
+shared style and the French / English toggle, and embeds every image referenced as src="figure.png" (path relative
+to the body) as base64.
 """
 
 import base64
