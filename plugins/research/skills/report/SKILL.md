@@ -55,9 +55,18 @@ Every report has the same structure and the same look, in every project, so that
    **Remarks** (a caution, an assumption, an estimate, something not verified) are not gathered at the end: each is a
    short `<aside class="remark">` placed just before the paragraph, figure or box it concerns. On a wide screen it
    sits in the right margin at that level, in thin dark red; on a narrow one, just above.
-4. **Conclusion**: the same kind of box in orange (`<fieldset class="box conclusion">`), always after the last
-   section: my own conclusions and recommendations, numbered, with why. The orange box is always the conclusion.
-5. **Sources**: only when literature or external pages were used.
+4. **Conclusion and next steps**, side by side (`<div class="closing">`, stacked on a phone):
+   - left, the orange box `<fieldset class="box conclusion">` "Conclusion": the conclusion of each section, in short,
+     numbered. The orange box is always the conclusion; the violet summary covers the whole report, the conclusion
+     gathers what each section found;
+   - right, the teal box `<fieldset class="box next">` "Pour aller plus loin": what remains to check in the results
+     (the remarks of the margin may come back here) and a reminder of what comes next, as already discussed.
+5. **Sources**: whenever results rely on literature or external pages, look for sources and cite them. Below the
+   two boxes, a section "Sources": a numbered list, one entry per source, always in this format:
+   `Author, A., Author, B., & Author, C. (Year). Title. Journal or publisher, volume(issue), pages. <link>`.
+   In the text, cite like Geophysical Research Letters: the first author in semibold, then the year, linked to the
+   entry: `(<a class="cite" href="#src-1"><strong>Hampel</strong>, 1974</a>)`; `et al.` beyond two authors; without
+   parentheses when the author is the subject of the sentence ("selon **Hampel** (1974)").
 
 ## 2. TYPOGRAPHY (FIXED, IN `style.css`)
 

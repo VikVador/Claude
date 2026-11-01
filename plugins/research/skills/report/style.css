@@ -2,7 +2,7 @@
    onto the page, so their white background takes the colour of the page.
    One typeface (Inter), two weights (400, 600), four sizes (34, 20, 16, 14 px), two text colours; monospace for code only. */
 :root {
-  --bg: #f7f7f5; --ink: #111111; --ink-2: #555555; --rule: #dddddd; --accent: #0b6e79; --warning: #b97800; --orange: #e8710a; --violet: #6f4bd8; --remark: #9b1d48;
+  --bg: #f7f7f5; --ink: #111111; --ink-2: #555555; --rule: #dddddd; --accent: #0b6e79; --warning: #b97800; --orange: #e8710a; --violet: #6f4bd8; --teal: #0f8a7e; --remark: #9b1d48;
   --blue: #0072B2; --amber: #c27c00; --green: #009E73; --vermilion: #D55E00; --grey: #6f6f6f;
   --code-bg: #ececea; color-scheme: light;
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -33,6 +33,14 @@ body:not(.en) main [lang="en"], body.en main [lang="fr"] { display: none; }
 .box legend { padding: 0 6px; font-weight: 600; color: var(--c); }
 .summary { --c: var(--violet); }
 .conclusion { --c: var(--orange); }
+.next { --c: var(--teal); }
+/* Conclusion and next steps side by side, stacked on a phone */
+.closing { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+@media (max-width: 700px) { .closing { grid-template-columns: 1fr; } }
+/* Sources: numbered, small; cited in the text as (First author et al., year) */
+.sources ol { font-size: 14px; color: var(--ink-2); gap: 6px; }
+a.cite { color: inherit; text-decoration: none; }
+a.cite:hover { text-decoration: underline; }
 h1, h2 { font-weight: 600; margin: 0; text-wrap: balance; }
 h1 { font-size: 34px; line-height: 1.15; }
 h2 { font-size: 20px; line-height: 1.3; }
@@ -42,6 +50,7 @@ section, .box { position: relative; min-width: 0; }
 section > * + * { margin-top: 14px; }
 section > .remark + * { margin-top: 8px; }
 section > figure { margin-top: 28px; }
+section > p + p { margin-top: 20px; }
 p, ul, ol { margin: 0; }
 ul, ol { padding-left: 1.3em; display: grid; gap: 8px; }
 a { color: var(--accent); text-underline-offset: 2px; }
