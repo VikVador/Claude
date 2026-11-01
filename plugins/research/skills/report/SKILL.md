@@ -55,7 +55,7 @@ Every report has the same structure and the same look, in every project, so that
 
 - **Two languages, French by default**: every text I write exists in French and in English, as sibling elements
   marked `lang="fr"` and `lang="en"` (a whole block, or a `<span>` inside a caption or a title); the toggle in the
-  header switches between them. Figures are made once, in English. Simple words, short sentences.
+  header switches between them. The English version is written last (§ 5). Figures are made once, in English. Simple words, short sentences.
 - Figures first: the text explains the figure, not the other way around. Few words.
 - Numbers rather than adjectives; always say what was measured and what was estimated.
 - Small tables only for exact numbers (4 to 5 columns, short cells); never a table where a figure works.
@@ -72,6 +72,10 @@ Every report has the same structure and the same look, in every project, so that
 ## 5. BUILD AND PUBLISH
 
 1. Write the analysis script and the figures in the analysis folder of the project (never in the repository).
-2. Copy `body-template.html` next to them, fill it, then `python build.py body.html report.html`.
-3. Look at the page at phone width (about 400 px) when a browser is available, then publish it as an artifact.
-4. Keep the same file path to update the same artifact, and give the link.
+2. Copy `body-template.html` next to them and write the whole report **in French only**: data, analysis, figures,
+   text. Leave the `lang="en"` elements of the template empty for now.
+3. When the French draft is final, the one I would hand over, **translate it into English as the last step**: fill
+   every `lang="en"` element next to its French one, nothing else changes.
+4. `python build.py body.html report.html`, look at the page at phone width (about 400 px) when a browser is
+   available, in both languages, then publish it as an artifact.
+5. Keep the same file path to update the same artifact, and give the link.
