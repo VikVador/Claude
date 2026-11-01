@@ -1,0 +1,14 @@
+{
+  "name": "vikvador",
+  "description": "Victor's shared Claude Code skills.",
+  "owner": {
+    "name": "Victor Mangeleer"
+  },
+  "plugins": [
+    {
+      "name": "vikvador",
+      "source": "./plugins/vikvador",
+      "description": "Victor's shared skills for Claude Code: reports and figures, used across Heimdall, Neptune and other projects."
+    }
+  ]
+}
