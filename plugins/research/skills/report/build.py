@@ -3,7 +3,7 @@ r"""Turn a report written as plain HTML into a single self-contained page.
 Usage: python build.py body.html report.html
 
 The body holds the content of <main> only (header, sections). This script adds the title, the fonts and the
-shared style, and embeds every image referenced as src="figure.png" (path relative to the body) as base64.
+shared style and the French / English toggle, and embeds every image referenced as src="figure.png" (path relative to the body) as base64.
 """
 
 import base64
@@ -21,6 +21,24 @@ FONTS = (
 )
 
 
+# French by default; the choice of a reader is remembered in their own browser only
+SCRIPT = """<script>
+(() => {
+  const buttons = document.querySelectorAll(".langs button");
+  const set = (lang) => {
+    document.body.classList.toggle("en", lang === "en");
+    document.documentElement.lang = lang;
+    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+  };
+  buttons.forEach((b) => b.addEventListener("click", () => set(b.dataset.lang)));
+  let saved = "fr";
+  try { saved = localStorage.getItem("lang") || "fr"; } catch (e) {}
+  set(saved);
+})();
+</script>"""
+
+
 def embed(match: re.Match, folder: Path) -> str:
     path = folder / match.group(1)
     kind = "svg+xml" if path.suffix == ".svg" else path.suffix.lstrip(".")
@@ -29,12 +47,13 @@ def embed(match: re.Match, folder: Path) -> str:
 
 def build(body: Path, output: Path) -> None:
     content = body.read_text()
-    title = re.search(r"<h1>(.*?)</h1>", content, re.S).group(1).strip()
+    # The first title is the French one
+    title = re.search(r"<h1[^>]*>(.*?)</h1>", content, re.S).group(1).strip()
     content = re.sub(r'src="(?!data:|https?:)([^"]+)"', lambda m: embed(m, body.parent), content)
     css = (HERE / "style.css").read_text()
     page = (
         f'<title>{title}</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n{FONTS}\n'
-        f"<style>\n{css}</style>\n<main>\n{content}\n</main>\n"
+        f"<style>\n{css}</style>\n<main>\n{content}\n</main>\n{SCRIPT}\n"
     )
     output.write_text(page)
     print(f"{output} ({len(page) / 1e6:.2f} MB)")

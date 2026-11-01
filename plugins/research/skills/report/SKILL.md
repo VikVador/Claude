@@ -28,7 +28,8 @@ Every report has the same structure and the same look, in every project, so that
 
 ## 1. STRUCTURE (ALWAYS THIS ORDER)
 
-1. **Header**: on the first line, `Projet : <name>` on the left and the date on the right, both small and grey;
+1. **Header**: on the first line, `Projet : <name>` on the left, the date and the FR / EN toggle on the right, small
+   and grey;
    the name links to the GitHub repository of the project when it is known (otherwise plain text);
    then the title (a short name, 2 to 4 words); then one or two sentences saying what the report studies and why.
 2. **Résumé**: a box with a thin orange border and a very light orange inside, "Résumé" set in a gap of its top
@@ -52,7 +53,9 @@ Every report has the same structure and the same look, in every project, so that
 
 ## 3. WRITING
 
-- French by default (English only when asked, e.g. for a paper), simple words, short sentences.
+- **Two languages, French by default**: every text I write exists in French and in English, as sibling elements
+  marked `lang="fr"` and `lang="en"` (a whole block, or a `<span>` inside a caption or a title); the toggle in the
+  header switches between them. Figures are made once, in English. Simple words, short sentences.
 - Figures first: the text explains the figure, not the other way around. Few words.
 - Numbers rather than adjectives; always say what was measured and what was estimated.
 - Small tables only for exact numbers (4 to 5 columns, short cells); never a table where a figure works.
