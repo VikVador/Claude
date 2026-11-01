@@ -33,11 +33,11 @@ phone, a compact answer mode keeps the answers readable on a small screen.
 
 ## 0. IN SHORT
 
-1. **Start** in a terminal on the machine, from the project folder: `claude-phone`. **Leave** without stopping it:
+1. **Start** in a terminal on the machine, from the project folder: `claude-remote`. **Leave** without stopping it:
    **Ctrl+B**, then **D**.
 2. **Connect**: claude.ai/code or the Claude app → **Code** → the session named after the project folder.
 3. **One active session at a time**: never give work to the remote session and to a local one simultaneously.
-4. **tmux is per node**: check or stop the session from the node where it runs; `claude-phone status` names it.
+4. **tmux is per node**: check or stop the session from the node where it runs; `claude-remote status` names it.
 5. **Compact answers** on a phone: `/phone on`, back to normal with `/phone off` (§ 5).
 
 ---
@@ -46,16 +46,15 @@ phone, a compact answer mode keeps the answers readable on a small screen.
 
 | Command               | Effect                                                                                         |
 | --------------------- | ---------------------------------------------------------------------------------------------- |
-| `claude-phone`        | Starts the tmux session `claude` if needed, then attaches to it                                |
-| `claude-phone stop`   | Kills the tmux session (and Claude with it)                                                    |
-| `claude-phone status` | Tells whether the session runs **on the current node**, otherwise on which node it was started |
+| `claude-remote`        | Starts the tmux session `claude` if needed, then attaches to it                                |
+| `claude-remote stop`   | Kills the tmux session (and Claude with it)                                                    |
+| `claude-remote status` | Tells whether the session runs **on the current node**, otherwise on which node it was started |
 
 | Option (environment variable) | Effect                                         | Default       |
 | ----------------------------- | ---------------------------------------------- | ------------- |
-| `CLAUDE_PHONE_MODE`           | permission mode (`default`, `plan`, `auto`, …) | `acceptEdits` |
-| `CLAUDE_PHONE_DIR`            | working directory, its name names the session  | the current folder |
+| `CLAUDE_REMOTE_MODE`           | permission mode (`default`, `plan`, `auto`, …) | `acceptEdits` |
+| `CLAUDE_REMOTE_DIR`            | working directory, its name names the session  | the current folder |
 
-The script and hooks keep the name `phone` from their first use; they serve any remote client.
 
 ---
 
@@ -63,10 +62,10 @@ The script and hooks keep the name `phone` from their first use; they serve any 
 
 | Piece          | Details                                                                                                  |
 | -------------- | -------------------------------------------------------------------------------------------------------- |
-| Script         | `~/bin/claude-phone` (in `PATH`, outside any repository)                                                 |
+| Script         | `~/bin/claude-remote` (in `PATH`, outside any repository)                                                 |
 | Claude binary  | `claude` from `PATH` (standalone CLI in `~/.local/bin`), otherwise the latest one bundled with VSCode    |
 | Command        | `claude remote-control` in a detached tmux session, from the project folder                              |
-| tmux socket    | `~/.tmux/claude-phone-<node>.sock`, not `/tmp`, which some nodes clean (the session became unreachable)  |
+| tmux socket    | `~/.tmux/claude-remote-<node>.sock`, not `/tmp`, which some nodes clean (the session became unreachable)  |
 | Shared nodes   | `nice -n 10`, `OMP_NUM_THREADS`, `MKL_NUM_THREADS` and `OPENBLAS_NUM_THREADS` set to 4                   |
 | Network        | outbound HTTPS to Anthropic only: the client needs neither the VPN nor the 2FA of the cluster            |
 
@@ -84,13 +83,13 @@ The script and hooks keep the name `phone` from their first use; they serve any 
 | ------------------------------------------- | --------------------------------------------------------------- |
 | Network outage of about 10 minutes          | Claude exits, the loop reattaches with `-c` every 30 s          |
 | `-c` only reattaches within about **4 h**   | After 480 failed retries the loop gives up: `stop` then `start` |
-| Reboot of the node                          | Everything is lost: run `claude-phone` again                    |
-| Long processes killed by the cluster admins | Same, run `claude-phone` again                                  |
-| `claude-phone stop`, or exit in the session | Ends normally                                                   |
+| Reboot of the node                          | Everything is lost: run `claude-remote` again                    |
+| Long processes killed by the cluster admins | Same, run `claude-remote` again                                  |
+| `claude-remote stop`, or exit in the session | Ends normally                                                   |
 
 **Good to know**
 
-- **tmux is per node.** An editor can reconnect to another login node: `claude-phone status` then says "not running"
+- **tmux is per node.** An editor can reconnect to another login node: `claude-remote status` then says "not running"
   and names the node where the session was started. Go there with `ssh <node>` before stopping or attaching,
   otherwise you start a **second** session.
 - **Login nodes are for light work.** Claude itself is light (~350 MB), but heavy work (training, analysis,
@@ -115,7 +114,7 @@ A blocked account shows it in `~/.claude/policy-limits.json` (`allow_remote_cont
 
 ## 5. COMPACT ANSWER MODE
 
-In the session started by `claude-phone`, answers can switch to a **compact style**, short enough for a phone.
+In the session started by `claude-remote`, answers can switch to a **compact style**, short enough for a phone.
 
 | When                                        | What happens                                          |
 | ------------------------------------------- | ----------------------------------------------------- |
@@ -161,7 +160,7 @@ en 2019-2021. Je les ai retirées et l'entraînement repart de zéro (≈ 20 h).
 
 | Piece                             | Role                                                                |
 | --------------------------------- | ------------------------------------------------------------------- |
-| `CLAUDE_PHONE=1`                  | set by `claude-phone` in the tmux session: the hooks act only there |
+| `CLAUDE_REMOTE=1`                  | set by `claude-remote` in the tmux session: the hooks act only there |
 | `~/.claude/hooks/phone-prompt.sh` | hook on every prompt: 2 h check, reminder when the mode is on       |
 | `~/.claude/hooks/phone-start.sh`  | hook at startup: the first prompt of a new session always asks      |
 | `~/.claude/hooks/phone-mode.sh`   | turns the mode on / off (state file `~/.claude/phone/mode`)         |
@@ -176,16 +175,16 @@ The scripts live in `scripts/`, next to this file; copy them to the places Claud
 
 | From `scripts/`                                      | To                                                         |
 | ---------------------------------------------------- | ---------------------------------------------------------- |
-| `claude-phone`                                       | `~/bin/claude-phone` (in `PATH`)                           |
+| `claude-remote`                                       | `~/bin/claude-remote` (in `PATH`)                           |
 | `phone-mode.sh`, `phone-prompt.sh`, `phone-start.sh` | `~/.claude/hooks/`                                         |
 | `phone.md`                                           | `~/.claude/commands/phone.md`                              |
 | `settings-hooks.json`                                | merged into `~/.claude/settings.json` (keep what is there) |
 
 ```bash
 mkdir -p ~/bin ~/.claude/hooks ~/.claude/commands
-cp scripts/claude-phone ~/bin/ && cp scripts/phone-*.sh ~/.claude/hooks/
-cp scripts/phone.md ~/.claude/commands/ && chmod +x ~/bin/claude-phone ~/.claude/hooks/phone-*.sh
+cp scripts/claude-remote ~/bin/ && cp scripts/phone-*.sh ~/.claude/hooks/
+cp scripts/phone.md ~/.claude/commands/ && chmod +x ~/bin/claude-remote ~/.claude/hooks/phone-*.sh
 ```
 
-- Set `CLAUDE_PHONE_DIR` (or edit the default in the script) to the folder of the project.
+- Set `CLAUDE_REMOTE_DIR` (or edit the default in the script) to the folder of the project.
 - After a change of a script, copy it back into `scripts/` of the `claude` repository so that both stay identical.
