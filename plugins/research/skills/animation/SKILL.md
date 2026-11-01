@@ -37,8 +37,8 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 
 ## 1. BEFORE DRAWING
 
-1. Write down the mechanism as equations, with the shape of every tensor (e.g. `Q = β_q 1ᵀ + Ω_q X_o`, shape
-   `D × N_o`). If a shape is unknown, find it before drawing.
+1. Write down the mechanism as equations, with the shape of every tensor (e.g. `Q = β_q 1ᵀ + Ω_q X`, shape
+   `D × N`). If a shape is unknown, find it before drawing.
 2. Open the closest examples of `examples.md` with the Read tool: `TransformerBlockSA.png` (matrix form of
    attention), `Conv2D.png` (grids and sliding), `ConvNetworkRF.png` (receptive fields across layers).
 3. Decide the steps: one operation per step, in the order of the computation.
@@ -63,12 +63,14 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 | Marginals      | the density over (x, t) as a white-to-brown heat map, with slices at a few times beside it         |
 | Joint, 2D      | a heat map of the joint, its two marginals drawn along the axes                                    |
 
-- **Real sizes are written, toy sizes are drawn**: draw 4 to 8 tokens and channels, and give the real numbers.
-- **Every diagram translates its dimensions** in a small legend on the drawing (`Diagram.legend`): what each symbol
-  means (channels, tokens, i.e. the flattened spatial grid Y × X, time, ensemble members) and its real size, and the
-  total size of the main tensors: "D: channels of a token, 768 · N_o: ocean tokens, the 63 × 135 latent grid
-  flattened, 8 505 · X_o: 768 × 8 505 values". The book's names (D for channels, N for tokens) are kept; the legend
-  links them to the project's (C, T, Y × X).
+- **Toy sizes are drawn**: 4 to 8 tokens and channels, enough to see the mechanism.
+- **Every diagram explains its dimensions** in a short legend on the drawing (`Diagram.legend`): one line per
+  symbol, a few plain words each, and the shape of the main tensors. For example:
+  `D: channels of a token · N: tokens · X, Q, K, V: D × N · Attention: N × N`.
+  Nothing more: no project, no long explanation; the text of the step says the rest. The book's names (D for
+  channels, N for tokens) are kept.
+- **General, never tied to a project**: the instructions and the examples of this skill stay general; a diagram made
+  for a project names its own tensors, but the drawing explains the mechanism, not the project.
 - Same tensor, same position and same name in every step; same colour for the same role in the whole report.
 - Text in the drawing: short names and symbols only (13 to 14 px at the drawn scale); explanations go in the step text.
 - Mathematical symbols in italic serif, as in the book (the only italic allowed by the report skill).
@@ -80,8 +82,9 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 - **Inside a step**, a short loop may sweep one element at a time (one query column, one output cell, the kernel
   sliding), to show that the same operation repeats.
 - Each step has a text of one or two sentences: what is computed, its shape, why. Bilingual in a report.
-- Controls: previous, next, play / pause (`Diagram.player`). It plays by itself, unless the reader prefers reduced
-  motion; any click on previous or next stops it.
+- Controls (`Diagram.player`): a progress bar to jump to any step, previous and next, and two separate pauses: one
+  for going through the steps, one for the animation inside the current step. It plays by itself, unless the reader
+  prefers reduced motion; moving the bar or clicking previous or next pauses the going through the steps.
 - Hand-written inline SVG drawn by a small script, no library, no external image: `diagram.js` gives the pieces.
   The drawing is at least 600 px wide: on a phone, it scrolls sideways rather than shrinking below legibility.
 
@@ -91,10 +94,11 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 <figure><div class="plate" id="anim"></div><figcaption>…</figcaption></figure>
 <script src="diagram.js"></script>
 <script>
-  const s = Diagram.svg(document.getElementById("anim"), 720, 440, "Cross-attention, step by step");
-  Diagram.panel(s, 150, 20, 410, 400, "Cross-attention");
+  const s = Diagram.svg(document.getElementById("anim"), 720, 500, "Self-attention, step by step");
+  Diagram.panel(s, 150, 20, 410, 400, "Self-attention");
   const X = Diagram.grid(s, { x: 30, y: 70, rows: 4, cols: 6, top: "N", left: "D" });
-  Diagram.label(s, X.x + X.w / 2, X.y + X.h + 20, ["Input", "X"]);
+  Diagram.label(s, X.x + X.w / 2, X.y + X.h + 20, ["Input,", "X"]);
+  Diagram.legend(s, 30, 450, [["D", "channels of a token"], ["N", "tokens"], ["X", "D × N"]]);
   Diagram.player(document.getElementById("anim"), [{ text: "…", draw: (tick) => {} }]);
 </script>
 ```

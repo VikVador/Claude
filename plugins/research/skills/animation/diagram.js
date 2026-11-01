@@ -82,9 +82,14 @@ const Diagram = (() => {
     const g = el("g", {}, parent);
     el("text", { x, y, "font-size": 12.5, "font-weight": 600, fill: COLORS.line }, g).textContent = title;
     items.forEach(([symbol, meaning], i) => {
-      const t = el("text", { x, y: y + 17 * (i + 1), "font-size": 12, fill: "#444" }, g);
-      write(el("tspan", { "font-style": "italic", "font-family": "Georgia, 'Times New Roman', serif", fill: COLORS.line }, t), symbol);
-      write(el("tspan", {}, t), ": " + meaning);
+      const t = el("text", { x, y: y + 17 * (i + 1), "font-size": 12.5, fill: "#444" }, g);
+      // Symbols in italic serif, words (such as "Attention") in the text font
+      symbol.split(", ").forEach((part, k) => {
+        const word = part.replace(/_.*/, "").length > 2;
+        if (k) el("tspan", {}, t).textContent = ", ";
+        write(el("tspan", word ? { fill: COLORS.line } : { "font-style": "italic", "font-family": "Georgia, 'Times New Roman', serif", fill: COLORS.line }, t), part);
+      });
+      write(el("tspan", {}, t), "\u2009: " + meaning);
     });
     return g;
   };
@@ -98,40 +103,50 @@ const Diagram = (() => {
   // Show a group fully, or faded when it is not part of the current step
   const show = (g, on) => g.setAttribute("opacity", on ? 1 : COLORS.faded);
 
-  // Step-by-step player: buttons, a caption per step, autoplay unless the reader prefers reduced motion.
+  // Step-by-step player: a progress bar over the steps, previous and next, and two pauses: one for going through
+  // the steps, one for the animation inside the current step. Autoplay unless the reader prefers reduced motion.
   // steps: [{ text: "<span lang='fr'>…</span><span lang='en'>…</span>", draw: (tick) => {} }]; draw is called
-  // with tick = 0, 1, 2, … every `beat` ms while the step is shown, to animate inside a step.
+  // with tick = 0, 1, 2, … every `beat` ms while the inner animation plays; a step lasts `perStep` beats.
   const player = (container, steps, { beat = 900, perStep = 6 } = {}) => {
+    const words = (fr, en) => `<span lang="fr">${fr}</span><span lang="en">${en}</span>`;
     const bar = document.createElement("div");
     bar.className = "player";
-    bar.innerHTML = '<button type="button" data-a="prev">‹</button><button type="button" data-a="next">›</button>'
-      + '<button type="button" data-a="play"></button><span class="count"></span>';
+    bar.innerHTML = '<button type="button" data-a="prev" aria-label="Previous step">‹</button>'
+      + `<input type="range" min="0" max="${steps.length - 1}" step="1" value="0" aria-label="Step">`
+      + '<button type="button" data-a="next" aria-label="Next step">›</button><span class="count"></span>'
+      + '<button type="button" data-a="steps"></button><button type="button" data-a="anim"></button>';
     const caption = document.createElement("p");
     caption.className = "step-text";
     container.append(bar, caption);
+    const range = bar.querySelector("input");
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let step = 0, tick = 0, playing = !reduce, timer = null;
+    let step = 0, tick = 0, elapsed = 0, stepsOn = !reduce, animOn = !reduce;
     const render = () => {
       steps[step].draw(tick);
       caption.innerHTML = steps[step].text;
+      range.value = step;
       bar.querySelector(".count").textContent = `${step + 1} / ${steps.length}`;
-      bar.querySelector('[data-a="play"]').textContent = playing ? "pause" : "lecture";
+      const b1 = bar.querySelector('[data-a="steps"]'), b2 = bar.querySelector('[data-a="anim"]');
+      b1.innerHTML = stepsOn ? words("pause étapes", "pause steps") : words("lecture étapes", "play steps");
+      b2.innerHTML = animOn ? words("pause animation", "pause animation") : words("lecture animation", "play animation");
+      b1.setAttribute("aria-pressed", String(stepsOn));
+      b2.setAttribute("aria-pressed", String(animOn));
     };
-    const go = (i) => { step = (i + steps.length) % steps.length; tick = 0; render(); };
-    const loop = () => {
-      tick += 1;
-      if (playing && tick >= perStep) go(step + 1);
-      else steps[step].draw(tick);
-    };
+    const go = (i) => { step = (i + steps.length) % steps.length; tick = 0; elapsed = 0; render(); };
+    setInterval(() => {
+      if (animOn) { tick += 1; steps[step].draw(tick); }
+      if (stepsOn && ++elapsed >= perStep) go(step + 1);
+    }, beat);
+    range.addEventListener("input", () => { stepsOn = false; go(Number(range.value)); });
     bar.addEventListener("click", (e) => {
-      const a = e.target.dataset.a;
-      if (a === "prev") { playing = false; go(step - 1); }
-      if (a === "next") { playing = false; go(step + 1); }
-      if (a === "play") { playing = !playing; render(); }
+      const a = e.target.closest("button")?.dataset.a;
+      if (a === "prev") { stepsOn = false; go(step - 1); }
+      if (a === "next") { stepsOn = false; go(step + 1); }
+      if (a === "steps") { stepsOn = !stepsOn; elapsed = 0; render(); }
+      if (a === "anim") { animOn = !animOn; render(); }
     });
-    timer = setInterval(loop, beat);
     go(0);
-    return { go, stop: () => clearInterval(timer) };
+    return { go };
   };
 
   return { el, svg, panel, grid, math, label, legend, arrow, heat, show, player, COLORS };
