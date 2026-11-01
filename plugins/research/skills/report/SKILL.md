@@ -28,9 +28,10 @@ Every report has the same structure and the same look, in every project, so that
 
 ## 1. STRUCTURE (ALWAYS THIS ORDER)
 
-1. **Header**: eyebrow `Projet · sujet`, a short name as title (2 to 4 words), the question in one sentence,
-   then the date, the data used, and whether the numbers are measured or estimated.
-2. **En bref**: 3 or 4 bullets, each a result in bold followed by the number that shows it.
+1. **Header**: on the first line, `Projet : <name>` on the left and the date on the right, both small and grey;
+   then the title (a short name, 2 to 4 words); then one or two sentences saying what the report studies and why.
+2. **Résumé**: a tinted box titled "Résumé", with 3 or 4 bullets; each opens with its topic in semibold, then the
+   result and the number that shows it.
 3. **One section per message**: the title states the finding, then its figure, its caption, and 2 to 3 lines.
 4. **Mes conclusions et la suite**: my own recommendations, numbered, with why.
 5. **Ce qui n'est pas vérifié**: assumptions, estimates, open questions.
