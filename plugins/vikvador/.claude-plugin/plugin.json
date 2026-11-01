@@ -1,6 +1,6 @@
 {
   "name": "vikvador",
   "version": "0.1.0",
-  "description": "Victor's shared skills for Claude Code: reports and figures, used across Heimdall, Neptune and other projects.",
+  "description": "Victor's shared skills for Claude Code: reports and figures, the Torch and Lucia clusters, phone use, across Heimdall, Neptune and other projects.",
   "author": { "name": "Victor Mangeleer" }
 }
