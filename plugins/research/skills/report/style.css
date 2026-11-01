@@ -3,6 +3,7 @@
    One typeface (Inter), two weights (400, 600), four sizes (34, 20, 16, 14 px), two text colours; monospace for code only. */
 :root {
   --bg: #f7f7f5; --ink: #111111; --ink-2: #555555; --rule: #dddddd; --accent: #0b6e79; --warning: #b97800; --orange: #e8710a; --violet: #6f4bd8; --remark: #9b1d48;
+  --blue: #0072B2; --amber: #c27c00; --green: #009E73; --vermilion: #D55E00; --grey: #6f6f6f;
   --code-bg: #ececea; color-scheme: light;
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -48,6 +49,10 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .small, figcaption, table { font-size: 14px; }
 code { font-family: var(--mono); font-size: .875em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
 figure { margin: 0; display: grid; gap: 8px; counter-increment: figure; }
+/* A curve named in a caption, in bold and in its colour in the figure */
+.blue { color: var(--blue); } .amber { color: var(--amber); } .green { color: var(--green); } .vermilion { color: var(--vermilion); } .grey { color: var(--grey); }
+figcaption .blue, figcaption .amber, figcaption .green, figcaption .vermilion, figcaption .grey { font-weight: 600; }
+figcaption strong { color: var(--ink); }
 figcaption::before { content: "Fig. " counter(figure, upper-alpha) ". "; font-weight: 600; color: var(--ink); }
 figure .plate { overflow-x: auto; }
 figure img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }

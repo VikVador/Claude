@@ -148,7 +148,8 @@ These are examples: take the true unit from the metadata of the dataset.
   panels are aligned. To share an x axis between runs of different lengths, use a common scale (e.g. a fraction of
   the schedule) when it does not squeeze the information.
 
-- **Caption**: what is shown, period, zone, depth, number of samples or members, what the colour limits are.
+- **Caption**: first what the figure shows, in a few words (in semibold in a report); then how to read it: x axis,
+  y axis, what each curve or colour is; then period, zone, depth, number of samples or members, colour limits.
 - **Show the uncertainty**: a mean alone hides the data. Show the points with the mean and its interval.
 - **Always say what the error bars show**: the standard deviation is the spread of the data, the standard error the
   uncertainty on the mean. Print which one.

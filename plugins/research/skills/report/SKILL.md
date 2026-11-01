@@ -36,6 +36,11 @@ Every report has the same structure and the same look, in every project, so that
    result and the number that shows it.
 3. **One section per message**: the title states the finding, then its figure, its caption, and 2 to 3 lines.
    Captions start with "Fig. A.", "Fig. B.", … (added by the style, in order); the text cites them as (Fig. A).
+   A caption then has two parts: **what the figure shows, in a few words, in semibold** (it plays the role of the
+   figure title, so the PNG has no title of its own); then how to read it: the x axis, the y axis, and what each
+   curve is, the word naming a curve in semibold and in the colour of that curve, e.g.
+   `<span class="blue">entraînement</span>` (classes `blue`, `amber`, `green`, `vermilion`, `grey`, matching
+   `plot_style.py`).
    **Remarks** (a caution, an assumption, an estimate, something not verified) are not gathered at the end: each is a
    short `<aside class="remark">` placed just before the paragraph, figure or box it concerns. On a wide screen it
    sits in the right margin at that level, in thin dark red; on a narrow one, just above.

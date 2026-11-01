@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 #
 # ----- Colours: colourblind-safe groups, then train / validation / test
 #
-GROUPS = ["#0072B2", "#E69F00", "#009E73", "#D55E00"]
+GROUPS = ["#0072B2", "#E69F00", "#009E73", "#D55E00"]  # blue, amber, green, vermilion: same names in the report
 SPLITS = {"train": "#2a78d6", "validation": "#eb6834", "test": "#1baf7a"}
 MUTED  = "#9a9a9a"
 # fmt: on
