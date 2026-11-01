@@ -15,9 +15,7 @@ plt.rcParams.update({
     "font.size": 9,
     "axes.spines.top": False,
     "axes.spines.right": False,
-    "axes.grid": True,
-    "grid.color": "#e5e5e5",
-    "grid.linewidth": 0.5,
+    "axes.grid": False,
     "figure.dpi": 110,
     "figure.constrained_layout.use": True,
 })

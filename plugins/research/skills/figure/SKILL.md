@@ -114,7 +114,7 @@ So a map, read through colour, shows **where**. To compare **how much**, add a l
 | Scale       | When                                 | Beware                                                         |
 | ----------- | ------------------------------------ | -------------------------------------------------------------- |
 | Linear      | by default                           | large values can dwarf the small ones                          |
-| Logarithmic | several orders of magnitude, spectra | hides absolute differences, no zero nor negative value, say it |
+| Logarithmic | several orders of magnitude, spectra | hides absolute differences, no zero nor negative value; the ticks show it, never "(log scale)" in a label |
 | Quantile    | skewed data, equal-count classes     | says who is ahead, not by how much (not the limits of § 6)     |
 
 - **Binning is a choice**: too few bins hide a group, too many show noise as structure. Try several.
@@ -141,13 +141,19 @@ So a map, read through colour, shows **where**. To compare **how much**, add a l
 
 These are examples: take the true unit from the metadata of the dataset.
 
+- **A quantity without unit** (a ratio, a fraction, a normalised loss) gets `[-]`: `Fraction of the schedule [-]`.
+- **Spell out** the quantity in labels rather than an acronym: `Geometric embedding loss [-]`, not `GME`.
+- **Panels of the same quantity share their axes** (`sharex`, `sharey`): tick labels and axis labels only on the
+  outer panels, x on the bottom row and y on the first column. It removes repeated text and shows at once that the
+  panels are aligned. To share an x axis between runs of different lengths, use a common scale (e.g. a fraction of
+  the schedule) when it does not squeeze the information.
+
 - **Caption**: what is shown, period, zone, depth, number of samples or members, what the colour limits are.
 - **Show the uncertainty**: a mean alone hides the data. Show the points with the mean and its interval.
 - **Always say what the error bars show**: the standard deviation is the spread of the data, the standard error the
   uncertainty on the mean. Print which one.
 - **Ensembles**: show the spread. Many lines are fine when the spread is the message (spaghetti plot).
-- Remove what no one reads (background, heavy grid, top and right frames), but keep light grid lines when values must
-  be read off a scale.
+- Remove what no one reads: background, top and right frames, and **no grid** unless asked for.
 
 ---
 
@@ -306,6 +312,8 @@ def plot_zones(ax: plt.Axes, extent: list[float], zones: dict[str, list[float]])
 - [ ] Can the message of each figure be said in one sentence? Is it its title?
 - [ ] Is there a map of all the zones named in the text?
 - [ ] Do all the axes and colorbars have a quantity and a unit in `[]`?
+- [ ] Are the quantities spelled out, with `[-]` when they have no unit, and no "(log scale)" in a label?
+- [ ] Do panels of the same quantity share their axes, labelled only on the outer panels? Is there no grid?
 - [ ] Is each colorbar exactly the size of its axis?
 - [ ] Are the limits the 2% and 98% quantiles, or the full range for an extreme event? Does the caption say so?
 - [ ] Do the panels to compare share their scales?
