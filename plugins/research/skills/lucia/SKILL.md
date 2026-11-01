@@ -15,7 +15,7 @@ description: Use as soon as you work on Lucia, the supercomputer hosted by Cenae
 
 # LUCIA HPC
 
-**Last updated: 2026-10-27**
+**Last updated: 2026-11-01**
 
 > **Keep this file up to date.** If the date above is **more than one month old**, before relying on this file:
 > 1. launch an agent to re-read the [Lucia docs](https://doc.lucia.cenaero.be) and the
@@ -25,7 +25,8 @@ description: Use as soon as you work on Lucia, the supercomputer hosted by Cenae
 
 Distilled from the [Lucia docs](https://doc.lucia.cenaero.be) (29 pages read on 2026-10-27), completed with the
 [CÉCI](https://www.ceci-hpc.be) pages (marked **(CÉCI)**) and with what Neptune already uses on Lucia.
-**Not yet checked on the cluster itself.** **[verify]** = missing or ambiguous in the docs.
+**Checked on the cluster on 2026-10-28** (`frontal02`, `sinfo`, `sacctmgr`, `scontrol`, `mmlsquota`,
+`sbatch --test-only`; no job run). **[verify]** = still missing or ambiguous.
 
 **Contents**
 
@@ -74,7 +75,11 @@ Distilled from the [Lucia docs](https://doc.lucia.cenaero.be) (29 pages read on 
 
 - Password: `passwd_days_left`, `passwd`, reset at https://ssp.lucia.cenaero.be. **5 wrong attempts lock the account
   for 10 min.** The first SSH login changes the initial password and creates `$HOME` (needed before using OOD).
-- Login nodes: no computations, light tasks and small compilations only.
+- Login nodes: no computations, light tasks and small compilations only. Each has 128 cores and 251 GB, shared by
+  every user, with **no per-user memory or CPU cap** (cgroup and `ulimit` unlimited, 2026-10-28): nothing stops a
+  heavy process, so keep it light (`nice`, 4 threads). Long, light processes (tmux, Remote Control): not documented.
+- A reconnection can land on the other login node (`frontal01` / `frontal02`): tmux sessions and processes started
+  from the previous one keep running there (`ssh frontal01` from Lucia to reach them).
 - Host-key warning: `ssh-keygen -f ~/.ssh/known_hosts -R frontal.lucia.cenaero.be`, then add the key given on the
   [SSH page](https://doc.lucia.cenaero.be/connect/ssh/).
 - Support tickets: give job IDs, project, paths and error messages.
@@ -99,12 +104,12 @@ Host lucia
 
 ## 2. HARDWARE
 
-AMD EPYC Milan (no hyperthreading), HDR InfiniBand fat tree, 10 Gb/s to Belnet. RHEL 8, Slurm 25.11. ~4 PFLOPS.
+AMD EPYC Milan (no hyperthreading), HDR InfiniBand fat tree, 10 Gb/s to Belnet. RHEL 8, Slurm 25.11.6. ~4 PFLOPS.
 
 | Type           | Nodes (`sinfo`)      | GPUs / node            | CPUs / node | RAM / node (usable) | Local disk      |
 | -------------- | -------------------- | ---------------------- | ----------: | ------------------- | --------------- |
 | **GPU**        | `cna[001-050]` (50)  | **4× A100 40 GB**      |      **32** | 256 GB (**240 GB**) | none            |
-| **AI**         | `cni[001-002]` (2)   | **8× A100 SXM4 80 GB** | 64 [verify] | 2 TB (2000 GB)      | **6.4 TB NVMe** |
+| **AI**         | `cni[001-002]` (2)   | **8× A100 SXM4 80 GB** |      **64** | 2 TB (2000 GB)      | **6.4 TB NVMe** |
 | Visualization  | `cng[001-004]` (4)   | 4× T4 16 GB            |          32 | 512 GB (492 GB)     | none            |
 | CPU standard   | `cns[001-270]` (270) | –                      |         128 | 256 GB (240 GB)     | none            |
 | CPU medium     | `cnm[001-030]` (30)  | –                      |         128 | 512 GB (492 GB)     | none            |
@@ -112,29 +117,43 @@ AMD EPYC Milan (no hyperthreading), HDR InfiniBand fat tree, 10 Gb/s to Belnet. 
 
 **Good to know**
 
-- 200 A100 40 GB in total. NVLink between the GPUs of a node: not documented **[verify]**.
+- 200 A100 40 GB in total: `cna[001-048]` in `gpu`, `cna[049-050]` in `debug-gpu`. Slurm GRES: `gpu:A100:4`
+  (`cna`), `gpu:A100:8` (`cni`), `gpu:T4:4` (`cng`). NVLink between the GPUs of a node: not documented **[verify]**.
+- CPU nodes: `cns[002-255]` in `batch`, `cns[261-270]` in `debug`, `cns[256-260]` and `cns001` in the private
+  partitions `sab` and `crm` (not reachable by our accounts); `cnm[001-020]` in `medium`, `cnm[021-030]` in `shared`.
 - Compared to Torch: **more GPUs per user (48)**, but older and smaller GPUs (A100 40 GB vs H200 150 GB).
 
 ---
 
 ## 3. OUR RESOURCES
 
-From the Neptune repository and from Victor (2026-10-27).
+From the Neptune repository, from Victor (2026-10-27) and from the cluster (2026-10-28).
 
 | What            | Value                                                                                                    |
 | --------------- | -------------------------------------------------------------------------------------------------------- |
 | Slurm accounts  | **`bsmfc`** (MAST group, Marilaure Grégoire): **use it first**; `sail` (SAIL lab, Gilles Louppe): backup |
-| Partitions used | `gpu` (trainings), `ia` (fine-tuning), `debug-gpu`, `visu`                                               |
-| Project space   | `/gpfs/projects/acad/bsmfc/` (NEMO simulation, datasets)                                                 |
-| Scratch         | `/gpfs/scratch/acad/bsmfc/vmangele/`                                                                     |
-| Job submission  | Python with [dawgz](https://github.com/francois-rozet/dawgz) (`schedule(...)`)                           |
+| Associations    | both accounts reach the same partitions: `gpu`, `ia`, `debug-gpu`, `visu`, `debug`, `shared`, `large`,   |
+|                 | `xlarge`, plus `batch` / `medium` with the QoS `normal` (default) or `long`                              |
+| Partitions used | `gpu` (trainings), `ia` (fine-tuning), `debug-gpu`, `visu`, `large` (statistics)                         |
+| Project space   | `/gpfs/projects/acad/bsmfc/` (NEMO simulation in `nemo4.2.0/`, datasets)                                 |
+|                 | `sail`: `/gpfs/projects/acad/sail`                                                                       |
+| Scratch         | `/gpfs/scratch/acad/bsmfc/vmangele/` (group `bsmfc`); `sail`: `/gpfs/scratch/acad/sail`                  |
+| Job submission  | Python with [dawgz](https://github.com/francois-rozet/dawgz) (`schedule(...)`), version 1.0.4            |
+| Environment     | micromamba environment `neptune` (`~/micromamba/envs/neptune`): PyTorch 2.5.1, ruff 0.4.8, wandb 0.26.1  |
 | Credits         | `get_slurm_quota` (both accounts)                                                                        |
+
+Credits on 2026-10-28 (`get_slurm_quota`):
+
+| Account |   Used BUh | Credits BUh | Left           | Expires        |
+| ------- | ---------: | ----------: | -------------- | -------------- |
+| `bsmfc` | 31 443 476 |  40 000 000 | 8.6 M (21 %)   | 2027-09-21     |
+| `sail`  | 36 640 950 |  40 000 000 | 3.4 M (8 %)    | **2027-02-22** |
 
 **Good to know**
 
 - **`bsmfc` first.** When its GPU credits run low (`get_slurm_quota`), **ask me** whether to switch to `sail`:
   never switch on your own.
-- Project and scratch paths of `sail`: probably `/gpfs/projects/<org>/sail` and `/gpfs/scratch/<org>/sail` **[verify]**.
+- 8.6 M BUh = about 16 800 hours of full GPU nodes (512 BUh/h), e.g. 175 trainings of 48 h on one node.
 
 ---
 
@@ -146,7 +165,7 @@ From the Neptune repository and from Victor (2026-10-27).
 | -------------------------------- | ------------------------------------------------------------------------------ |
 | `--account` and `--partition`    | in every job, as in all the examples of the docs.                              |
 | **≤ 8 CPUs and ≤ 60 GB per GPU** | on the `gpu` partition; a full node = `--gpus=4 --cpus-per-task=8 --mem=240G`. |
-| GPU syntax                       | `--gpus=N` in the docs (`--gres=gpu:N` should also work) **[verify]**.         |
+| GPU syntax                       | `--gpus=N` (docs) or `--gres=gpu:N`: both accepted (`--test-only`).            |
 | **No wall-time extension**       | 48 h max on the GPU partitions ⇒ checkpoint/restart.                           |
 
 ### Partitions and limits
@@ -155,21 +174,24 @@ Live values: `sacctmgr show qos format=Name,MaxTRESPU%16,MaxJobsPU,MaxSubmitPU,M
 
 | Partition         | Nodes               | Max wall    | Limits                                            | Use                     |
 | ----------------- | ------------------- | ----------- | ------------------------------------------------- | ----------------------- |
-| **`gpu`**         | 50 × 4 A100 40 GB   | **48 h**    | **48 GPUs, 12 nodes per user**                    | trainings               |
+| **`gpu`**         | 48 × 4 A100 40 GB   | **48 h**    | **48 GPUs, 12 nodes per user**                    | trainings               |
 | **`ia`**          | 2 × 8 A100 80 GB    | **48 h**    | –                                                 | big models, fine-tuning |
 | **`debug-gpu`**   | 2 × 4 A100 40 GB    | **2 h**     | 2 nodes per job, 1 running and 10 queued per user | tests                   |
 | `visu`            | 4 × 4 T4            | 4 h         | exactly 1 GPU, ≤ 8 CPUs, ≤ 123 GB, 1 job          | light GPU work          |
-| `batch`, `medium` | 260 / 30 × 128 CPUs | 48 h        | whole nodes (ExclusiveUser), 2000 queued jobs     | CPU jobs                |
+| `batch`, `medium` | 254 / 20 × 128 CPUs | 48 h        | whole nodes (ExclusiveUser), 2000 queued jobs     | CPU jobs                |
 | `batch` (`long`)  | 128 CPUs            | 168 h       | 4 nodes, 512 CPUs per user                        | long CPU jobs           |
 | `shared`          | 10 × 128 CPUs       | 168 h       | 1 node per job, 500 queued                        | small CPU jobs          |
 | `debug`           | 10 × 128 CPUs       | 2 h         | 4 nodes, 4 running, 20 queued                     | CPU tests               |
-| `large`, `xlarge` | 2 TB / 4 TB nodes   | 168 / 336 h | ≥ 490 GB / ≥ 1000 GB per job                      | big memory              |
+| `large`, `xlarge` | 7 × 2 TB / 1 × 4 TB | 168 / 336 h | ≥ 490 GB / ≥ 1000 GB per job; 4 / 1 nodes per user | big memory             |
 
 **Good to know**
 
-- Not documented: preemption, cancellation of underused GPUs, requeue **[verify]**.
-- How to select the `long` QoS (`--qos=long`?) and whether the partitions overlap: **[verify]**.
-- CÉCI says GPU nodes are allocated whole, Lucia says the `gpu` partition is shared **[verify]**.
+- **No preemption**: `PreemptMode=OFF` on `gpu`, `ia`, `debug-gpu` and `batch` (2026-10-28). Cancellation of
+  underused GPUs and requeue: not documented, nothing seen in the configuration **[verify]**.
+- `long` QoS: `--partition=batch --qos=long` (accepted by `--test-only`). The partitions do not overlap.
+- **GPU nodes are shared** between jobs (`ExclusiveUser=NO`, `OverSubscribe=NO`): a 1-GPU job gets 8 CPUs of a node
+  (`--test-only`). Default memory: 7.5 GB per CPU on `gpu` / `debug-gpu` (= 60 GB per GPU), 31 GB on `ia`.
+- `xlarge`: the partition says 7 days, but its QoS overrides it with 14 days (`PartitionTimeLimit`).
 - Interactive: `srun -p debug-gpu -A bsmfc --gpus=1 -t 60 --pty bash`, or `salloc -p batch -A bsmfc -N 1 -t 1:00:00`.
 - Arrays: `#SBATCH --array=0-19`, output `%A-%a_%x.out`, `$SLURM_ARRAY_TASK_ID`.
 
@@ -188,6 +210,8 @@ Counted in **BUh**: the largest of requested CPUs, memory and GPUs (in CPU equiv
 
 **Good to know**
 
+- Billing weights (`scontrol show partition`): `gpu` = CPU 16, memory 2.13 per GB, GPU 128, so the largest of the
+  three gives 512 BUh/h for a full node; `ia` = CPU 25.6, memory 0.82 per GB, GPU 204.8.
 - A project out of credits, or expired, **cannot submit**. Top-up: https://login.ceci-hpc.be/init-project/#update_project.
 - Usage: `get_slurm_quota`, or
   `sreport cluster AccountUtilizationByUser Accounts=bsmfc -t Hour -T billing Start=... End=...`.
@@ -205,9 +229,18 @@ IBM Spectrum Scale (GPFS), about 3 PiB.
 | `/gpfs/projects/<org>/<project>`    | 1000 GB / ~1 M                | snapshots 7 days + tape 30 days | no                                             | shared data, long term       |
 | `/gpfs/scratch/<org>/<project>`     | 1000 GB / ~1 M                | **no**                          | **wiped at the May and November maintenances** | fast I/O (NVMe burst buffer) |
 
+Our quotas on 2026-10-28 (`mmlsquota`, soft quota / hard limit):
+
+| Space                      | Used        | Quota / limit (space) | Files used | Quota (files) |
+| -------------------------- | ----------- | --------------------- | ---------- | ------------- |
+| home `vmangele`            | 109 GB      | 200 / 230 GB          | **940 K**  | **1.02 M** ⚠  |
+| projects `bsmfc` (group)   | 99.6 TB     | 150 / 195 TB          | 1.9 M      | 10.2 M        |
+| scratch `bsmfc` (group)    | **121.5 TB**| 150 / 195 TB          | 2.1 M      | 10.2 M        |
+
 **Good to know**
 
-- CÉCI says 50 / 50 / 100 GB for academic projects **[verify]**. Files: ≥ 500 K up to 500 GB, then +1 K per GB.
+- **Home: 92 % of the files used** (environments, `.vscode-server`, caches): avoid new environments or many small
+  files in `$HOME`. The default quotas of the docs (and CÉCI's 50 / 50 / 100 GB) do not apply to `bsmfc`.
 - Check: `mmlsquota -g <project> --block-size g ess:projects` (or `ess:scratch`, `ess:home` with `-u <user>`).
 - **Group trap**: files in projects and scratch must belong to the **project group**, otherwise "Disk quota exceeded".
   Use `newgrp <project>`, copy with `rsync -av --no-p --no-g --chmod=ug=rwX` or `cp` (not `mv`, not `scp`).
@@ -221,7 +254,8 @@ IBM Spectrum Scale (GPFS), about 3 PiB.
 - I/O-heavy work goes to **scratch** (burst buffer, ~15× faster than projects); copy results elsewhere afterwards.
 - Avoid millions of small files (file quotas). Only the AI nodes have a local NVMe disk (6.4 TB).
 - Transfers: `rsync` / `scp` through the SSH gateway. No DTN, no Globus documented **[verify]**.
-- Internet: yes from the login nodes (`apptainer pull docker://...` works there); from compute nodes **[verify]**.
+- Internet: yes from the login nodes (GitHub, PyPI, `api.wandb.ai`, `claude.ai` reached on 2026-10-28;
+  `apptainer pull docker://...` works there); from compute nodes **[verify]**.
 
 ---
 
@@ -239,6 +273,10 @@ IBM Spectrum Scale (GPFS), about 3 PiB.
 
 **Good to know**
 
+- Neptune uses the micromamba environment `neptune` (§ 3): activate it before running anything.
+- The [cybersecurity page](https://doc.lucia.cenaero.be/cyber/) says: "Do not install software from unverified
+  sources" and "Use only the modules and environments available via module managers". Install only official
+  releases (checksum verified) and ask me first.
 - No documented policy for conda, pip or PyTorch **[verify]**; the only PyTorch example is a container:
   `apptainer pull pytorch.sif docker://pytorch/pytorch:2.7.1-cuda11.8-cudnn9-runtime`.
 - Set `APPTAINER_CACHEDIR` to the project scratch (the default `~/.apptainer` grows large).
@@ -278,20 +316,35 @@ srun bash -c "RANK=\$SLURM_PROCID LOCAL_RANK=\$SLURM_LOCALID python train.py"
 - **Acknowledgement** (required): *"The present research benefited from computational resources made available on
   Lucia, the Tier-1 supercomputer of the Walloon Region, infrastructure funded by the Walloon Region under the grant
   agreement n°1910247."*
-- **Maintenance**: quarterly, Mondays 07:00–19:00. Next one **Monday 30 November 2026** (scratch wiped), then planned
+- **Maintenance**: quarterly, Mondays 07:00–19:00. Next one **Monday 30 November 2026** (scratch wiped; confirmed by
+  the banner of the docs on 2026-10-28), then planned
   2027-02-22, 2027-05-10, 2027-09-13, 2027-11-29 **[verify]**.
 - Lucia is mainly meant for large jobs; short wall times favour the rotation of the jobs.
 - Security: never share credentials or keys, report a lost key to support immediately; Lucia is not a backup system.
+
+**Remote session on Lucia** (the `remote` skill, checked on 2026-10-28 and 2026-11-01):
+
+- `frontal.lucia.cenaero.be` is a DNS round robin: an editor can reconnect to the other login node (`frontal01` /
+  `frontal02`), where `claude-remote status` says "not running" and names the node of the session. Go there with
+  `ssh <node>` before stopping or attaching, otherwise a **second** session starts.
+- The login nodes have no per-user cap: the limit is ours. Claude uses ~250 MB; heavy work goes through Slurm. The
+  docs allow "lightweight tasks" and say nothing about long, light processes such as tmux; ask support in case of doubt.
+- `tmux` is `/usr/bin/tmux` 2.7; `python3` (used by the hooks) is `/usr/bin/python3` 3.6.8 on both login nodes.
+- A personal claude.ai account (Pro) allows Remote Control. Use the standalone CLI (`~/.local/bin/claude`), not the
+  binary bundled with VSCode, which a VSCode update removes.
+- The client needs neither the ULiège VPN nor the SSH gateway: the login node only makes outbound HTTPS requests.
+- A maintenance reboots the login nodes: run `claude-remote` again afterwards.
 
 ---
 
 ## 11. OPEN QUESTIONS
 
-| #   | Question                                                 | Status                            |
-| --- | -------------------------------------------------------- | --------------------------------- |
-| 1   | Internet from compute nodes (WandB, PyPI, GitHub)?       | **open**, test from a job         |
-| 2   | Policy for conda / pip, recommended PyTorch install?     | **open**, ask support             |
-| 3   | Cancellation of underused GPUs, preemption?              | **open**, not documented          |
-| 4   | `--gpus` or `--gres=gpu:N`; are GPU nodes shared?        | **open**, test with `--test-only` |
-| 5   | Quotas of the `bsmfc` project (home, projects, scratch)? | **open**, run `mmlsquota`         |
-| 6   | Cores of the AI nodes (32 or 64)?                        | **open**, run `sinfo -N -l`       |
+| #   | Question                                                 | Status                                           |
+| --- | -------------------------------------------------------- | ------------------------------------------------ |
+| 1   | Internet from compute nodes (WandB, PyPI, GitHub)?       | **open**, test from a job                        |
+| 2   | Policy for conda / pip, recommended PyTorch install?     | **open**, ask support (see § 8, cybersecurity)   |
+| 3   | Cancellation of underused GPUs, preemption?              | no preemption (§ 4); cancellation **open**       |
+| 4   | `--gpus` or `--gres=gpu:N`; are GPU nodes shared?        | both work, nodes shared (§ 4)                    |
+| 5   | Quotas of the `bsmfc` project (home, projects, scratch)? | 150 TB per group space, home 92 % of files (§ 6) |
+| 6   | Cores of the AI nodes (32 or 64)?                        | 64 (§ 2)                                         |
+| 7   | Long, light processes on login nodes (tmux, Claude)?     | **open**, not documented, ask support            |
