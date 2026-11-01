@@ -29,8 +29,10 @@ Every report has the same structure and the same look, in every project, so that
 ## 1. STRUCTURE (ALWAYS THIS ORDER)
 
 1. **Header**: on the first line, `Projet : <name>` on the left and the date on the right, both small and grey;
+   the name links to the GitHub repository of the project when it is known (otherwise plain text);
    then the title (a short name, 2 to 4 words); then one or two sentences saying what the report studies and why.
-2. **Résumé**: a tinted box titled "Résumé", with 3 or 4 bullets; each opens with its topic in semibold, then the
+2. **Résumé**: "Résumé" written vertically on the left of a box with a thin dark orange border and a very light
+   orange inside, holding 3 or 4 bullets; each opens with its topic in semibold, then the
    result and the number that shows it.
 3. **One section per message**: the title states the finding, then its figure, its caption, and 2 to 3 lines.
 4. **Mes conclusions et la suite**: my own recommendations, numbered, with why.
@@ -42,7 +44,7 @@ Every report has the same structure and the same look, in every project, so that
 - **One typeface everywhere: Inter**, for titles, text, tables and captions; a monospace only for code and file names.
 - **Two weights**: regular (400) and semibold (600, for titles and the opening words of a key point). No italic,
   no capitals for emphasis, no letter-spacing.
-- **Four sizes**: title 28 px, section 20 px, text 16 px, captions, tables and header details 14 px.
+- **Four sizes**: title 34 px, section 20 px, text 16 px, captions, tables and header details 14 px.
 - **Off-white page (`#f7f7f5`), black text**, in every theme of the viewer (no dark mode): near the most contrast,
   without the glare of pure white. Figures keep a white background; the page blends it into its own colour. No frame or background around the figures. Colour only where it carries information.
 - **Two text colours**: ink for the text, grey for captions, the subtitle and the header details.
