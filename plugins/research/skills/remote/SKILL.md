@@ -110,6 +110,9 @@ phone, a compact answer mode keeps the answers readable on a small screen.
 
 A blocked account shows it in `~/.claude/policy-limits.json` (`allow_remote_control: false`).
 
+Prefer the **standalone CLI** to the binary bundled with an editor (VSCode): an editor update removes the old binary,
+which breaks a running session at its next restart.
+
 ---
 
 ## 5. COMPACT ANSWER MODE
