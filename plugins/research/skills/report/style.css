@@ -84,10 +84,12 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space:
 @media (max-width: 640px) { .trio { grid-template-columns: 1fr; } }
 /* Diagrams and animations of the animation skill: never smaller than readable, scrolled sideways on a phone */
 svg.diagram { display: block; width: 100%; min-width: 600px; height: auto; font-family: var(--font); }
-.player { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 14px; color: var(--ink-2); }
-.player button { font: inherit; font-size: 13px; padding: 3px 12px; border: 1px solid var(--rule); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; }
+/* An animation: controls, text of the step and drawing held together in a light frame */
+.plate.anim { border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 8px; padding: 12px; }
+.player { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 13px; color: var(--ink-2); }
+.player button { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 1px solid var(--rule); border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; }
 .player button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .player button:focus-visible, .player input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .player input[type="range"] { flex: 1 1 160px; min-width: 120px; accent-color: var(--ink); }
-/* The text of the current step, set apart from the report text: it explains what the drawing below shows */
-.step-text { margin-bottom: 14px; min-height: 3.4em; padding: 10px 14px; border-left: 3px solid var(--ink); background: color-mix(in srgb, var(--ink) 4%, transparent); border-radius: 0 6px 6px 0; }
+/* The text of the current step, on a light shade: it explains what the drawing below shows */
+.step-text { margin-bottom: 14px; min-height: 3.4em; padding: 10px 14px; background: color-mix(in srgb, var(--ink) 5%, transparent); border-radius: 6px; }

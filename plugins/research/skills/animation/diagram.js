@@ -109,14 +109,25 @@ const Diagram = (() => {
   // steps: [{ text: "<span lang='fr'>…</span><span lang='en'>…</span>", draw: (tick) => {} }]; draw is called
   // with tick = 0, 1, 2, … every `beat` ms while the inner animation plays; a step lasts `perStep` beats.
   const player = (container, steps, { beat = 900, perStep = 6 } = {}) => {
-    const words = (fr, en) => `<span lang="fr">${fr}</span><span lang="en">${en}</span>`;
+    // Icons drawn in SVG (fonts on phones lack some media symbols), in the colour of the button
+    const icon = (d) => `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="${d}" fill="currentColor"/></svg>`;
+    const ICONS = {
+      prev: icon("M10.5 3 5 8l5.5 5 1-1.1L7.2 8l4.3-3.9z"),
+      next: icon("M5.5 3 11 8l-5.5 5-1-1.1L8.8 8 4.5 4.1z"),
+      play: icon("M5 3v10l8-5z"),
+      pause: icon("M4 3h3v10H4zm5 0h3v10H9z"),
+      steps: icon("M2 3v10l6-5zm6 0v10l6-5z"),
+      restart: icon("M8 2a6 6 0 1 0 6 6h-1.6A4.4 4.4 0 1 1 8 3.6V6l3.5-3L8 0z"),
+    };
+    container.classList.add("anim");
     const bar = document.createElement("div");
     bar.className = "player";
-    bar.innerHTML = '<button type="button" data-a="prev" aria-label="Previous step">‹</button>'
+    bar.innerHTML = `<button type="button" data-a="prev" title="Étape précédente / Previous step">${ICONS.prev}</button>`
       + `<input type="range" min="0" max="${steps.length - 1}" step="1" value="0" aria-label="Step">`
-      + '<button type="button" data-a="next" aria-label="Next step">›</button><span class="count"></span>'
-      + '<button type="button" data-a="steps"></button><button type="button" data-a="anim"></button>'
-      + `<button type="button" data-a="reset">${words("recommencer", "restart")}</button>`;
+      + `<button type="button" data-a="next" title="Étape suivante / Next step">${ICONS.next}</button><span class="count"></span>`
+      + `<button type="button" data-a="steps" title="Défilement des étapes / Go through the steps">${ICONS.steps}</button>`
+      + '<button type="button" data-a="anim" title="Animation de l\'étape / Animation of the step"></button>'
+      + `<button type="button" data-a="reset" title="Recommencer / Restart">${ICONS.restart}</button>`;
     const caption = document.createElement("p");
     caption.className = "step-text";
     // Controls and the text of the step above the drawing, so that the caption of the figure follows it directly
@@ -130,8 +141,7 @@ const Diagram = (() => {
       range.value = step;
       bar.querySelector(".count").textContent = `${step + 1} / ${steps.length}`;
       const b1 = bar.querySelector('[data-a="steps"]'), b2 = bar.querySelector('[data-a="anim"]');
-      b1.innerHTML = stepsOn ? words("pause étapes", "pause steps") : words("lecture étapes", "play steps");
-      b2.innerHTML = animOn ? words("pause animation", "pause animation") : words("lecture animation", "play animation");
+      b2.innerHTML = animOn ? ICONS.pause : ICONS.play;
       b1.setAttribute("aria-pressed", String(stepsOn));
       b2.setAttribute("aria-pressed", String(animOn));
     };

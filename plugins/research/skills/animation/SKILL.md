@@ -82,11 +82,11 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 - **Inside a step**, a short loop may sweep one element at a time (one query column, one output cell, the kernel
   sliding), to show that the same operation repeats.
 - Each step has a text of one or two sentences: what is computed, its shape, why. Bilingual in a report.
-- **Layout, top to bottom**: the controls, the text of the current step (set apart in a shaded box), the drawing
-  with the legend of the dimensions at its bottom (two columns), then directly the caption of the figure.
-- Controls (`Diagram.player`): a progress bar to jump to any step, previous and next, two separate pauses (one
-  for going through the steps, one for the animation inside the current step), and a restart that plays everything
-  again from the first step. It plays by itself, unless the reader
+- **Layout, top to bottom**, in one light frame: the controls, the text of the current step (on a light shade),
+  the drawing with the legend of the dimensions at its bottom (two columns); then, below the frame, the caption.
+- Controls (`Diagram.player`), as icons with a tooltip: previous, a progress bar to jump to any step, next, a
+  toggle for going through the steps (dark when on), play / pause of the animation inside the current step, and a
+  restart that plays everything again from the first step. It plays by itself, unless the reader
   prefers reduced motion; moving the bar or clicking previous or next pauses the going through the steps.
 - Hand-written inline SVG drawn by a small script, no library, no external image: `diagram.js` gives the pieces.
   The drawing is at least 600 px wide: on a phone, it scrolls sideways rather than shrinking below legibility.
