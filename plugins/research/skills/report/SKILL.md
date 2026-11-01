@@ -72,8 +72,8 @@ Every report has the same structure and the same look, in every project, so that
 ## 5. BUILD AND PUBLISH
 
 1. Write the analysis script and the figures in the analysis folder of the project (never in the repository).
-2. Copy `body-template.html` next to them and write the whole report **in French only**: data, analysis, figures,
-   text. Leave the `lang="en"` elements of the template empty for now.
+2. Copy `body-template.html` next to them and write the whole report **in French only** (figures stay in English):
+   gather the data, run the analysis, draw the figures, write the text. Leave the `lang="en"` elements empty for now.
 3. When the French draft is final, the one I would hand over, **translate it into English as the last step**: fill
    every `lang="en"` element next to its French one, nothing else changes.
 4. `python build.py body.html report.html`, look at the page at phone width (about 400 px) when a browser is
