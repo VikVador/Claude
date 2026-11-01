@@ -62,5 +62,10 @@ figcaption { line-height: 1.5; }
 table { border-collapse: collapse; width: 100%; }
 th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Problem, solution, observation: three columns, stacked on a phone */
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.trio > div { border-top: 2px solid var(--rule); padding-top: 8px; min-width: 0; }
+.trio .label { display: block; font-size: 14px; font-weight: 600; color: var(--ink-2); margin-bottom: 4px; }
+@media (max-width: 640px) { .trio { grid-template-columns: 1fr; } }
 .note, .why { border-left: 3px solid var(--accent); padding-left: 16px; display: grid; gap: 8px; }
 .note { border-left-color: var(--warning); }

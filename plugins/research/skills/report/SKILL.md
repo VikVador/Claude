@@ -34,8 +34,18 @@ Every report has the same structure and the same look, in every project, so that
 2. **Résumé**: a violet box (thin border, very light inside, "Résumé" set in a gap of its top border:
    `<fieldset class="box summary">` and `<legend>`), holding 3 or 4 bullets; each opens with its topic in semibold, then the
    result and the number that shows it.
-3. **One section per message**: the title states the finding, then its figure, its caption, and 2 to 3 lines.
-   Captions start with "Fig. A.", "Fig. B.", … (added by the style, in order); the text cites them as (Fig. A).
+3. **Sections**, one per question studied. Each follows the same pattern:
+   - a **generic title** naming what is analysed ("Analyse des pics de loss"), not the finding;
+   - a paragraph: the **goal** of the analysis, the experiment done to reach it, then what the figure shows and what
+     we observe and conclude, citing the figure (Fig. A); the key words (goal, main observation) in semibold, so
+     the main information can be picked up at a glance;
+   - the figure, then its caption.
+   A section always ends with a figure and its caption: nothing comes after them. When a second experiment is needed
+   to answer the question, its paragraph, figure and caption follow, in the same order.
+   For a report that **summarises past work** (a cleaning of the data, a set of fixes), open each section with three
+   columns, `<div class="trio">`: the problem met, the solution put in place, and what we observe since (is it
+   solved?); then the figure that shows it, and its caption.
+   Captions start with "Fig. A.", "Fig. B.", … (added by the style, in order).
    A caption then has two parts: **what the figure shows, in a few words, in semibold** (it plays the role of the
    figure title, so the PNG has no title of its own); then how to read it: the x axis, the y axis, and what each
    curve is, the word naming a curve in semibold and in the colour of that curve, e.g.
@@ -69,6 +79,8 @@ Every report has the same structure and the same look, in every project, so that
 - Small tables only for exact numbers (4 to 5 columns, short cells); never a table where a figure works.
 - Give my own conclusions, not only the results.
 - One question, one figure: an exploratory sweep stays out of the report.
+- **Spell out every variable and acronym** whose meaning is known, at least at its first use: "la température
+  de surface de la mer (SST)", so that a reader from outside the project understands. Same in the figures.
 
 ## 4. FIGURES AND DIAGRAMS
 

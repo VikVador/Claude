@@ -56,7 +56,7 @@ the matching images when choosing a plot or checking one.
 | Rule                    | In practice                                                                                 |
 | ----------------------- | ------------------------------------------------------------------------------------------- |
 | Figures first           | every result comes with a figure; prefer a figure to a paragraph of numbers                 |
-| One figure, one message | the title states the finding ("Shelf oxygen drops in summer"), not the content              |
+| One figure, one message | on a slide, the title states the finding; in a report, no title: the caption says what is shown |
 | Explanatory, not a dump | as many figures as there are messages; an exploratory sweep stays out of the report         |
 | Rawest data first       | show fields and samples before their summaries: the same statistics can hide anything       |
 | All the data            | no subset of runs, dates or zones without saying so: the pattern may be in what is cut      |
@@ -142,7 +142,8 @@ So a map, read through colour, shows **where**. To compare **how much**, add a l
 These are examples: take the true unit from the metadata of the dataset.
 
 - **A quantity without unit** (a ratio, a fraction, a normalised loss) gets `[-]`: `Fraction of the schedule [-]`.
-- **Spell out** the quantity in labels rather than an acronym: `Geometric embedding loss [-]`, not `GME`.
+- **Spell out** quantities and variables in labels and panel titles rather than acronyms:
+  `Geometric embedding loss [-]`, not `GME`; `Sea surface temperature`, not `SST`.
 - **Panels of the same quantity share their axes** (`sharex`, `sharey`): tick labels and axis labels only on the
   outer panels, x on the bottom row and y on the first column. It removes repeated text and shows at once that the
   panels are aligned. To share an x axis between runs of different lengths, use a common scale (e.g. a fraction of
