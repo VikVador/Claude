@@ -31,8 +31,8 @@ Every report has the same structure and the same look, in every project, so that
 1. **Header**: on the first line, `Projet : <name>` on the left and the date on the right, both small and grey;
    the name links to the GitHub repository of the project when it is known (otherwise plain text);
    then the title (a short name, 2 to 4 words); then one or two sentences saying what the report studies and why.
-2. **Résumé**: "Résumé" written vertically on the left of a box with a thin dark orange border and a very light
-   orange inside, holding 3 or 4 bullets; each opens with its topic in semibold, then the
+2. **Résumé**: a box with a thin orange border and a very light orange inside, "Résumé" set in a gap of its top
+   border (`<fieldset>` and `<legend>`), holding 3 or 4 bullets; each opens with its topic in semibold, then the
    result and the number that shows it.
 3. **One section per message**: the title states the finding, then its figure, its caption, and 2 to 3 lines.
 4. **Mes conclusions et la suite**: my own recommendations, numbered, with why.

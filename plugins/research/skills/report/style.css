@@ -2,7 +2,7 @@
    onto the page, so their white background takes the colour of the page.
    One typeface (Inter), two weights (400, 600), four sizes (34, 20, 16, 14 px), two text colours; monospace for code only. */
 :root {
-  --bg: #f7f7f5; --ink: #111111; --ink-2: #555555; --rule: #dddddd; --accent: #0b6e79; --warning: #b97800; --orange: #c2410c;
+  --bg: #f7f7f5; --ink: #111111; --ink-2: #555555; --rule: #dddddd; --accent: #0b6e79; --warning: #b97800; --orange: #e8710a;
   --code-bg: #ececea; color-scheme: light;
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -16,9 +16,8 @@ main { max-width: 760px; margin: 0 auto; display: grid; gap: 48px; }
 header { display: grid; gap: 10px; }
 .top a { color: inherit; }
 .top { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--ink-2); }
-.summary { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; }
-.summary h2 { writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; font-size: 16px; color: var(--orange); }
-.summary ul { border: 1px solid var(--orange); background: rgba(234, 88, 12, 0.07); border-radius: 6px; padding: 16px 18px 16px 36px; }
+.summary { border: 1px solid var(--orange); background: rgba(245, 140, 30, 0.10); border-radius: 6px; margin: 0; padding: 4px 18px 16px; min-width: 0; }
+.summary legend { padding: 0 6px; font-weight: 600; color: var(--orange); }
 h1, h2 { font-weight: 600; margin: 0; text-wrap: balance; }
 h1 { font-size: 34px; line-height: 1.15; }
 h2 { font-size: 20px; line-height: 1.3; }
