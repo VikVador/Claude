@@ -4,7 +4,7 @@
 set -euo pipefail
 
 SESSION="claude"
-PROJECT_DIR="${CLAUDE_PHONE_DIR:-$HOME/heimdall}"
+PROJECT_DIR="${CLAUDE_PHONE_DIR:-$PWD}"
 PROJECT_NAME="$(basename "$PROJECT_DIR")"
 MODE="${CLAUDE_PHONE_MODE:-acceptEdits}"
 

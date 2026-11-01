@@ -1,24 +1,23 @@
 ---
-name: phone
-description: Use when Victor drives Claude Code from his phone (Remote Control in tmux, the claude-phone script, the phone answer mode and /phone), when the phone session must be started, checked or stopped, or to install that setup on a new machine.
+name: remote
+description: Use to deploy, check or stop a remote Claude Code session on a distant machine (for example the login node of a computing cluster), kept alive in tmux and reached from anywhere through Remote Control (claude.ai/code or the Claude app). Also use for the compact answer mode of such sessions (/phone), and to install this setup on a new machine.
 ---
 
 ```text
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Phone: drive Claude Code from the phone while it
-     ┌─┴───┴─┐       works on a cluster (Remote Control in tmux).
+     └─┬───┬─┘       Remote: keep Claude Code running on a distant
+     ┌─┴───┴─┐       machine and drive it from anywhere.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# CLAUDE PHONE
+# REMOTE
 
-**Set up: 2026-10-26** on `torch-login-a-1`.
-
-Drive Claude Code from the phone (Claude mobile app, or https://claude.ai/code) while it works on Torch, through the
-Remote Control of Claude Code.
+Claude Code runs on a distant machine (typically the login node of a cluster) inside tmux, and stays reachable through
+its **Remote Control** from https://claude.ai/code or the Claude app, on a computer or a phone. When the client is a
+phone, a compact answer mode keeps the answers readable on a small screen.
 
 **Contents**
 
@@ -27,18 +26,19 @@ Remote Control of Claude Code.
 2. How it works
 3. How long it stays open
 4. Requirements
-5. Phone answer mode
+5. Compact answer mode
 6. Install on a new machine
 
 ---
 
 ## 0. IN SHORT
 
-1. **Start** in a VSCode terminal on Torch: `claude-phone`. **Leave** without stopping it: **Ctrl+B**, then **D**.
-2. **Phone**: Claude app → **Code** tab → session **heimdall**.
-3. **One active session at a time**: never give work to the phone session and to VSCode simultaneously.
+1. **Start** in a terminal on the machine, from the project folder: `claude-phone`. **Leave** without stopping it:
+   **Ctrl+B**, then **D**.
+2. **Connect**: claude.ai/code or the Claude app → **Code** → the session named after the project folder.
+3. **One active session at a time**: never give work to the remote session and to a local one simultaneously.
 4. **tmux is per node**: check or stop the session from the node where it runs; `claude-phone status` names it.
-5. **Phone answer mode**: short answers for a small screen, turned on with `/phone on`, off with `/phone off` (§ 5).
+5. **Compact answers** on a phone: `/phone on`, back to normal with `/phone off` (§ 5).
 
 ---
 
@@ -50,16 +50,12 @@ Remote Control of Claude Code.
 | `claude-phone stop`   | Kills the tmux session (and Claude with it)                                                    |
 | `claude-phone status` | Tells whether the session runs **on the current node**, otherwise on which node it was started |
 
-| Step | Where           | What                                                                            |
-| ---- | --------------- | ------------------------------------------------------------------------------- |
-| 1    | VSCode on Torch | `claude-phone`                                                                  |
-| 2    | same terminal   | leave without stopping Claude: **Ctrl+B**, then **D** (or close the terminal 🗑️) |
-| 3    | phone           | Claude app → **Code** tab → session **heimdall**                                |
-
 | Option (environment variable) | Effect                                         | Default       |
 | ----------------------------- | ---------------------------------------------- | ------------- |
 | `CLAUDE_PHONE_MODE`           | permission mode (`default`, `plan`, `auto`, …) | `acceptEdits` |
-| `CLAUDE_PHONE_DIR`            | working directory                              | `~/heimdall`  |
+| `CLAUDE_PHONE_DIR`            | working directory, its name names the session  | the current folder |
+
+The script and hooks keep the name `phone` from their first use; they serve any remote client.
 
 ---
 
@@ -67,16 +63,16 @@ Remote Control of Claude Code.
 
 | Piece          | Details                                                                                                  |
 | -------------- | -------------------------------------------------------------------------------------------------------- |
-| Script         | `~/bin/claude-phone` (in `PATH`, outside the repository)                                                 |
+| Script         | `~/bin/claude-phone` (in `PATH`, outside any repository)                                                 |
 | Claude binary  | `claude` from `PATH` (standalone CLI in `~/.local/bin`), otherwise the latest one bundled with VSCode    |
-| Command        | `claude remote-control` in a detached tmux session, from `~/heimdall`                                    |
-| tmux socket    | `~/.tmux/claude-phone-<node>.sock`, not `/tmp` (cleaned by the node, which made the session unreachable) |
-| Login node use | `nice -n 10`, `OMP_NUM_THREADS`, `MKL_NUM_THREADS` and `OPENBLAS_NUM_THREADS` set to 4 (shared nodes)    |
-| Network        | outbound HTTPS to Anthropic: the phone needs neither the NYU VPN nor the 2FA                             |
+| Command        | `claude remote-control` in a detached tmux session, from the project folder                              |
+| tmux socket    | `~/.tmux/claude-phone-<node>.sock`, not `/tmp`, which some nodes clean (the session became unreachable)  |
+| Shared nodes   | `nice -n 10`, `OMP_NUM_THREADS`, `MKL_NUM_THREADS` and `OPENBLAS_NUM_THREADS` set to 4                   |
+| Network        | outbound HTTPS to Anthropic only: the client needs neither the VPN nor the 2FA of the cluster            |
 
 **Restart loop**
 
-- The first run creates the session `heimdall` (`--name`), the next ones reattach to it (`-c`).
+- The first run creates the named session (`--name`), the next ones reattach to it (`-c`).
 - After a failure, it restarts 30 s later.
 - It stops on exit code 0 or 130 (Ctrl+C); Ctrl+C during the 30 s wait also stops it.
 
@@ -88,49 +84,48 @@ Remote Control of Claude Code.
 | ------------------------------------------- | --------------------------------------------------------------- |
 | Network outage of about 10 minutes          | Claude exits, the loop reattaches with `-c` every 30 s          |
 | `-c` only reattaches within about **4 h**   | After 480 failed retries the loop gives up: `stop` then `start` |
-| Reboot of the login node                    | Everything is lost: run `claude-phone` again                    |
+| Reboot of the node                          | Everything is lost: run `claude-phone` again                    |
 | Long processes killed by the cluster admins | Same, run `claude-phone` again                                  |
 | `claude-phone stop`, or exit in the session | Ends normally                                                   |
 
 **Good to know**
 
-- **tmux is per node.** VSCode can reconnect to another login node (`torch-login-a-0`, `a-1`, `b-1`, `b-3`, …):
-  `claude-phone status` then says "not running" and names the node where the session was started. Go there with
-  `ssh <node>` before `claude-phone stop` or attaching, otherwise you start a **second** session.
-- **Login nodes are for light work.** The NYU docs do not forbid long, light processes there, but heavy work
-  (training, analysis, transfers) goes through Slurm jobs or the DTN. Memory is capped at 2 GB per user (Claude uses
-  ~350 MB). Ask hpc@nyu.edu in case of doubt.
+- **tmux is per node.** An editor can reconnect to another login node: `claude-phone status` then says "not running"
+  and names the node where the session was started. Go there with `ssh <node>` before stopping or attaching,
+  otherwise you start a **second** session.
+- **Login nodes are for light work.** Claude itself is light (~350 MB), but heavy work (training, analysis,
+  transfers) goes through the scheduler or the transfer nodes. Check the rules of the cluster (its own skill).
 
 ---
 
 ## 4. REQUIREMENTS
 
-| Requirement     | Details                                                                       |
-| --------------- | ----------------------------------------------------------------------------- |
-| Claude Code CLI | ≥ 2.1, installed with `curl -fsSL https://claude.ai/install.sh \| bash`       |
-| Login           | a **claude.ai account** (`/login`), API keys are not supported                |
-| Remote Control  | allowed by the **personal** account, blocked by the NYU-managed one           |
-| Phone           | logged in with the **same account** as the CLI                                |
-| tmux            | `/usr/bin/tmux` on Torch                                                      |
-| One session     | **one active session at a time**: never the phone session and VSCode together |
+| Requirement     | Details                                                                        |
+| --------------- | ------------------------------------------------------------------------------ |
+| Claude Code CLI | ≥ 2.1, installed with `curl -fsSL https://claude.ai/install.sh \| bash`        |
+| Login           | a **claude.ai account** (`/login`), API keys are not supported                 |
+| Remote Control  | allowed by the account: some managed (institution) accounts block it           |
+| Client          | logged in with the **same account** as the CLI                                |
+| tmux            | installed on the machine                                                       |
+| One session     | **one active session at a time**: never the remote session and a local one     |
 
-The NYU-managed account shows the block in `~/.claude/policy-limits.json` (`allow_remote_control: false`).
+A blocked account shows it in `~/.claude/policy-limits.json` (`allow_remote_control: false`).
 
 ---
 
-## 5. PHONE ANSWER MODE
+## 5. COMPACT ANSWER MODE
 
-In the session started by `claude-phone`, answers can switch to a **phone style**, short enough for a small screen.
+In the session started by `claude-phone`, answers can switch to a **compact style**, short enough for a phone.
 
-| When                                        | What happens                                       |
-| ------------------------------------------- | -------------------------------------------------- |
-| First prompt of the session                 | Claude first asks: "Es-tu sur ton téléphone ?"     |
-| More than **2 h** since the previous prompt | Same question                                      |
-| Answer yes / no                             | Claude turns the mode on / off by itself           |
-| `/phone on`, `/phone off`, `/phone`         | Turns it on, off, or toggles it, at any time       |
-| Mode on                                     | Every prompt reminds Claude to use the phone style |
+| When                                        | What happens                                          |
+| ------------------------------------------- | ----------------------------------------------------- |
+| First prompt of the session                 | Claude first asks: "Es-tu sur ton téléphone ?"        |
+| More than **2 h** since the previous prompt | Same question                                         |
+| Answer yes / no                             | Claude turns the mode on / off by itself              |
+| `/phone on`, `/phone off`, `/phone`         | Turns it on, off, or toggles it, at any time          |
+| Mode on                                     | Every prompt reminds Claude to use the compact style  |
 
-**Phone style**: every answer has three parts, separated by a horizontal rule (a `---` line between blank lines).
+**Compact style**: every answer has three parts, separated by a horizontal rule (a `---` line between blank lines).
 
 | Part       | Content                                                                            |
 | ---------- | ---------------------------------------------------------------------------------- |
@@ -192,5 +187,5 @@ cp scripts/claude-phone ~/bin/ && cp scripts/phone-*.sh ~/.claude/hooks/
 cp scripts/phone.md ~/.claude/commands/ && chmod +x ~/bin/claude-phone ~/.claude/hooks/phone-*.sh
 ```
 
-- Set `CLAUDE_PHONE_DIR` (or edit the default `~/heimdall` in the script) to the repository of the project.
+- Set `CLAUDE_PHONE_DIR` (or edit the default in the script) to the folder of the project.
 - After a change of a script, copy it back into `scripts/` of the `claude` repository so that both stay identical.

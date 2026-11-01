@@ -1,4 +1,4 @@
-r"""Common matplotlib style and colours of Victor's reports (import or copy into the analysis script)."""
+r"""Common matplotlib style and colours of the figures (import or copy into the analysis script)."""
 
 import matplotlib.pyplot as plt
 

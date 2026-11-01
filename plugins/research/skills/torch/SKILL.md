@@ -1,6 +1,6 @@
 ---
 name: torch
-description: Use on the NYU Torch cluster (hostname torch-*, or compute nodes gh*, gr*, gl*) before any Slurm job, GPU choice, storage or quota operation, data transfer, Apptainer environment, or read/write on the OSN pod of M2LInES.
+description: Use as soon as you work on Torch, the HPC cluster of New York University (hostname torch-*, or a compute node gh*, gr*, gl*), before any Slurm job, choice of account or GPU, storage or quota operation, data transfer or Apptainer environment. Also read it whenever you work with the Open Storage Network (S3-compatible object storage, pod nyu1.osn.mghpcc.org): endpoint, public and private buckets, reading and writing.
 ---
 
 ```text

@@ -1,24 +1,29 @@
+---
+name: figure
+description: Use before drawing any figure meant to carry a scientific message (results, data, diagnostics, maps), in a report or on its own, in any project. Gives the rules to choose the plot, the colours, the scales, the captions, the uncertainty and the maps, with ready-made matplotlib and cartopy helpers and a checklist before delivering.
+---
+
 ```text
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Analysis: how to write reports and draw figures
-     ┌─┴───┴─┐       for my projects.
+     └─┬───┬─┘       Figures: how to draw a figure that carries
+     ┌─┴───┴─┐       a scientific message.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# ANALYSIS
+# FIGURES
 
-Read this file **before writing a report or drawing a figure**. Projects and libraries to know:
-`claude-ressources.md`. How to write the code: `claude-python.md`.
+Read this file **before drawing any figure**, for a report or on its own. The structure of a report is in the
+`report` skill. Common matplotlib style and colours: `plot_style.py`, next to this file.
 
 **Last checked: 2026-10-30** (every link below was opened and verified on that day).
 
 **Contents**
 
 0. In short
-1. Reports
+1. Figures in a report
 2. Choosing the plot
 3. Encoding and colours
 4. Scales
@@ -42,7 +47,7 @@ Read this file **before writing a report or drawing a figure**. Projects and lib
 
 ---
 
-## 1. REPORTS
+## 1. FIGURES IN A REPORT
 
 | Rule                    | In practice                                                                                 |
 | ----------------------- | ------------------------------------------------------------------------------------------- |
@@ -54,13 +59,13 @@ Read this file **before writing a report or drawing a figure**. Projects and lib
 | Same choices everywhere | one variable, model or zone keeps the same colour, name and order in the whole report       |
 | Table or figure         | a table for exact numbers, a heatmap or lines for a pattern, never bars with printed values |
 
-Metrics come from `albus` (`claude-ressources.md`) rather than from a new implementation.
+Metrics come from the project's metrics library (e.g. `albus`) rather than from a new implementation.
 
 ---
 
 ## 2. CHOOSING THE PLOT
 
-| Message      | Plot                                                            | Example in my projects            |
+| Message      | Plot                                                            | Example                           |
 | ------------ | --------------------------------------------------------------- | --------------------------------- |
 | Comparison   | bars starting at zero, or dots                                  | skill of several models           |
 | Distribution | all the points along an axis, or a histogram / box plot if many | sea surface temperature at a site |
@@ -109,6 +114,8 @@ So a map, read through colour, shows **where**. To compare **how much**, add a l
 | Quantile    | skewed data, equal-count classes     | says who is ahead, not by how much (not the limits of § 6)     |
 
 - **Binning is a choice**: too few bins hide a group, too many show noise as structure. Try several.
+- **A value read against a limit** (memory against the size of a GPU, a threshold): linear scale, with a line
+  per limit, so the distance to the limit reads directly.
 - **Bars start at zero**, as they encode a length. Dots and lines encode a position and can show a narrow range.
 - No misleading aspect ratio.
 
@@ -186,7 +193,7 @@ And to stay honest with these limits:
 
 ## 8. CODE
 
-`plot_map` and `plot_zones` follow the rules of § 6, for Heimdall and Neptune alike.
+`plot_map` and `plot_zones` follow the rules of § 6, for every project.
 
 ```python
 import cartopy.crs as ccrs

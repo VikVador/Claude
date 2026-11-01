@@ -1,6 +1,6 @@
 ---
 name: lucia
-description: Use on the Lucia cluster of Cenaero (hostname frontal*, used by Neptune) before any Slurm job, account or credit question, data transfer or storage operation.
+description: Use as soon as you work on Lucia, the supercomputer hosted by Cenaero in Wallonia (hostname frontal*, or a Lucia compute node), before any Slurm job, choice of account, partition or GPU, credit check, data transfer or storage operation. It explains how the cluster works and what not to do there, so that jobs run and nothing gets lost.
 ---
 
 ```text
