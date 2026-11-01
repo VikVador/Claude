@@ -65,8 +65,8 @@ Every report has the same structure and the same look, in every project, so that
 
 ## 4. FIGURES AND DIAGRAMS
 
-- Results: matplotlib figures following the `figure` skill, saved as PNG (`dpi=110` or more). A wide figure goes
-  in `<figure class="wide">`, any other in `<figure>`, always inside `<div class="plate">` with a `<figcaption>`.
+- Results: matplotlib figures following the `figure` skill, saved as PNG (`dpi=110` or more). Every figure takes the
+  width of the text column: `<figure>`, inside it `<div class="plate">`, then a `<figcaption>`.
 - Diagrams (an architecture, a pipeline): hand-written inline SVG using `currentColor`, inside
   `<div class="plate svg">`, so that they follow the light and dark themes.
 
