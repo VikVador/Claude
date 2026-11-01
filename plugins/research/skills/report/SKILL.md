@@ -42,8 +42,8 @@ Every report has the same structure and the same look, in every project, so that
 - **Two weights**: regular (400) and semibold (600, for titles and the opening words of a key point). No italic,
   no capitals for emphasis, no letter-spacing.
 - **Four sizes**: title 28 px, section 20 px, text 16 px, captions, tables and header details 14 px.
-- **White page, black text**, in every theme of the viewer (no dark mode): the figures are white, and black on
-  white gives the most contrast. No frame or background around the figures. Colour only where it carries information.
+- **Off-white page (`#f7f7f5`), black text**, in every theme of the viewer (no dark mode): near the most contrast,
+  without the glare of pure white. Figures keep a white background; the page blends it into its own colour. No frame or background around the figures. Colour only where it carries information.
 - **Two text colours**: ink for the text, grey for captions, the subtitle and the header details.
 - Figures follow the same rule: Inter (or the default sans-serif of matplotlib) in every figure and diagram.
 
