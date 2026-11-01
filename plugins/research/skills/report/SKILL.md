@@ -29,17 +29,19 @@ Every report has the same structure and the same look, in every project, so that
 ## 1. STRUCTURE (ALWAYS THIS ORDER)
 
 1. **Header**: on the first line, `Projet : <name>` on the left, the date and the FR / EN toggle on the right, small
-   and grey;
-   the name links to the GitHub repository of the project when it is known (otherwise plain text);
-   then the title (a short name, 2 to 4 words); then one or two sentences saying what the report studies and why.
+   and grey; the name links to the GitHub repository of the project when it is known (otherwise plain text); then
+   the title (a short name, 2 to 4 words); then one or two sentences saying what the report studies and why.
 2. **Résumé**: a violet box (thin border, very light inside, "Résumé" set in a gap of its top border:
    `<fieldset class="box summary">` and `<legend>`), holding 3 or 4 bullets; each opens with its topic in semibold, then the
    result and the number that shows it.
 3. **One section per message**: the title states the finding, then its figure, its caption, and 2 to 3 lines.
+   Captions start with "Fig. A.", "Fig. B.", … (added by the style, in order); the text cites them as (Fig. A).
+   **Remarks** (a caution, an assumption, an estimate, something not verified) are not gathered at the end: each is a
+   short `<aside class="remark">` placed just before the paragraph, figure or box it concerns. On a wide screen it
+   sits in the right margin at that level, in thin dark red; on a narrow one, just above.
 4. **Conclusion**: the same kind of box in orange (`<fieldset class="box conclusion">`), always after the last
    section: my own conclusions and recommendations, numbered, with why. The orange box is always the conclusion.
-5. **Ce qui n'est pas vérifié**: assumptions, estimates, open questions.
-6. **Sources**: only when literature or external pages were used.
+5. **Sources**: only when literature or external pages were used.
 
 ## 2. TYPOGRAPHY (FIXED, IN `style.css`)
 
@@ -49,7 +51,7 @@ Every report has the same structure and the same look, in every project, so that
 - **Four sizes**: title 34 px, section 20 px, text 16 px, captions, tables and header details 14 px.
 - **Off-white page (`#f7f7f5`), black text**, in every theme of the viewer (no dark mode): near the most contrast,
   without the glare of pure white. Figures keep a white background; the page blends it into its own colour. No frame or background around the figures. Colour only where it carries information.
-- **Two text colours**: ink for the text, grey for captions, the subtitle and the header details.
+- **Text colours**: ink for the text, grey for captions, the subtitle and the header details, dark red for remarks.
 - Figures follow the same rule: Inter (or the default sans-serif of matplotlib) in every figure and diagram.
 
 ## 3. WRITING
