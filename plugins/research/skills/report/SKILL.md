@@ -36,9 +36,10 @@ Every report has the same structure and the same look, in every project, so that
    result and the number that shows it.
 3. **Sections**, one per question studied. Each follows the same pattern:
    - a **generic title** naming what is analysed ("Analyse des pics de loss"), not the finding;
-   - a paragraph: the **goal** of the analysis, the experiment done to reach it, then what the figure shows and what
-     we observe and conclude, citing the figure (Fig. A); the key words (goal, main observation) in semibold, so
-     the main information can be picked up at a glance;
+   - plain, natural text, in one or several short paragraphs (one idea each), as simple and clear as possible: why
+     this analysis, what was done, what the figure shows, what we observe and conclude, citing the figure (Fig. A).
+     No labels such as "But :"; the key observations in semibold, so the main information can be picked up at a
+     glance;
    - the figure, then its caption.
    A section always ends with a figure and its caption: nothing comes after them. When a second experiment is needed
    to answer the question, its paragraph, figure and caption follow, in the same order.

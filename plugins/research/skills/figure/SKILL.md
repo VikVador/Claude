@@ -156,6 +156,8 @@ These are examples: take the true unit from the metadata of the dataset.
   uncertainty on the mean. Print which one.
 - **Ensembles**: show the spread. Many lines are fine when the spread is the message (spaghetti plot).
 - Remove what no one reads: background, top and right frames, and **no grid** unless asked for.
+- **Let it breathe**: one font size for titles, labels and legends (ticks one point smaller), space between ticks
+  and axis labels and between panels. `plot_style.py` sets all of this.
 
 ---
 
