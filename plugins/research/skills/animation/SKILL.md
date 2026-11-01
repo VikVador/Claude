@@ -1,6 +1,6 @@
 ---
 name: animation
-description: Use before drawing a diagram or an animation that explains how a mechanism or an architecture works inside (attention, cross-attention, convolution and receptive fields, graph networks, U-Net, tokenisation, encoders, a training pipeline), on its own or in a report. Gives the style to follow, the one of the figures of the book Understanding Deep Learning (Prince, 2023), with the book's figures as examples, and a small library to draw tensors, modules and arrows and to play them step by step.
+description: Use before drawing a diagram or an animation that explains how a mechanism, an architecture or a probabilistic concept works (attention, cross-attention, convolution and receptive fields, graph networks, U-Net, encoders, autoencoders and VAEs, normalizing flows, diffusion models, stochastic interpolants, distributions and their transformations), on its own or in a report. Gives the style to follow, the one of the figures of the book Understanding Deep Learning (Prince, 2023), with the book's figures as examples, and a small library to draw tensors, modules and arrows and to play them step by step.
 ---
 
 ```text
@@ -57,9 +57,18 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 | Neurons, nodes | circles, with their name inside when useful (`x₁₁`, `h₂₃`); layers as orange columns of circles    |
 | Receptive field| a light grey wedge from the field in one layer to the unit it feeds in the next                     |
 | Symbols        | ⊗ for a product, ⊕ for a sum, at the place where the operation happens                             |
+| Densities      | filled curves on a shared axis: teal for the base or source, orange for the target or model        |
+| Samples        | small arrows or points on the axis, followed through the map that moves them                       |
+| Time           | downwards, as in the diffusion figures; paths as thin coloured lines, one colour per sample        |
+| Marginals      | the density over (x, t) as a white-to-brown heat map, with slices at a few times beside it         |
+| Joint, 2D      | a heat map of the joint, its two marginals drawn along the axes                                    |
 
-- **Real sizes are written, toy sizes are drawn**: draw 4 to 8 tokens and channels, and give the real numbers in
-  the caption or the text ("in Heimdall, N_o = 8 505 tokens of D = 768").
+- **Real sizes are written, toy sizes are drawn**: draw 4 to 8 tokens and channels, and give the real numbers.
+- **Every diagram translates its dimensions** in a small legend on the drawing (`Diagram.legend`): what each symbol
+  means (channels, tokens, i.e. the flattened spatial grid Y × X, time, ensemble members) and its real size, and the
+  total size of the main tensors: "D: channels of a token, 768 · N_o: ocean tokens, the 63 × 135 latent grid
+  flattened, 8 505 · X_o: 768 × 8 505 values". The book's names (D for channels, N for tokens) are kept; the legend
+  links them to the project's (C, T, Y × X).
 - Same tensor, same position and same name in every step; same colour for the same role in the whole report.
 - Text in the drawing: short names and symbols only (13 to 14 px at the drawn scale); explanations go in the step text.
 - Mathematical symbols in italic serif, as in the book (the only italic allowed by the report skill).

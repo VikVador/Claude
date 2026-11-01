@@ -77,6 +77,18 @@ const Diagram = (() => {
   const arrow = (parent, points, head = true) =>
     el("polyline", { points: points.map((p) => p.join(",")).join(" "), fill: "none", stroke: COLORS.line, "stroke-width": 1.4, ...(head ? { "marker-end": "url(#arrow)" } : {}) }, parent);
 
+  // Legend of the dimensions: one line per symbol, "symbol: meaning, size" (a "_x" in the symbol is a subscript)
+  const legend = (parent, x, y, items, title = "Dimensions") => {
+    const g = el("g", {}, parent);
+    el("text", { x, y, "font-size": 12.5, "font-weight": 600, fill: COLORS.line }, g).textContent = title;
+    items.forEach(([symbol, meaning], i) => {
+      const t = el("text", { x, y: y + 17 * (i + 1), "font-size": 12, fill: "#444" }, g);
+      write(el("tspan", { "font-style": "italic", "font-family": "Georgia, 'Times New Roman', serif", fill: COLORS.line }, t), symbol);
+      write(el("tspan", {}, t), ": " + meaning);
+    });
+    return g;
+  };
+
   // White to brown, as the attention weights of the book (t in [0, 1])
   const heat = (t) => {
     const a = [255, 245, 235], b = [127, 39, 4];
@@ -122,5 +134,5 @@ const Diagram = (() => {
     return { go, stop: () => clearInterval(timer) };
   };
 
-  return { el, svg, panel, grid, math, label, arrow, heat, show, player, COLORS };
+  return { el, svg, panel, grid, math, label, legend, arrow, heat, show, player, COLORS };
 })();
