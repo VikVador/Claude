@@ -22,6 +22,15 @@ FONTS = (
 )
 
 
+# Mathematics in LaTeX everywhere, rendered by MathJax as SVG (no font to load): \( … \) inline, \[ … \] apart
+MATHJAX = (
+    '<script>window.MathJax = { tex: { inlineMath: [["\\\\(", "\\\\)"]], displayMath: [["\\\\[", "\\\\]"]],'
+    ' packages: { "[+]": ["boldsymbol"] } },'
+    ' svg: { fontCache: "local" }, loader: { load: ["[tex]/boldsymbol"] } };</script>\n'
+    '<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>'
+)
+
+
 # French by default; the choice of a reader is remembered in their own browser only
 SCRIPT = """<script>
 (() => {
@@ -59,7 +68,7 @@ def build(body: Path, output: Path) -> None:
     content = re.sub(r'(<img\b[^>]*?\s)src="(?!data:|https?:)([^"]+)"', lambda m: m.group(1) + embed(m, body.parent), content)
     css = (HERE / "style.css").read_text()
     page = (
-        f'<title>{title}</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n{FONTS}\n'
+        f'<title>{title}</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n{FONTS}\n{MATHJAX}\n'
         f"<style>\n{css}</style>\n<main>\n{content}\n</main>\n{SCRIPT}\n"
     )
     output.write_text(page)

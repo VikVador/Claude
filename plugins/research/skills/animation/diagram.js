@@ -50,7 +50,7 @@ const Diagram = (() => {
     return { g, cells, x, y, w: cols * cell, h: rows * cell, rows, cols, cell };
   };
 
-  // Write text into an SVG text element, "_x" or "_{xy}" becoming a subscript
+  // Write text into an SVG text element, "_x" or "_{xy}" becoming a subscript (fallback when MathJax is missing)
   const write = (t, text) => {
     const parts = text.split(/_(\{[^}]*\}|[A-Za-z0-9])/);
     parts.forEach((part, i) => {
@@ -62,35 +62,61 @@ const Diagram = (() => {
     return t;
   };
 
-  // A mathematical symbol, in italic serif as in the book
-  const math = (parent, x, y, text, anchor = "middle", size = 14) =>
-    write(el("text", { x, y, "text-anchor": anchor, "font-size": size, "font-style": "italic", "font-family": "Georgia, 'Times New Roman', serif", fill: COLORS.line }, parent), text);
-
-  // A name and an equation under a tensor: lines[0] plain, lines[1] (optional) in bold; "_x" is a subscript
-  const label = (parent, x, y, lines) => {
-    lines.forEach((line, i) => {
-      write(el("text", { x, y: y + i * 17, "text-anchor": "middle", "font-size": 13.5, "font-weight": i ? 600 : 400, fill: COLORS.line }, parent), line);
-    });
+  // LaTeX rendered by MathJax as an SVG, its baseline at (x, y); without MathJax (or if it fails), a plain fallback
+  const tex = (parent, x, y, latex, anchor = "middle", size = 14) => {
+    let node = null;
+    try { node = window.MathJax?.tex2svg?.(latex, { display: false }).querySelector("svg"); } catch (e) { node = null; }
+    if (!node) {
+      const plain = latex.replace(/\\(mathbf|boldsymbol|mathrm|text)\{([^}]*)\}/g, "$2").replace(/\\cdot/g, "·").replace(/\\times/g, "×").replace(/\\[a-zA-Z]+/g, "").replace(/[{}]/g, "");
+      return write(el("text", { x, y, "text-anchor": anchor, "font-size": size, "font-style": "italic", "font-family": "Georgia, serif", fill: COLORS.line }, parent), plain);
+    }
+    const ex = size * 0.44, w = parseFloat(node.getAttribute("width")) * ex, h = parseFloat(node.getAttribute("height")) * ex;
+    const va = parseFloat((node.style.verticalAlign || "0").replace("ex", "")) * ex;
+    node.setAttribute("width", w);
+    node.setAttribute("height", h);
+    node.setAttribute("x", x - (anchor === "middle" ? w / 2 : anchor === "end" ? w : 0));
+    node.setAttribute("y", y - h - va);
+    node.setAttribute("style", `color: ${COLORS.line}; overflow: visible`);
+    parent.append(node);
+    node.dataset.width = w;
+    return node;
   };
+  const math = tex;
+
+  // A line mixing words and $…$ LaTeX, its baseline at (x, y), aligned as a whole
+  const rich = (parent, x, y, line, { anchor = "middle", size = 13.5, weight = 400, fill = COLORS.line } = {}) => {
+    const g = el("g", {}, parent);
+    let cursor = 0;
+    line.split("$").forEach((part, i) => {
+      if (!part) return;
+      if (i % 2) {
+        const node = tex(g, cursor, y, part, "start", size + 0.5);
+        cursor += Number(node.dataset.width || node.getComputedTextLength?.() || 0);
+      } else {
+        const t = el("text", { x: cursor, y, "font-size": size, "font-weight": weight, fill, style: "white-space: pre" }, g);
+        t.textContent = part;
+        cursor += t.getComputedTextLength();
+      }
+    });
+    g.setAttribute("transform", `translate(${x - (anchor === "middle" ? cursor / 2 : anchor === "end" ? cursor : 0)}, 0)`);
+    return g;
+  };
+
+  // A name and an equation under a tensor, one line each; "$…$" parts are LaTeX
+  const label = (parent, x, y, lines) => lines.forEach((line, i) => rich(parent, x, y + i * 19, line));
 
   // An arrow through the given points, turning at right angles: [[x0, y0], [x1, y1], ...]
   const arrow = (parent, points, head = true) =>
     el("polyline", { points: points.map((p) => p.join(",")).join(" "), fill: "none", stroke: COLORS.line, "stroke-width": 1.4, ...(head ? { "marker-end": "url(#arrow)" } : {}) }, parent);
 
-  // Legend of the dimensions: one short line per symbol, "symbol: meaning", in two columns (a "_x" is a subscript)
+  // Legend of the dimensions, in two columns: each item is [LaTeX symbol, words] or a line mixing words and $…$
   const legend = (parent, x, y, items, { title = "Dimensions", width = 340 } = {}) => {
     const g = el("g", {}, parent);
     el("text", { x, y, "font-size": 12.5, "font-weight": 600, fill: COLORS.line }, g).textContent = title;
     const rows = Math.ceil(items.length / 2);
-    items.forEach(([symbol, meaning], i) => {
-      const t = el("text", { x: x + Math.floor(i / rows) * width, y: y + 18 * ((i % rows) + 1), "font-size": 12.5, fill: "#444" }, g);
-      // Symbols in italic serif, words (such as "Attention") in the text font
-      symbol.split(", ").forEach((part, k) => {
-        const word = part.replace(/_.*/, "").length > 2;
-        if (k) el("tspan", {}, t).textContent = ", ";
-        write(el("tspan", word ? { fill: COLORS.line } : { "font-style": "italic", "font-family": "Georgia, 'Times New Roman', serif", fill: COLORS.line }, t), part);
-      });
-      write(el("tspan", {}, t), "\u2009: " + meaning);
+    items.forEach((item, i) => {
+      const line = typeof item === "string" ? item : `$${item[0]}$: ${item[1]}`;
+      rich(g, x + Math.floor(i / rows) * width, y + 20 * ((i % rows) + 1), line, { anchor: "start", size: 12.5, fill: "#444" });
     });
     return g;
   };
@@ -99,6 +125,15 @@ const Diagram = (() => {
   const heat = (t) => {
     const a = [255, 245, 235], b = [127, 39, 4];
     return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * Math.min(Math.max(t, 0), 1))).join(",")})`;
+  };
+
+  // Run a drawing once MathJax is ready, so that its labels are typeset; without MathJax after 5 s, draw anyway
+  const ready = (draw) => {
+    let tries = 0;
+    const wait = setInterval(() => {
+      const promise = window.MathJax?.startup?.promise;
+      if (promise || ++tries > 100) { clearInterval(wait); (promise || Promise.resolve()).then(draw); }
+    }, 50);
   };
 
   // Show a group fully, or faded when it is not part of the current step
@@ -138,6 +173,7 @@ const Diagram = (() => {
     const render = () => {
       steps[step].draw(tick);
       caption.innerHTML = steps[step].text;
+      window.MathJax?.typesetPromise?.([caption]);
       range.value = step;
       bar.querySelector(".count").textContent = `${step + 1} / ${steps.length}`;
       const b1 = bar.querySelector('[data-a="steps"]'), b2 = bar.querySelector('[data-a="anim"]');
@@ -163,5 +199,5 @@ const Diagram = (() => {
     return { go };
   };
 
-  return { el, svg, panel, grid, math, label, legend, arrow, heat, show, player, COLORS };
+  return { el, svg, panel, grid, tex, math, rich, label, legend, arrow, heat, show, ready, player, COLORS };
 })();

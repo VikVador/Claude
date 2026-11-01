@@ -66,14 +66,17 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 - **Toy sizes are drawn**: 4 to 8 tokens and channels, enough to see the mechanism.
 - **Every diagram explains its dimensions** in a short legend at the bottom of the drawing (`Diagram.legend`, two
   columns): one line per symbol, a few plain words each, and the shape of the main tensors. For example:
-  `D: channels of a token · N: tokens · X, Q, K, V: D × N · Attention: N × N`.
+  `D`: channels of a token · `N`: tokens · `X, Q, K, V`: `D × N` · Attention: `N × N` (all in LaTeX).
   Nothing more: no project, no long explanation; the text of the step says the rest. The book's names (D for
   channels, N for tokens) are kept.
 - **General, never tied to a project**: the instructions and the examples of this skill stay general; a diagram made
   for a project names its own tensors, but the drawing explains the mechanism, not the project.
 - Same tensor, same position and same name in every step; same colour for the same role in the whole report.
 - Text in the drawing: short names and symbols only (13 to 14 px at the drawn scale); explanations go in the step text.
-- Mathematical symbols in italic serif, as in the book (the only italic allowed by the report skill).
+- **All mathematics in LaTeX**, as in the text of the report: in the drawing, `$…$` inside any label or legend
+  (`Diagram.rich`, `Diagram.tex`, rendered by MathJax), e.g. `"$\\mathbf{Q} = \\boldsymbol\\beta_q\\mathbf{1}^T +
+  \\boldsymbol\\Omega_q\\mathbf{X}$"`; in the step texts, `\\( … \\)`. Matrices in bold, as in the book.
+- Draw inside `Diagram.ready(() => { … })`, so that MathJax is loaded before the labels are typeset.
 
 ## 3. ANIMATION
 
@@ -97,12 +100,14 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 <figure><div class="plate" id="anim"></div><figcaption>…</figcaption></figure>
 <script src="diagram.js"></script>
 <script>
+  Diagram.ready(() => {
   const s = Diagram.svg(document.getElementById("anim"), 720, 500, "Self-attention, step by step");
   Diagram.panel(s, 150, 20, 410, 400, "Self-attention");
   const X = Diagram.grid(s, { x: 30, y: 70, rows: 4, cols: 6, top: "N", left: "D" });
-  Diagram.label(s, X.x + X.w / 2, X.y + X.h + 20, ["Input,", "X"]);
-  Diagram.legend(s, 30, 450, [["D", "channels of a token"], ["N", "tokens"], ["X", "D × N"]]);
-  Diagram.player(document.getElementById("anim"), [{ text: "…", draw: (tick) => {} }]);
+  Diagram.label(s, X.x + X.w / 2, X.y + X.h + 20, ["Input,", "$\\mathbf{X}$"]);
+  Diagram.legend(s, 30, 450, [["D", "channels of a token"], ["N", "tokens"], ["\\mathbf{X}: D \\times N", ""]]);
+  Diagram.player(document.getElementById("anim"), [{ text: "… \\(\\mathbf{Q} = \\boldsymbol\\Omega_q\\mathbf{X}\\) …", draw: (tick) => {} }]);
+  });
 </script>
 ```
 

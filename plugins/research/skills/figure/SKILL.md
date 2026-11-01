@@ -140,9 +140,11 @@ So a map, read through colour, shows **where**. To compare **how much**, add a l
 
 These are examples: take the true unit from the metadata of the dataset.
 
-- **A quantity without unit** (a ratio, a fraction, a normalised loss) gets `[-]`: `Fraction of the schedule [-]`.
+- **All mathematics in LaTeX** (`$…$`), rendered in Computer Modern by `plot_style.py`, so that figures, text and
+  diagrams look the same: symbols, formulas and units, e.g. `r"Temperature [$^\circ\mathrm{C}$]"`, `r"$\sigma/\tau$"`.
+- **A quantity without unit** (a ratio, a fraction, a normalised loss) gets `[$-$]`: `r"Fraction of the schedule [$-$]"`.
 - **Spell out** quantities and variables in labels and panel titles rather than acronyms:
-  `Geometric embedding loss [-]`, not `GME`; `Sea surface temperature`, not `SST`.
+  `r"Geometric embedding loss [$-$]"`, not `GME`; `Sea surface temperature`, not `SST`.
 - **Panels of the same quantity share their axes** (`sharex`, `sharey`): tick labels and axis labels only on the
   outer panels, x on the bottom row and y on the first column. It removes repeated text and shows at once that the
   panels are aligned. To share an x axis between runs of different lengths, use a common scale (e.g. a fraction of

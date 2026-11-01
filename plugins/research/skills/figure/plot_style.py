@@ -11,9 +11,11 @@ SPLITS = {"train": "#2a78d6", "validation": "#eb6834", "test": "#1baf7a"}
 MUTED  = "#9a9a9a"
 # fmt: on
 
-# One size for titles, labels and legends, a little smaller for the ticks, and room between ticks and labels
+# One size for titles, labels and legends, a little smaller for the ticks, room between ticks and labels, and
+# mathematics in Computer Modern, as LaTeX in the reports
 plt.rcParams.update({
     "font.size": 10,
+    "mathtext.fontset": "cm",
     "axes.titlesize": 10.5,
     "axes.labelsize": 10,
     "xtick.labelsize": 9,

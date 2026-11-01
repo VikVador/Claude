@@ -123,6 +123,11 @@ Whenever results rely on literature or external pages, look for sources and cite
   `lang="fr"` and `lang="en"`: a whole block (`<p lang="fr">`, `<ul lang="en">`), or a `<span>` inside a caption,
   a legend or the header. The toggle shows one language at a time. The English version is written last (§ 5).
   Figures are made once, in English.
+- **All mathematics in LaTeX**, the same everywhere: symbols, formulas, shapes and units, in the text, the captions,
+  the step texts of animations and the figures. In the HTML, `\( … \)` inline and `\[ … \]` apart, rendered by
+  MathJax (`build.py` loads it): `\(\sigma/\tau\)`, `\(D \times N\)`, `\(\rho_0\)`. Never Unicode maths (ρ₀, Q₁,
+  σ/τ typed as characters) and never `<sub>`. In matplotlib, `$…$` with the Computer Modern font of `plot_style.py`;
+  in diagrams, the `$…$` of `diagram.js`. Plain numbers with their unit stay in the text: "2,8 fois", "4 h".
 - Simple words, short sentences, one idea per paragraph. Numbers rather than adjectives.
 - Figures first: the text explains the figure, not the other way around.
 - **Spell out every variable and acronym** whose meaning is known, at least at its first use, in the text and in
