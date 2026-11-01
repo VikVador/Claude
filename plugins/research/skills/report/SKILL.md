@@ -36,7 +36,16 @@ Every report has the same structure and the same look, in every project, so that
 5. **Ce qui n'est pas vérifié**: assumptions, estimates, open questions.
 6. **Sources**: only when literature or external pages were used.
 
-## 2. WRITING
+## 2. TYPOGRAPHY (FIXED, IN `style.css`)
+
+- **One typeface everywhere: Inter**, for titles, text, tables and captions; a monospace only for code and file names.
+- **Two weights**: regular (400) and semibold (600, for titles and the opening words of a key point). No italic,
+  no capitals for emphasis, no letter-spacing.
+- **Four sizes**: title 28 px, section 20 px, text 16 px, captions, tables and header details 14 px.
+- **Two text colours**: ink for the text, grey for captions, the subtitle and the header details.
+- Figures follow the same rule: Inter (or the default sans-serif of matplotlib) in every figure and diagram.
+
+## 3. WRITING
 
 - French by default (English only when asked, e.g. for a paper), simple words, short sentences.
 - Figures first: the text explains the figure, not the other way around. Few words.
@@ -45,14 +54,14 @@ Every report has the same structure and the same look, in every project, so that
 - Give my own conclusions, not only the results.
 - One question, one figure: an exploratory sweep stays out of the report.
 
-## 3. FIGURES AND DIAGRAMS
+## 4. FIGURES AND DIAGRAMS
 
 - Results: matplotlib figures following the `figure` skill, saved as PNG (`dpi=110` or more). A wide figure goes
   in `<figure class="wide">`, any other in `<figure>`, always inside `<div class="plate">` with a `<figcaption>`.
 - Diagrams (an architecture, a pipeline): hand-written inline SVG using `currentColor`, inside
   `<div class="plate svg">`, so that they follow the light and dark themes.
 
-## 4. BUILD AND PUBLISH
+## 5. BUILD AND PUBLISH
 
 1. Write the analysis script and the figures in the analysis folder of the project (never in the repository).
 2. Copy `body-template.html` next to them, fill it, then `python build.py body.html report.html`.
