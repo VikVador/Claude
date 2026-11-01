@@ -82,3 +82,9 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space:
 .trio > div { border-top: 2px solid var(--rule); padding-top: 8px; min-width: 0; }
 .trio .label { display: block; font-size: 14px; font-weight: 600; color: var(--ink-2); margin-bottom: 4px; }
 @media (max-width: 640px) { .trio { grid-template-columns: 1fr; } }
+/* Diagrams and animations of the animation skill: never smaller than readable, scrolled sideways on a phone */
+svg.diagram { display: block; width: 100%; min-width: 600px; height: auto; font-family: var(--font); }
+.player { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; color: var(--ink-2); }
+.player button { font: inherit; font-size: 13px; padding: 3px 12px; border: 1px solid var(--rule); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; }
+.player button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.step-text { margin-top: 8px; min-height: 3.2em; }

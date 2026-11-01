@@ -1,6 +1,6 @@
 ---
 name: report
-description: Use before writing any report, analysis page or study summary meant to be read by the user or shared (published as an HTML artifact), in any project. Gives the fixed structure of a report, its look, the writing rules, and a builder that turns the content into one self-contained bilingual page. For each figure of the report, also read the figure skill.
+description: Use before writing any report, analysis page or study summary meant to be read by the user or shared (published as an HTML artifact), in any project. Gives the fixed structure of a report, its look, the writing rules, and a builder that turns the content into one self-contained bilingual page. For each figure of the report, also read the figure skill; for each diagram or animation of a mechanism, the animation skill.
 ---
 
 ```text
@@ -16,7 +16,8 @@ description: Use before writing any report, analysis page or study summary meant
 # REPORT
 
 Every report has the same structure and the same look, in every project, so that it reads quickly, on a computer as
-on a phone. **Every figure follows the `figure` skill**: read it before drawing the first one.
+on a phone. **Every figure follows the `figure` skill**, and **every diagram or animation of a mechanism the
+`animation` skill**: read them before drawing the first one.
 
 | File                 | What                                                                                         |
 | -------------------- | -------------------------------------------------------------------------------------------- |
@@ -141,8 +142,9 @@ Whenever results rely on literature or external pages, look for sources and cite
   2. how to read it: the x axis, the y axis, and what each curve is, the word naming a curve in semibold and in the
      colour of that curve: `<span class="blue">entraînement</span>` (classes `blue`, `amber`, `green`, `vermilion`,
      `grey`, the colours of `plot_style.py`).
-- Diagrams (an architecture, a pipeline): hand-written inline SVG using `currentColor`, inside
-  `<div class="plate svg">`.
+- **Diagrams and animations** of a mechanism or an architecture follow the `animation` skill: inline SVG drawn
+  with its `diagram.js` (copied next to the body, inlined by `build.py`), inside `<div class="plate">`, with a
+  caption like any figure (lettered too).
 
 ---
 

@@ -16,7 +16,8 @@ description: Use before drawing any figure meant to carry a scientific message (
 # FIGURES
 
 Read this file **before drawing any figure**, for a report or on its own. The structure of a report is in the
-`report` skill. Common matplotlib style and colours: `plot_style.py`, next to this file.
+`report` skill; diagrams and animations that explain a mechanism follow the `animation` skill. Common matplotlib
+style and colours: `plot_style.py`, next to this file.
 Examples of good figures, with what each does well: `examples.md` (images in `examples/`); open the matching
 images when choosing a plot or checking one.
 

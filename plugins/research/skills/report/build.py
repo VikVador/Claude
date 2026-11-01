@@ -3,8 +3,8 @@ r"""Turn a report written as plain HTML into a single self-contained page.
 Usage: python build.py body.html report.html
 
 The body holds the content of <main> only (header, boxes, sections). This script adds the title, the fonts, the
-shared style and the French / English toggle, and embeds every image referenced as src="figure.png" (path relative
-to the body) as base64.
+shared style and the French / English toggle, embeds every image referenced as src="figure.png" (path relative
+to the body) as base64, and inlines every local script referenced as <script src="diagram.js"></script>.
 """
 
 import base64
@@ -41,16 +41,22 @@ SCRIPT = """<script>
 
 
 def embed(match: re.Match, folder: Path) -> str:
-    path = folder / match.group(1)
+    path = folder / match.group(2)
     kind = "svg+xml" if path.suffix == ".svg" else path.suffix.lstrip(".")
     return f'src="data:image/{kind};base64,{base64.b64encode(path.read_bytes()).decode()}"'
 
 
+def inline_script(match: re.Match, folder: Path) -> str:
+    return f"<script>\n{(folder / match.group(1)).read_text()}\n</script>"
+
+
 def build(body: Path, output: Path) -> None:
     content = body.read_text()
+    # Local scripts (e.g. diagram.js of the animation skill) are inlined, as the page must be self-contained
+    content = re.sub(r'<script src="(?!https?:)([^"]+)"></script>', lambda m: inline_script(m, body.parent), content)
     # The first title is the French one
     title = re.search(r"<h1[^>]*>(.*?)</h1>", content, re.S).group(1).strip()
-    content = re.sub(r'src="(?!data:|https?:)([^"]+)"', lambda m: embed(m, body.parent), content)
+    content = re.sub(r'(<img\b[^>]*?\s)src="(?!data:|https?:)([^"]+)"', lambda m: m.group(1) + embed(m, body.parent), content)
     css = (HERE / "style.css").read_text()
     page = (
         f'<title>{title}</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n{FONTS}\n'
