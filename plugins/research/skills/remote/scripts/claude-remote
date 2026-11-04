@@ -3,9 +3,11 @@
 # to drive it from the Claude app or claude.ai/code. See the remote skill of the research plugin.
 set -euo pipefail
 
-SESSION="claude"
 PROJECT_DIR="${CLAUDE_REMOTE_DIR:-$PWD}"
 PROJECT_NAME="$(basename "$PROJECT_DIR")"
+
+# One tmux session per project folder, so that several projects run side by side on the same node
+SESSION="claude-$PROJECT_NAME"
 MODE="${CLAUDE_REMOTE_MODE:-acceptEdits}"
 
 # The tmux socket lives in the home directory, named after the node: the cleaning of /tmp can no longer
@@ -69,7 +71,8 @@ start() {
     cli=$(resolve_cli)
     if ! tm has-session -t "$SESSION" 2> /dev/null; then
         mkdir -p "$SOCKET_DIR" && chmod 700 "$SOCKET_DIR"
-        rm -f "$SOCKET"
+        # The socket is shared by the sessions of every project on this node: removed only when no server answers
+        tm list-sessions > /dev/null 2>&1 || rm -f "$SOCKET"
         local threads="export OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 CLAUDE_REMOTE=1"
         local call
         call="run_loop $(printf '%q ' "$cli" "$PROJECT_NAME" "$MODE")"
@@ -87,7 +90,7 @@ stop() {
         echo "No '$SESSION' session on $(hostname -s)."
         other_nodes
     fi
-    rm -f "$SOCKET"
+    tm list-sessions > /dev/null 2>&1 || rm -f "$SOCKET"
 }
 
 status() {
