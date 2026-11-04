@@ -36,8 +36,10 @@ phone, a compact answer mode keeps the answers readable on a small screen.
 1. **Start** in a terminal on the machine, from the project folder: `claude-remote`. **Leave** without stopping it:
    **Ctrl+B**, then **D**.
 2. **Connect**: claude.ai/code or the Claude app → **Code** → the session named after the project folder.
-3. **One active session at a time**: never give work to the remote session and to a local one simultaneously.
-4. **tmux is per node**: check or stop the session from the node where it runs; `claude-remote status` names it.
+3. **One session per project folder**: run `claude-remote` from each folder to work on several projects at once,
+   but never give work to the remote session of a folder and to a local one in the same folder.
+4. **tmux is per node**: check or stop a session from its folder, on the node where it runs; `claude-remote status`
+   names it.
 5. **Compact answers** on a phone: `/phone on`, back to normal with `/phone off` (§ 5).
 
 ---
@@ -46,9 +48,9 @@ phone, a compact answer mode keeps the answers readable on a small screen.
 
 | Command               | Effect                                                                                         |
 | --------------------- | ---------------------------------------------------------------------------------------------- |
-| `claude-remote`        | Starts the tmux session `claude` if needed, then attaches to it                                |
-| `claude-remote stop`   | Kills the tmux session (and Claude with it)                                                    |
-| `claude-remote status` | Tells whether the session runs **on the current node**, otherwise on which node it was started |
+| `claude-remote`        | Starts the tmux session `claude-<folder>` if needed, then attaches to it                       |
+| `claude-remote stop`   | Kills the tmux session of the current folder (and Claude with it)                              |
+| `claude-remote status` | Tells whether the session of the folder runs **on the current node**, or names the other nodes |
 
 | Option (environment variable) | Effect                                         | Default       |
 | ----------------------------- | ---------------------------------------------- | ------------- |
@@ -106,7 +108,7 @@ phone, a compact answer mode keeps the answers readable on a small screen.
 | Remote Control  | allowed by the account: some managed (institution) accounts block it           |
 | Client          | logged in with the **same account** as the CLI                                |
 | tmux            | installed on the machine                                                       |
-| One session     | **one active session at a time**: never the remote session and a local one     |
+| One session     | **one active session per folder**: never the remote session and a local one    |
 
 A blocked account shows it in `~/.claude/policy-limits.json` (`allow_remote_control: false`).
 
