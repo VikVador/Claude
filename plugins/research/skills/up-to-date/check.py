@@ -1,7 +1,7 @@
 r"""Tell whether the libraries of an environment are behind GitHub and list the latest pull requests of the projects.
 
 Run it with the Python of the project environment (standard library only), e.g.
-`python check.py --since 2026-11-01`.
+`python check.py --since 2026-11-04T08:00`.
 """
 
 import argparse
@@ -97,6 +97,19 @@ def report_library(name: str, repository: str, branch: str) -> list[str]:
     return lines
 
 
+def versions() -> str:
+    r"""Give the installed commit of each library on one line, to write next to a result.
+
+    Returns:
+        line : e.g. "albus 32ebf6b, shaggy 6095950".
+    """
+    parts = []
+    for name in LIBRARIES:
+        commit, status = installed_commit(name)
+        parts.append(f"{name} {commit[:7]}" if commit else f"{name} ({status.split(',')[0]})")
+    return ", ".join(parts)
+
+
 def summary_of(body: str | None) -> str:
     r"""Extract the "Summary" section of the body of a pull request.
 
@@ -117,7 +130,7 @@ def report_project(repository: str, since: str) -> list[str]:
 
     Arguments:
         repository : GitHub repository, e.g. "VikVador/Heimdall".
-        since      : Date of the last check (YYYY-MM-DD), pull requests updated after it are marked NEW.
+        since      : Time of the last check (YYYY-MM-DDTHH:MM, UTC), pull requests updated after it are NEW.
 
     Returns:
         lines : Lines of the report for this project.
@@ -128,7 +141,7 @@ def report_project(repository: str, since: str) -> list[str]:
     lines = [f"{repository}:"]
     for pull in pulls:
         state = "merged" if pull["merged_at"] else pull["state"]
-        new = " NEW" if since and pull["updated_at"][:10] >= since else ""
+        new = " NEW" if since and pull["updated_at"][:16] >= since else ""
         lines += [
             f"  #{pull['number']} [{state}{new}] {pull['created_at'][:10]} {pull['title']}",
             f"      {pull['html_url']}",
@@ -139,9 +152,15 @@ def report_project(repository: str, since: str) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--since", default="", help="date of the last check, YYYY-MM-DD")
+    parser.add_argument(
+        "--since", default="", help="time of the last check, YYYY-MM-DDTHH:MM (UTC)"
+    )
     parser.add_argument("--no-libraries", action="store_true", help="only the pull requests")
+    parser.add_argument("--versions", action="store_true", help="only the installed commits")
     arguments = parser.parse_args()
+    if arguments.versions:
+        print(versions())
+        return
 
     libraries = [(name, *source) for name, source in LIBRARIES.items()]
     sections = [] if arguments.no_libraries else [("LIBRARIES", report_library, libraries)]

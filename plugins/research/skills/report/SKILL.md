@@ -44,6 +44,7 @@ on a phone. **Every figure follows the `figure` skill**, and **every diagram or 
 | Sections                         | `<section>`                             | one per question studied                          |
 | Conclusion, Pour aller plus loin | `<div class="closing">`, two boxes      | the conclusion of each section; notes, next steps |
 | Sources                          | `<section class="sources">`             | numbered references, when any is cited            |
+| Versions                         | `<p class="versions">`                  | commits of the libraries the results were made with |
 
 ### Header
 
@@ -97,6 +98,12 @@ Whenever results rely on literature or external pages, look for sources and cite
   the year, linked to the entry: `(<a class="cite" href="#src-1"><strong>Hampel</strong>, 1974</a>)`; "et al."
   beyond two authors; without parentheses when the author is the subject of the sentence: "selon **Hampel** (1974)".
 - Never invent a reference: cite only sources that were found and read.
+
+### Versions
+
+Last line of the page, small and grey: `Versions : albus 32ebf6b, shaggy 6095950`, given by
+`python check.py --versions` of the `up-to-date` skill in the environment the results were made with. Two
+environments (e.g. a run on another cluster) → one line each, saying which. Not needed when no code was run.
 
 ---
 
