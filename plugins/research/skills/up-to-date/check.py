@@ -1,7 +1,7 @@
 r"""Tell whether the libraries of an environment are behind GitHub and list the latest pull requests of the projects.
 
 Run it with the Python of the project environment (standard library only), e.g.
-`python check.py --since 2026-11-01`.
+`python check.py --since 2026-11-04T08:00`.
 """
 
 import argparse
@@ -117,7 +117,7 @@ def report_project(repository: str, since: str) -> list[str]:
 
     Arguments:
         repository : GitHub repository, e.g. "VikVador/Heimdall".
-        since      : Date of the last check (YYYY-MM-DD), pull requests updated after it are marked NEW.
+        since      : Time of the last check (YYYY-MM-DDTHH:MM, UTC), pull requests updated after it are NEW.
 
     Returns:
         lines : Lines of the report for this project.
@@ -128,7 +128,7 @@ def report_project(repository: str, since: str) -> list[str]:
     lines = [f"{repository}:"]
     for pull in pulls:
         state = "merged" if pull["merged_at"] else pull["state"]
-        new = " NEW" if since and pull["updated_at"][:10] >= since else ""
+        new = " NEW" if since and pull["updated_at"][:16] >= since else ""
         lines += [
             f"  #{pull['number']} [{state}{new}] {pull['created_at'][:10]} {pull['title']}",
             f"      {pull['html_url']}",
@@ -139,7 +139,9 @@ def report_project(repository: str, since: str) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--since", default="", help="date of the last check, YYYY-MM-DD")
+    parser.add_argument(
+        "--since", default="", help="time of the last check, YYYY-MM-DDTHH:MM (UTC)"
+    )
     parser.add_argument("--no-libraries", action="store_true", help="only the pull requests")
     arguments = parser.parse_args()
 

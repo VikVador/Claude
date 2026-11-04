@@ -8,9 +8,9 @@ from pathlib import Path
 
 # fmt: off
 #
-# ----- How often a project folder is brought up to date, and where the date of the last reminder is kept
+# ----- How often a project folder is brought up to date, and where the time of the last reminder is kept (UTC)
 #
-DAYS   = 2
+HOURS  = 6
 STAMPS = Path.home() / ".claude" / "up-to-date"
 # fmt: on
 
@@ -18,7 +18,8 @@ REMINDER = (
     "This project folder was {last}. Follow the up-to-date skill before answering: "
     "check whether albus and shaggy in the project environment are behind GitHub (update them if so), read the "
     "last pull requests of Heimdall and Neptune (python check.py{since}), give a very short 'Quoi de "
-    "neuf' first, then answer the message."
+    "neuf' first (with a short question for each change of the other project worth reusing here), then "
+    "answer the message."
 )
 
 
@@ -44,20 +45,24 @@ def main() -> None:
     if prompt.lstrip().startswith("/"):
         return
 
-    stamp, today = stamp_of(folder), datetime.date.today()
+    stamp = stamp_of(folder)
+    now = datetime.datetime.now(datetime.timezone.utc).replace(
+        tzinfo=None, second=0, microsecond=0
+    )
     try:
-        last = datetime.date.fromisoformat(stamp.read_text().strip())
+        last = datetime.datetime.fromisoformat(stamp.read_text().strip())
     except (OSError, ValueError):
         last = None
-    if last is not None and (today - last).days < DAYS:
+    if last is not None and now - last < datetime.timedelta(hours=HOURS):
         return
 
-    # The date is written when reminding, so that the reminder comes once and not at every message
+    # The time is written when reminding, so that the reminder comes once and not at every message
     stamp.parent.mkdir(parents=True, exist_ok=True)
-    stamp.write_text(today.isoformat())
+    stamp.write_text(now.isoformat(timespec="minutes"))
+    since = last.isoformat(timespec="minutes") if last else ""
     reminder = REMINDER.format(
-        last=f"last brought up to date on {last}" if last else "never brought up to date",
-        since=f" --since {last}" if last else "",
+        last=f"last brought up to date on {since} UTC" if last else "never brought up to date",
+        since=f" --since {since}" if last else "",
     )
     output = {"hookEventName": "UserPromptSubmit", "additionalContext": reminder}
     print(json.dumps({"hookSpecificOutput": output}))
