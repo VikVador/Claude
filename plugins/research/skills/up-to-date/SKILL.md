@@ -91,6 +91,10 @@ python -c "import albus, shaggy"                   # the environment still impor
 
 Then run `check.py` again with the environment mounted read-only: it must say `up to date`.
 
+**When the public API of a library changed** (new module, function renamed or removed, see the files changed): check
+that the description of the library in the resources file of the project (e.g. `.claude/claude-ressources.md`)
+still holds, and update it; in a repository, propose the change to the user first.
+
 ---
 
 ## 3. PULL REQUESTS
