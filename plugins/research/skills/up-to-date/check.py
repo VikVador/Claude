@@ -97,6 +97,19 @@ def report_library(name: str, repository: str, branch: str) -> list[str]:
     return lines
 
 
+def versions() -> str:
+    r"""Give the installed commit of each library on one line, to write next to a result.
+
+    Returns:
+        line : e.g. "albus 32ebf6b, shaggy 6095950".
+    """
+    parts = []
+    for name in LIBRARIES:
+        commit, status = installed_commit(name)
+        parts.append(f"{name} {commit[:7]}" if commit else f"{name} ({status.split(',')[0]})")
+    return ", ".join(parts)
+
+
 def summary_of(body: str | None) -> str:
     r"""Extract the "Summary" section of the body of a pull request.
 
@@ -143,7 +156,11 @@ def main() -> None:
         "--since", default="", help="time of the last check, YYYY-MM-DDTHH:MM (UTC)"
     )
     parser.add_argument("--no-libraries", action="store_true", help="only the pull requests")
+    parser.add_argument("--versions", action="store_true", help="only the installed commits")
     arguments = parser.parse_args()
+    if arguments.versions:
+        print(versions())
+        return
 
     libraries = [(name, *source) for name, source in LIBRARIES.items()]
     sections = [] if arguments.no_libraries else [("LIBRARIES", report_library, libraries)]

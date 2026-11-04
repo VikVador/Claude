@@ -30,6 +30,7 @@ working again after a while, each session catches up, for two goals:
 2. Libraries
 3. Pull requests
 4. What to tell the user
+5. Versions next to every result
 
 ---
 
@@ -42,6 +43,7 @@ working again after a while, each session catches up, for two goals:
 3. **Read** the last 3 pull requests of Heimdall and Neptune, to know what was done on the other side (§ 3).
 4. **Tell** the user in a very short "Quoi de neuf", with **one short question** per change of the other project that
    could help here (§ 4), then answer their message.
+5. **Write the versions** (`python check.py --versions`) next to every result: report, run, log (§ 5).
 
 ---
 
@@ -125,3 +127,17 @@ Before answering their message, a very short block, in their language, in the co
 
 Nothing changed → a single line ("Tout est à jour : albus, shaggy, aucune nouvelle PR."). Then answer the message.
 Never present as done an update that was not run and checked.
+
+---
+
+## 5. VERSIONS NEXT TO EVERY RESULT
+
+The libraries now change under the experiments: the same command can give another number after an update. To tell a
+change of the code from a change of a library, every result says which commits it was made with.
+
+- `python check.py --versions` (Python of the project environment, no network) prints e.g.
+  `albus 32ebf6b, shaggy 6095950`.
+- **Reports**: this line at the bottom of the page (`<p class="versions">`, see the `report` skill).
+- **Runs**: in the configuration logged with the run (WandB config, saved `config.yml`) and at the top of the log.
+- **Comparing two results** made with different versions: say it, and check the commits in between before blaming
+  the model.
