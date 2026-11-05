@@ -1,6 +1,6 @@
 ---
 name: presentation
-description: Use when the user asks for slides, a deck or a presentation, typically for a meeting with a supervisor or a team, made from the results of the current session or project. Builds a Marp Markdown deck in the user's private repository VikVador/Slides, following its template and its brief, then builds it to HTML or PDF and lists it in the repository's README. For figures in the deck, also read the figure skill; for diagrams and animations of a mechanism, the animation skill.
+description: Use when the user asks for slides, a deck or a presentation, typically for a meeting with a supervisor or a team, made from the results of the current session or project. Builds a Marp Markdown deck in the user's private repository VikVador/slide-template, following its template and its brief, builds it to HTML and PDF, and once approved publishes the PDF in the public repository VikVador/slide-public. For figures in the deck, also read the figure skill; for diagrams and animations of a mechanism, the animation skill.
 ---
 
 ```text
@@ -16,9 +16,10 @@ description: Use when the user asks for slides, a deck or a presentation, typica
 # PRESENTATION
 
 This skill is the **procedure**. The details live in the repository
-[VikVador/Slides](https://github.com/VikVador/Slides) (private): `template.md` shows every rule on its own slide,
+[VikVador/slide-template](https://github.com/VikVador/slide-template) (private: it holds a licensed font): `template.md` shows every rule on its own slide,
 in a yellow box; `docs/skill-brief.md` holds the workflow and the decisions behind it. **Those two files win** over
-anything you remember: never change the design or the rules without asking me.
+anything you remember: never change the design or the rules without asking me. Only the PDFs go public, in
+[VikVador/slide-public](https://github.com/VikVador/slide-public).
 
 **Contents**
 
@@ -26,14 +27,14 @@ anything you remember: never change the design or the rules without asking me.
 2. Ask first
 3. Write the deck
 4. Build and check
-5. Finish
+5. Finish and publish
 
 ---
 
 ## 1. GET THE REPOSITORY
 
 1. Find a clone: on my Mac it is `~/Desktop/victor-slides`; elsewhere, look for a folder whose remote is
-   `VikVador/Slides`. None → `gh repo clone VikVador/Slides ~/slides`.
+   `VikVador/slide-template`. None → `gh repo clone VikVador/slide-template ~/slide-template`.
 2. `git pull` on `main`, then `npm install` if `node_modules/` is missing.
 3. **Read `template.md` and `docs/skill-brief.md` in full** before writing a single slide, every time.
 
@@ -85,10 +86,15 @@ slide, grouped by project, each result slide with its box (`key` result, `alert`
 
 ---
 
-## 5. FINISH
+## 5. FINISH AND PUBLISH
 
 1. Add one row to the *Talks* table of `README.md`, newest first:
    `| 2026-11-12 | Weekly, Gilles Louppe | NYU, ULiège | [talk](talks/2026-11-12-weekly-gilles/) |`.
 2. Commit on `main` (no branch per talk) with the deck, its figures and the README; built HTML and PDF are ignored.
    Push when I approve the deck.
-3. If the theme or the template had to change, ask me first, then tag the repository `theme-vN`.
+3. **Publish, only when I approve**: `bash scripts/build.sh talks/YYYY-MM-DD-meeting/talk.md --pdf`, check that the
+   PDF uses Arial Nova (`pdffonts`), then in a clone of `VikVador/slide-public` (on my Mac `~/Desktop/slide-public`)
+   copy it to `talks/YYYY-MM-DD-meeting.pdf`, add one row to its README table, newest first
+   (`| 2026-11-12 | Weekly, Gilles Louppe | NYU, ULiège | [PDF](talks/2026-11-12-weekly-gilles.pdf) |`),
+   commit and push. **Only the PDF goes public**: never the Markdown, the fonts, the media or the figures' sources.
+4. If the theme or the template had to change, ask me first, then tag the repository `theme-vN`.
