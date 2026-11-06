@@ -210,12 +210,16 @@ Then:
 Only if question 10 says yes (or I ask later), once the deck is approved:
 
 1. `bash scripts/build.sh talks/<talk>/talk.md --pdf` and check that the PDF uses Arial Nova (`pdffonts`).
-2. In a clone of `VikVador/Talks` (on my Mac `~/Desktop/talks`), create `talks/<talk>/` with the PDF, named after the
-   file name I gave (`YYYY-MM-DD-<name>.pdf`), and `figures/` (a copy of the talk's `figures/`).
+2. In a clone of `VikVador/Talks` (on my Mac `~/Desktop/talks`), on `main`, create one folder named after the talk,
+   `talks/YYYY-MM-DD-<name>/` (`<name>` = the file name I gave), holding exactly:
+   - `YYYY-MM-DD-<name>.pdf`, the PDF, with the same name as its folder;
+   - `figures/`, every figure and animation of the talk (a copy of its `figures/` in Talks-template).
+
    **Nothing else goes public**: never the Markdown, the fonts, the shared media, the recap videos or the team photos.
 3. Add one row at the top of the README table (keep the invisible spacer images in its header):
    `| 2026-11-12 | [Weekly meeting with Gilles Louppe](talks/2026-11-12-weekly-gilles/) | [PDF](talks/2026-11-12-weekly-gilles/2026-11-12-weekly-gilles.pdf) |`
-4. Commit, push, and give me the links to the folder and to the PDF.
+4. Commit and push **directly on `main`** of Talks: no branch, no pull request. Give me the links to the folder and to
+   the PDF.
 
 If the theme or the template had to change, ask me first, then tag Talks-template `theme-vN`.
 
