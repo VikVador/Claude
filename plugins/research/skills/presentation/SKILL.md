@@ -1,6 +1,6 @@
 ---
 name: presentation
-description: Use when the user asks for slides, a deck or a presentation, typically for a meeting with a supervisor or a team, made from the results of the current session or project. Builds a Marp Markdown deck in the user's private repository VikVador/slide-template, following its template and its brief, builds it to HTML and PDF, and once approved publishes the PDF in the public repository VikVador/Talks. For figures in the deck, also read the figure skill; for diagrams and animations of a mechanism, the animation skill.
+description: Use when the user asks for slides, a deck or a presentation, typically for a meeting with a supervisor or a team, made from the results of the current session or project. Builds a Marp Markdown deck in the user's private repository VikVador/talks-template, following its template and its brief, builds it to HTML and PDF, and once approved publishes the PDF in the public repository VikVador/Talks. For figures in the deck, also read the figure skill; for diagrams and animations of a mechanism, the animation skill.
 ---
 
 ```text
@@ -16,7 +16,7 @@ description: Use when the user asks for slides, a deck or a presentation, typica
 # PRESENTATION
 
 This skill is the **procedure**. The details live in the repository
-[VikVador/slide-template](https://github.com/VikVador/slide-template) (private: it holds a licensed font): `template.md` shows every rule on its own slide,
+[VikVador/talks-template](https://github.com/VikVador/talks-template) (private: it holds a licensed font): `template.md` shows every rule on its own slide,
 in a yellow box; `docs/skill-brief.md` holds the workflow and the decisions behind it. **Those two files win** over
 anything you remember: never change the design or the rules without asking me. Only the PDFs go public, in
 [VikVador/Talks](https://github.com/VikVador/Talks).
@@ -34,9 +34,22 @@ anything you remember: never change the design or the rules without asking me. O
 ## 1. GET THE REPOSITORY
 
 1. Find a clone: on my Mac it is `~/Desktop/victor-slides`; elsewhere, look for a folder whose remote is
-   `VikVador/slide-template`. None → `gh repo clone VikVador/slide-template ~/slide-template`.
+   `VikVador/talks-template`. None → `gh repo clone VikVador/talks-template ~/talks-template`.
 2. `git pull` on `main`, then `npm install` if `node_modules/` is missing.
 3. **Read `template.md` and `docs/skill-brief.md` in full** before writing a single slide, every time.
+
+| Path                        | What                                                                                   |
+| --------------------------- | -------------------------------------------------------------------------------------- |
+| `template.md`               | The template: each slide shows one rule in its yellow box.                             |
+| `palettes.md`               | The four palettes side by side: `reef` (default), `slate`, `liege`, `violet`.          |
+| `docs/skill-brief.md`       | The workflow and the decisions behind this skill.                                      |
+| `theme/`                    | `base.css`, one CSS per palette, Arial Nova (licensed: never copy it out), `video-controls.js`. |
+| `media/title/`, `media/recap/` | Title-slide video; recap videos and posters, NYU (3) and ULiège (2).                |
+| `animations/`               | HTML sources of the recap videos and their 4K render script (see its README).          |
+| `team/`                     | `people.yaml` (name, university, team, photo) and the photos.                          |
+| `logos/`                    | University logos, not used in decks.                                                   |
+| `talks/YYYY-MM-DD-meeting/` | One folder per talk: `talk.md` + `figures/`.                                           |
+| `scripts/build.sh`          | Build a deck to HTML (videos get play/pause and a seek bar) or PDF (`--pdf`).          |
 
 ---
 
@@ -82,19 +95,19 @@ slide, grouped by project, each result slide with its box (`key` result, `alert`
 2. Look at it: serve the repository root (`python3 -m http.server 8765`) and open
    `http://127.0.0.1:8765/talks/YYYY-MM-DD-meeting/talk.html`. A snapshot of the file cannot load relative media.
    Check that the videos play, the figures and faces load, the maths renders, and no text overflows a slide.
+   An HTML deck only works from inside the repository (relative media paths). For a live preview while
+   editing, I can use *Marp for VS Code* (themes registered in `.vscode/settings.json`).
 3. Show me the deck (a few slides) and fix what I ask.
 
 ---
 
 ## 5. FINISH AND PUBLISH
 
-1. Add one row to the *Talks* table of `README.md`, newest first:
-   `| 2026-11-12 | Weekly, Gilles Louppe | NYU, ULiège | [talk](talks/2026-11-12-weekly-gilles/) |`.
-2. Commit on `main` (no branch per talk) with the deck, its figures and the README; built HTML and PDF are ignored.
+1. Commit on `main` (no branch per talk) with the deck and its figures; built HTML and PDF are ignored.
    Push when I approve the deck.
-3. **Publish, only when I approve**: `bash scripts/build.sh talks/YYYY-MM-DD-meeting/talk.md --pdf`, check that the
+2. **Publish, only when I approve**: `bash scripts/build.sh talks/YYYY-MM-DD-meeting/talk.md --pdf`, check that the
    PDF uses Arial Nova (`pdffonts`), then in a clone of `VikVador/Talks` (on my Mac `~/Desktop/talks`)
    copy it to `talks/YYYY-MM-DD-meeting.pdf`, add one row to its README table, newest first
    (`| 2026-11-12 | Weekly meeting with Gilles Louppe | [PDF](talks/2026-11-12-weekly-gilles.pdf) |`),
    commit and push. **Only the PDF goes public**: never the Markdown, the fonts, the media or the figures' sources.
-4. If the theme or the template had to change, ask me first, then tag the repository `theme-vN`.
+3. If the theme or the template had to change, ask me first, then tag the repository `theme-vN`.
