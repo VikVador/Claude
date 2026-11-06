@@ -1,6 +1,6 @@
 ---
 name: presentation
-description: Use when the user asks for slides, a deck or a presentation, typically for a meeting with a supervisor or a team, made from the results of the current session or project. Builds a Marp Markdown deck in the user's private repository VikVador/slide-template, following its template and its brief, builds it to HTML and PDF, and once approved publishes the PDF in the public repository VikVador/slide-public. For figures in the deck, also read the figure skill; for diagrams and animations of a mechanism, the animation skill.
+description: Use when the user asks for slides, a deck or a presentation, typically for a meeting with a supervisor or a team, made from the results of the current session or project. Builds a Marp Markdown deck in the user's private repository VikVador/slide-template, following its template and its brief, builds it to HTML and PDF, and once approved publishes the PDF in the public repository VikVador/Talks. For figures in the deck, also read the figure skill; for diagrams and animations of a mechanism, the animation skill.
 ---
 
 ```text
@@ -19,7 +19,7 @@ This skill is the **procedure**. The details live in the repository
 [VikVador/slide-template](https://github.com/VikVador/slide-template) (private: it holds a licensed font): `template.md` shows every rule on its own slide,
 in a yellow box; `docs/skill-brief.md` holds the workflow and the decisions behind it. **Those two files win** over
 anything you remember: never change the design or the rules without asking me. Only the PDFs go public, in
-[VikVador/slide-public](https://github.com/VikVador/slide-public).
+[VikVador/Talks](https://github.com/VikVador/Talks).
 
 **Contents**
 
@@ -93,8 +93,8 @@ slide, grouped by project, each result slide with its box (`key` result, `alert`
 2. Commit on `main` (no branch per talk) with the deck, its figures and the README; built HTML and PDF are ignored.
    Push when I approve the deck.
 3. **Publish, only when I approve**: `bash scripts/build.sh talks/YYYY-MM-DD-meeting/talk.md --pdf`, check that the
-   PDF uses Arial Nova (`pdffonts`), then in a clone of `VikVador/slide-public` (on my Mac `~/Desktop/slide-public`)
+   PDF uses Arial Nova (`pdffonts`), then in a clone of `VikVador/Talks` (on my Mac `~/Desktop/talks`)
    copy it to `talks/YYYY-MM-DD-meeting.pdf`, add one row to its README table, newest first
-   (`| 2026-11-12 | Weekly, Gilles Louppe | NYU, ULiège | [PDF](talks/2026-11-12-weekly-gilles.pdf) |`),
+   (`| 2026-11-12 | Weekly meeting with Gilles Louppe | [PDF](talks/2026-11-12-weekly-gilles.pdf) |`),
    commit and push. **Only the PDF goes public**: never the Markdown, the fonts, the media or the figures' sources.
 4. If the theme or the template had to change, ask me first, then tag the repository `theme-vN`.
