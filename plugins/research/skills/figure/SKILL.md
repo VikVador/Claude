@@ -1,6 +1,6 @@
 ---
 name: figure
-description: "Use before drawing or fixing any figure meant to carry a scientific message (plots, charts, maps of results, data or diagnostics), for a report, a slide or on its own, in any project. Gives the rules to choose the plot, the colours, the scales, the captions, the uncertainty and the maps, the style of plot_style.py, the cartopy map helpers of maps.py, and a checklist. Not for diagrams of a mechanism (animation skill)."
+description: "Use before drawing or fixing any figure meant to carry a scientific message (plots, charts, maps of results, data or diagnostics), for a report, a slide or on its own, in any project. Gives the rules to choose the plot, the colours, the scales, the captions, the uncertainty and the maps, the style of plot_style.py, the cartopy map helpers of maps.py, and a checklist. Not for diagrams of a mechanism (diagram skill)."
 ---
 
 ```text
