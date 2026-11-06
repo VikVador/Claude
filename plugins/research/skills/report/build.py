@@ -68,7 +68,7 @@ def build(body: Path, output: Path) -> None:
     content = re.sub(r'(<img\b[^>]*?\s)src="(?!data:|https?:)([^"]+)"', lambda m: m.group(1) + embed(m, body.parent), content)
     css = (HERE / "style.css").read_text()
     page = (
-        f'<title>{title}</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n{FONTS}\n{MATHJAX}\n'
+        f'<meta charset="utf-8">\n<title>{title}</title>\n<meta name="claude:viewport-fit-sides" content="cover">\n{FONTS}\n{MATHJAX}\n'
         f"<style>\n{css}</style>\n<main>\n{content}\n</main>\n{SCRIPT}\n"
     )
     output.write_text(page)
