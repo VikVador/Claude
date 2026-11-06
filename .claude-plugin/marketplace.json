@@ -6,7 +6,7 @@
     {
       "name": "research",
       "source": "./plugins/research",
-      "description": "Victor Mangeleer's Claude Code skills for PhD research in ocean deep learning: the NYU Torch and Lucia clusters, project context and library catch-up, scientific figures, mechanism diagrams, analysis reports, meeting talks, and remote Claude sessions on clusters."
+      "description": "Victor Mangeleer's Claude Code skills for PhD research in ocean deep learning: the NYU Torch and Lucia clusters, project context and library catch-up, scientific figures, mechanism diagrams, analysis reports, meeting talks, CI checks of pull requests, and remote Claude sessions on clusters."
     }
   ]
 }
