@@ -1,23 +1,23 @@
 ---
 name: message
-description: "Use when I want to share my progress, ask a question or ask for help on Slack or Discord (un message Slack, un post Discord, une update pour l'équipe, partager mon avancement), usually with figures. Opens with a short list of proposed points and questions taken from the session, then writes one message in my style, ready to paste on both platforms, and a caption for each figure. Not for slides (presentation skill) or a written report (report skill)."
+description: "Use when I want to write a message to share my progress, ask a question or ask for help with my team or a community (un message, un post, une update, partager mon avancement), usually with figures. Opens with a short list of proposed points and questions taken from the session, then writes one short structured message ready to paste on any chat platform, and a caption for each figure. Not for slides (presentation skill) or a written report (report skill)."
 ---
 
 ```text
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Message: a short project update for Slack
-     ┌─┴───┴─┐       and Discord, with its figures and questions.
+     └─┬───┬─┘       Message: a short project update to post,
+     ┌─┴───┴─┐       with its figures and questions.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
 # MESSAGE
 
-I share my progress on Slack and Discord in short, structured messages, usually with figures, and use them to ask
-questions or for help. This skill proposes what to say from the session, lets me choose and complete, then writes one
-message that pastes as is on both platforms, and the captions I post under each figure in its thread.
+I share my progress in short, structured messages on chat platforms (Slack, Discord, …), usually with figures, and use
+them to ask questions or for help. This skill proposes what to say from the session, lets me choose and complete, then
+writes one message that pastes as is on any of them, and the captions I post under each figure in its thread.
 
 Related: the `figure` skill for a figure to draw, the `presentation` skill for slides.
 
@@ -29,7 +29,7 @@ Related: the `figure` skill for a figure to draw, the `presentation` skill for s
    updated list and write only on my go.
 2. **Propose, never invent**: the points and questions you propose come from the session (results, figures, problems,
    open choices); I can complete each list with "Autre", and you rewrite what I add as short as your own points.
-3. **One message for both platforms**, in the format of § 2: in English, clear, simple and concise.
+3. **One message for every platform**, in the format of § 2: in English, clear, simple and concise.
 4. **One caption per figure** (§ 3): what the figure shows, then what to read.
 
 ---
@@ -40,8 +40,9 @@ Your first reply, before writing anything, is this list, in French, in exactly t
 
 - Options are written `` `[x]` `` (proposed) or `` `[ ]` `` in inline code: never Markdown task lists, which render the
   checked text struck through.
-- Question 1: tick the project(s) the session is about; several can be ticked (one section each). "Autre" means we
-  work on something else: I give its name.
+- Question 1: one line per project of Talks-template (`projects/*/project.yaml`, its `title`, with an emoji that fits
+  it); tick the project(s) the session is about, several if needed (one section each). "Autre" means we work on
+  something else: I give its name.
 - Questions 2 and 3: propose every point and every question worth sharing that you find in the session, each starting
   with a **bold keyword**, one per project ticked in 1. For each, say its figure: an existing one (its file), one to
   generate (what it would show), or none. Always end with "Autre", for what I want to add.
@@ -56,8 +57,7 @@ Your first reply, before writing anything, is this list, in French, in exactly t
 Réponds seulement sur ce que tu veux changer : sans réponse, je garde les cases cochées.
 
 **1. Projet**
-- `[ ]` What can we predict from space? 🛰️
-- `[ ]` Neural emulator of Black Sea dynamics 🌊
+- `[ ]` <title of a project of Talks-template> <emoji>
 - `[ ]` Autre (préciser le nom) : …
 
 **2. Points à partager**
@@ -83,7 +83,8 @@ Then:
 
 ## 2. WRITE THE MESSAGE
 
-One message, in a ```` ```text ```` block, in Discord Markdown: it renders the same on Slack.
+One message, in a ```` ```text ```` block, in plain Markdown (`**bold**`, `- ` bullets): it renders the same on Slack,
+Discord and most chat platforms.
 
 ```text
 **[ PROJECT UPDATE | #XXX ]**
@@ -108,7 +109,7 @@ Hey @everyone 👋
 - **Points**: `- ` bullets, 2 to 4 per section, one sentence each, with the key information in bold (one to four words).
   English, clear, simple, concise; *we*, not *I*; numbers with their unit.
 - **Figures**: numbered across the whole message (Fig. 1, Fig. 2, …), cited at the end of their point.
-- Under the block, one line in French: on Slack, replace `@everyone` by `@canal`.
+- Under the block, one line in French: where `@everyone` is not the mention for everyone (on Slack, `@canal`), replace it.
 
 ---
 
@@ -134,4 +135,4 @@ Fig. 2 | Power spectral density of the temperature at 0.3 m against the wavenumb
 - [ ] One message, header with `#XXX`, `Hey @everyone 👋`, one section per project named Project A, B, …?
 - [ ] Are the questions bold inside their points, with no separate section?
 - [ ] Is every figure cited (Fig. N) and given a caption that says what it shows and what to read?
-- [ ] Under 2 000 characters (the Discord limit)?
+- [ ] Under 2 000 characters (the shortest limit, Discord's)?
