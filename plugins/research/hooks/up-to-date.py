@@ -1,8 +1,12 @@
-r"""Hook on every prompt: when a project folder was not brought up to date for a while, remind Claude to do it."""
+r"""Hook on every prompt: when a project folder was not brought up to date for a while, remind Claude to do it.
+
+Runs with the system python3 of every machine, down to Python 3.6 (Lucia login nodes): standard library only.
+"""
 
 import datetime
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -12,6 +16,11 @@ from pathlib import Path
 #
 HOURS  = 6
 STAMPS = Path.home() / ".claude" / "up-to-date"
+#
+# ----- Only folders of these repositories are brought up to date (git remote, any case)
+#
+REPOSITORIES = r"github\.com[:/]VikVador/(Heimdall|Neptune|albus|shaggy)(\.git)?/?\s"
+FORMAT       = "%Y-%m-%dT%H:%M"
 # fmt: on
 
 REMINDER = (
@@ -36,13 +45,35 @@ def stamp_of(folder: str) -> Path:
     return STAMPS / f"{name}.txt"
 
 
+def is_project(folder: str) -> bool:
+    r"""Tell whether a folder belongs to one of the projects or libraries kept up to date.
+
+    Arguments:
+        folder : Working directory of the session.
+
+    Returns:
+        project : Whether one of its git remotes is in REPOSITORIES.
+    """
+    try:
+        remotes = subprocess.run(
+            ["git", "-C", folder, "remote", "-v"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            universal_newlines=True,
+            timeout=2,
+        ).stdout
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return re.search(REPOSITORIES, remotes + "\n", re.I) is not None
+
+
 def main() -> None:
     try:
         data = json.load(sys.stdin)
         folder, prompt = data.get("cwd", ""), data.get("prompt", "")
     except (json.JSONDecodeError, AttributeError):
         return
-    if prompt.lstrip().startswith("/"):
+    if prompt.lstrip().startswith(("/", "<")) or not folder or not is_project(folder):
         return
 
     stamp = stamp_of(folder)
@@ -50,7 +81,7 @@ def main() -> None:
         tzinfo=None, second=0, microsecond=0
     )
     try:
-        last = datetime.datetime.fromisoformat(stamp.read_text().strip())
+        last = datetime.datetime.strptime(stamp.read_text().strip()[:16], FORMAT)
     except (OSError, ValueError):
         last = None
     if last is not None and now - last < datetime.timedelta(hours=HOURS):
@@ -58,8 +89,8 @@ def main() -> None:
 
     # The time is written when reminding, so that the reminder comes once and not at every message
     stamp.parent.mkdir(parents=True, exist_ok=True)
-    stamp.write_text(now.isoformat(timespec="minutes"))
-    since = last.isoformat(timespec="minutes") if last else ""
+    stamp.write_text(now.strftime(FORMAT))
+    since = last.strftime(FORMAT) if last else ""
     reminder = REMINDER.format(
         last=f"last brought up to date on {since} UTC" if last else "never brought up to date",
         since=f" --since {since}" if last else "",

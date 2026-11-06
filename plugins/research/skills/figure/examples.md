@@ -11,7 +11,10 @@ Read tool. The slide text and notes say what each figure does well.
 
 Files: `examples/exploratory-explanatory.png`
 
-Slide: - Exploratory : for yourself, quickly and in numbers, to see (Lecture 2). - Explanatory : for others, few and polished, to carry one message.
+Slide:
+
+- Exploratory: for yourself, quickly and in numbers, to see (Lecture 2).
+- Explanatory: for others, few and polished, to carry one message.
 
 Notes:
 The building blocks are the same, the standards are not. The same plots come back in Lecture 7, on what a model gets wrong.
@@ -44,7 +47,10 @@ Credit: The grammar of graphics: Wilkinson, 1999; implemented in ggplot2, Vega-L
 
 Files: `examples/marks.png`
 
-Slide: Visual cues are elements of a visualization that encode data. They are expressed as marks and channels: - A mark is a geometric primitive such as points, lines, or areas. - A channel is an attribute of a mark that can be used to encode data, such as position, size, shape, or color. Marks are geometric primitives.
+Slide: Visual cues are elements of a visualization that encode data. They are expressed as marks and channels:
+
+- A mark is a geometric primitive such as points, lines, or areas.
+- A channel is an attribute of a mark that can be used to encode data, such as position, size, shape, or color.
 
 Credit: T. Munzner, "Visualization Analysis and Design", 2014.
 
@@ -92,6 +98,7 @@ In each task, two marks are highlighted, and participants estimate what percenta
 - T6 compares two slices of a pie: angles.
 - T7 compares two circles: areas.
 - T8 compares two rectangles side by side, T9 two rectangles inside a treemap: areas again.
+
 The horizontal axis is the log of the absolute error, so further right is worse, and the bars are 95% confidence intervals. The top panel is the original experiment (Cleveland and McGill, 1984); the bottom one is a replication with crowd workers on Mechanical Turk (Heer and Bostock, 2010), which adds T6 to T9 and finds the same order: positions on a common scale, then lengths, then angles, then areas.
 
 Credit: T. Munzner, "Visualization Analysis and Design", 2014.
@@ -166,11 +173,18 @@ Credit: Gilles Louppe, DATS0001 lecture 3
 
 Files: `examples/uncertainty.png`
 
-Slide: - Left: one bar per species, and the birds are gone. - Middle: every bird, with the mean and its 95% interval. - Right: the same Adelie mean, with three different error bars. The standard deviation is the spread of the birds; the standard error is the uncertainty on the mean.
+Slide:
+
+- Left: one bar per species, and the birds are gone.
+- Middle: every bird, with the mean and its 95% interval.
+- Right: the same Adelie mean, with three different error bars.
+
+The standard deviation is the spread of the birds; the standard error is the uncertainty on the mean.
 
 Notes:
 The left bars are one standard error, and the figure does not say so: that is the fault it illustrates. The middle bars are 95% intervals for the mean. Both look tiny because, with about 150 birds per species, the mean is known to within a few dozen grams, while the birds themselves spread over more than a kilogram.
-.alert[Always say in the caption what the error bars show.]
+
+**Always say in the caption what the error bars show.**
 
 Credit: Gilles Louppe, DATS0001 lecture 3
 
@@ -178,7 +192,7 @@ Credit: Gilles Louppe, DATS0001 lecture 3
 
 Files: `examples/spaghetti-ensemble.png`
 
-Slide: Ten forecasts of the same contour, three days ahead. Too many lines on purpose&#58; the message is the spread.
+Slide: Ten forecasts of the same contour, three days ahead. Too many lines on purpose: the message is the spread.
 
 Notes:
 The annotation does the rest of the work, circling where the forecasts disagree.

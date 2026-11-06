@@ -1,6 +1,6 @@
 ---
 name: torch
-description: Use as soon as you work on Torch, the HPC cluster of New York University (hostname torch-*, or a compute node gh*, gr*, gl*), before any Slurm job, choice of account or GPU, storage or quota operation, data transfer or Apptainer environment. Also read it whenever you work with the Open Storage Network (S3-compatible object storage, pod nyu1.osn.mghpcc.org): endpoint, public and private buckets, reading and writing.
+description: "Use as soon as you work on Torch, the HPC cluster of New York University (hostname torch-*, or a compute node gh*, gr*, gl*), before any Slurm job, choice of account or GPU, storage or quota operation, data transfer or Apptainer environment. Also read it whenever you work with the Open Storage Network (S3-compatible object storage, pod nyu1.osn.mghpcc.org): endpoint, public and private buckets, reading and writing."
 ---
 
 ```text
@@ -175,9 +175,11 @@ Verified with held jobs.
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `--account=<slurm_account>` mandatory | on every `srun` / `sbatch`.                                                                                 |
 | **Never `--partition`**               | partitions are QoS views: Slurm dispatches to every partition the account reaches that matches the request. |
-| GPU type with `--constraint`          | `rtx6000`, `l40s`, `h200`, `h100`, `a100`, `b200`, `cuda`, or `'h200\|l40s'` (`sinfo -o "%P %f"`).          |
+| GPU type with `--constraint`          | `rtx6000`, `l40s`, `h200`, `h100`, `a100`, `b200`, `cuda` (list: `sinfo -o "%P %f"`); several types: see below.            |
 | `--mem=0` refused                     | "Please do not request memory 0": ask explicitly, e.g. `--mem=1400G` per RTX node.                          |
 | `--exclude=<node>` refused            | "Please do note --exclude … report back to hpc@nyu.edu": report the node instead.                           |
+
+Several GPU types at once: `--constraint='h200|l40s'`.
 
 ### Limits per user
 
@@ -377,6 +379,7 @@ Apptainer + overlay: the environment lives in a single file ⇒ no inode problem
 **Good to know**
 
 - No Docker, Apptainer only (Docker images work: `apptainer pull docker://…`). Add `--nv` for GPUs.
+- **Installs**: updating `albus` and `shaggy` as the `up-to-date` skill says is pre-approved; any other install or upgrade in an environment, ask me first.
 - **Install packages on a compute node**: login nodes cap memory at **2 GB/user** and run a *different OS*
   (`srun --account=<acct> -c4 --mem=16GB -t2:00:00 --pty bash`).
 - **Jobs mount the overlay `:ro`**: a `:rw` mount locks the file (no other job may use it meanwhile).

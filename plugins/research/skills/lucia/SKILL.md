@@ -277,6 +277,7 @@ Our quotas on 2026-10-28 (`mmlsquota`, soft quota / hard limit):
 - The [cybersecurity page](https://doc.lucia.cenaero.be/cyber/) says: "Do not install software from unverified
   sources" and "Use only the modules and environments available via module managers". Install only official
   releases (checksum verified) and ask me first.
+- **Installs**: updating `albus` and `shaggy` as the `up-to-date` skill says is pre-approved; any other install or upgrade in an environment, ask me first.
 - No documented policy for conda, pip or PyTorch **[verify]**; the only PyTorch example is a container:
   `apptainer pull pytorch.sif docker://pytorch/pytorch:2.7.1-cuda11.8-cudnn9-runtime`.
 - Set `APPTAINER_CACHEDIR` to the project scratch (the default `~/.apptainer` grows large).

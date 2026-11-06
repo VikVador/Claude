@@ -84,9 +84,11 @@ placeholder, and you say so.
 ## 3. WRITE THE DECK
 
 - Copy `template.md` into `talks/YYYY-MM-DD-meeting/talk.md`, keep its front matter (set `theme` and `title`)
-  and its **title slide exactly**, then delete every other slide you do not use.
-- **Remove every yellow `rule` box and every `guides` div**: they exist only in the template.
-- Paths from a talk: shared assets are `../../media/…` and `../../team/…`; the talk's own figures and animations go
+  and its **title slide exactly** (only its paths change, see below), then delete every other slide you do not use.
+- **Remove every yellow `rule` box, every `guides` div and every `<!-- RULE … -->` comment**: they exist only in
+  the template, and Marp would turn the comments into speaker notes.
+- Paths from a talk: rewrite every `media/…` and `team/…` copied from the template (title video and poster
+  included) to `../../media/…` and `../../team/…`; the talk's own figures and animations go
   in `talks/YYYY-MM-DD-meeting/figures/` and are linked as `figures/…`.
 - Structure, once per project: recap videos (if asked) → `## Progress` → one slide per result, each with exactly
   one box → `## Summary` (every `key` left, every `alert` and open `question` right) → dark `## What's next`.
@@ -104,8 +106,8 @@ placeholder, and you say so.
 1. Build and check: `bash scripts/build.sh talks/YYYY-MM-DD-meeting/talk.md`, then serve the repository root
    (`python3 -m http.server 8765`) and open `http://127.0.0.1:8765/talks/YYYY-MM-DD-meeting/talk.html`: the videos
    play, the figures and faces load, the maths renders, no text overflows a slide.
-2. Stage it: `bash scripts/artifact.sh talks/YYYY-MM-DD-meeting/talk.md OUTDIR`, with `OUTDIR` a folder of your
-   scratchpad (or of the working directory), e.g. `<scratchpad>/talk-2026-11-12-weekly-gilles`.
+2. Stage it: `bash scripts/artifact.sh talks/YYYY-MM-DD-meeting/talk.md OUTDIR`, with `OUTDIR` an **absolute** path
+   to a folder of your scratchpad, e.g. `<scratchpad>/talk-2026-11-12-weekly-gilles` (the script empties it first).
 3. **Publish it as an artifact** (private): `OUTDIR/index.html` as the page, and every other file of `OUTDIR` in
    `files`, under its path inside `OUTDIR` (`media/…`, `theme/fonts/…`, `figures/…`). Give me the link.
 4. **Iterate with me on that artifact**: after each change, rebuild, stage again into the same `OUTDIR` and publish

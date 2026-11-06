@@ -36,8 +36,10 @@ working again after a while, each session catches up, for two goals:
 
 ## 0. IN SHORT
 
-1. **Run** `python check.py --since <time of the last check>` with the Python of the **project environment**
-   (`check.py` sits next to this file, standard library only, reads the public GitHub API without any token).
+1. **Run** `python <this skill's folder>/check.py --since <time of the last check>` with the Python of the **project
+   environment** (standard library only, Python 3.6 or later, 3.8 or later to compare the libraries; it reads the
+   public GitHub API without any token). Only in a folder of Heimdall, Neptune, albus or shaggy: anywhere else,
+   skip this skill.
 2. **A library is behind** → update it in the environment (§ 2), unless a job uses the environment or the project
    pins a commit.
 3. **Read** the last 3 pull requests of Heimdall and Neptune, to know what was done on the other side (§ 3).
@@ -49,8 +51,8 @@ working again after a while, each session catches up, for two goals:
 
 ## 1. WHEN
 
-- The hook `up-to-date.py` of this plugin adds a reminder to the first message of a session when the folder was not
-  brought up to date for **6 hours** or more (time in UTC kept in `~/.claude/up-to-date/<folder>.txt`, written when
+- The hook `up-to-date.py` of this plugin adds a reminder to the first message of a session in a folder of Heimdall,
+  Neptune, albus or shaggy (found from its git remote) when it was not brought up to date for **6 hours** or more (time in UTC kept in `~/.claude/up-to-date/<folder>.txt`, written when
   reminding, so the reminder comes only once). It gives the time of the last check, to pass to `--since`.
 - The check is quick (a few seconds); the user changes the libraries often, so do it every time it is asked.
 - Also when the user asks what changed, or before a task that relies on the latest version of a library.
@@ -66,7 +68,8 @@ working again after a while, each session catches up, for two goals:
 **Find the environment** in the `CLAUDE.md` of the project (overlay on Torch, micromamba on Lucia, ...). No
 environment in the folder → run `python3 check.py --no-libraries` and skip this section.
 
-**Update only when all hold**, otherwise say why it was not done:
+**Updating `albus` and `shaggy` this way is pre-approved** (no need to ask); any other install still needs my
+approval. **Update only when all hold**, otherwise say why it was not done:
 
 | Condition                                  | Check                                                                     |
 | ------------------------------------------ | ------------------------------------------------------------------------- |

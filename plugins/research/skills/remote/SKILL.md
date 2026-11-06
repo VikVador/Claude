@@ -103,12 +103,14 @@ phone, a compact answer mode keeps the answers readable on a small screen.
 
 | Requirement     | Details                                                                        |
 | --------------- | ------------------------------------------------------------------------------ |
-| Claude Code CLI | ≥ 2.1, installed with `curl -fsSL https://claude.ai/install.sh \| bash`        |
+| Claude Code CLI | ≥ 2.1, standalone install (command below the table)                            |
 | Login           | a **claude.ai account** (`/login`), API keys are not supported                 |
 | Remote Control  | allowed by the account: some managed (institution) accounts block it           |
 | Client          | logged in with the **same account** as the CLI                                |
 | tmux            | installed on the machine                                                       |
 | One session     | **one active session per folder**: never the remote session and a local one    |
+
+Install the CLI: `curl -fsSL https://claude.ai/install.sh | bash`.
 
 A blocked account shows it in `~/.claude/policy-limits.json` (`allow_remote_control: false`).
 
