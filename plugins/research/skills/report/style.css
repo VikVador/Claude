@@ -57,6 +57,9 @@ section > * + * { margin-top: 14px; }
 section > .remark + * { margin-top: 8px; }
 section > figure { margin-top: 28px; }
 section > p + p { margin-top: 20px; }
+/* Running text justified, hyphenated in its language; a little more room under a section title */
+p, li, figcaption, .remark { text-align: justify; hyphens: auto; }
+section > h2 { padding-bottom: 8px; }
 p, ul, ol { margin: 0; }
 ul, ol { padding-left: 1.3em; display: grid; gap: 8px; }
 a { color: var(--accent); text-underline-offset: 2px; }

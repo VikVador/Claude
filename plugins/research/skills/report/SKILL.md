@@ -138,8 +138,10 @@ Fixed by `style.css`:
 - **Colour only where it carries information**: grey for captions and details, dark red for remarks, the colour of
   a curve for its name in a caption, teal for links and cited authors, and the three boxes: violet (summary), orange
   (conclusion), teal (next steps).
-- **Width**: one column of 960 px; every figure takes exactly that width. Space between paragraphs (20 px) and
-  above each figure (28 px).
+- **Width**: one column of 960 px; every figure takes exactly that width. Space between paragraphs (20 px), above
+  each figure (28 px), and between a section title and its first paragraph (22 px).
+- **Justified text**: paragraphs, bullets, captions and remarks are justified and hyphenated in their language (each
+  text carries its `lang`, so French and English hyphenate correctly).
 
 ---
 
