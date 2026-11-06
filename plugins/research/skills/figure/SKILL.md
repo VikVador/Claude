@@ -1,6 +1,6 @@
 ---
 name: figure
-description: Use before drawing any figure meant to carry a scientific message (results, data, diagnostics, maps), in a report or on its own, in any project. Gives the rules to choose the plot, the colours, the scales, the captions, the uncertainty and the maps, with ready-made matplotlib and cartopy helpers and a checklist before delivering.
+description: "Use before drawing or fixing any figure meant to carry a scientific message (plots, charts, maps of results, data or diagnostics), for a report, a slide or on its own, in any project. Gives the rules to choose the plot, the colours, the scales, the captions, the uncertainty and the maps, the style of plot_style.py, the cartopy map helpers of maps.py, and a checklist. Not for diagrams of a mechanism (animation skill)."
 ---
 
 ```text
@@ -13,28 +13,34 @@ description: Use before drawing any figure meant to carry a scientific message (
      └─┘   └─┘
 ```
 
-# FIGURES
+# FIGURE
 
-Read this file **before drawing any figure**, for a report or on its own. The structure of a report is in the
-`report` skill; diagrams and animations that explain a mechanism follow the `animation` skill. Common matplotlib
-style and colours: `plot_style.py`, next to this file.
-Examples of good figures, with what each does well: `examples.md` (images in `examples/`); open the matching
-images when choosing a plot or checking one.
+Every figure carries one message, that the reader gets at a glance and cannot misread. Read this file before drawing
+any figure, for a report, a slide or on its own, and before fixing an existing one.
 
-**Last checked: 2026-10-30** (every link below was opened and verified on that day).
+**Last checked: 2026-10-30** (every link of § 10 was opened and verified on that day).
+
+| File            | Use                                                                                      | When                                  |
+| --------------- | ---------------------------------------------------------------------------------------- | ------------------------------------- |
+| `plot_style.py` | **Run** by importing it (§ 1): the style, and the colours `GROUPS`, `SPLITS`, `MUTED`    | every figure                          |
+| `maps.py`       | **Run** by importing it (§ 7): `color_limits`, `add_geography`, `plot_map`, `plot_zones` | every map                             |
+| `examples.md`   | **Read**, then open the matching images of `examples/` with the Read tool                | when choosing or checking a plot type |
+
+Related: the `report` skill for the structure of a report, the `presentation` skill for where a figure goes on a
+slide, the `animation` skill for diagrams and animations that explain a mechanism.
 
 **Contents**
 
 0. In short
-1. Figures in a report
-2. Choosing the plot
-3. Encoding and colours
-4. Scales
-5. Guides, captions and uncertainty
-6. Maps
-7. Anti-patterns
-8. Code
-9. Before delivering
+1. Work order
+2. Figures in a report or on a slide
+3. Choosing the plot
+4. Encoding and colours
+5. Scales
+6. Guides, captions and uncertainty
+7. Maps
+8. Anti-patterns
+9. Checklist
 10. Sources
 
 ---
@@ -42,31 +48,52 @@ images when choosing a plot or checking one.
 ## 0. IN SHORT
 
 1. **I like figures**: when a result can be shown, show it. The text explains the figure, not the other way around.
-2. **Start from the message**: a comparison, a distribution, a correlation or an evolution.
-3. **Geographic data**: one map at the start with every zone named in the text (§ 6).
-4. **Every map**: longitude and latitude axes, units in `[]` with LaTeX, a colorbar of the size of the axis,
-   the 2% and 98% quantiles as limits (except for an extreme event), thin black contours (§ 6).
-5. **Do not let the reader misread**: position before colour, no rainbow, no cut bars, no 3D, uncertainty shown.
+2. **Start from the message**: a comparison, a distribution, a correlation or an evolution, said in one sentence (§ 3).
+3. **Do not let the reader misread**: position before colour, no rainbow, no cut bars, no 3D, uncertainty shown.
+4. **Geographic data**: first one map of every zone named in the text, then every map drawn with `maps.py` (§ 7).
+5. **Look before delivering**: open the saved PNG with the Read tool and run the checklist (§ 9).
+6. **Ask me first** before adding `cartopy` or `cmocean` to an environment.
 
 ---
 
-## 1. FIGURES IN A REPORT
+## 1. WORK ORDER
+
+1. **Say the message in one sentence**: it opens the caption (report), or it is the caption or the box (slide).
+2. **Pick the plot** (§ 3); when unsure, open the matching example of `examples.md`.
+3. **Import `plot_style`** (and `maps.py` for a map) from `<skill folder>`, the "Base directory for this skill" shown
+   when the skill loads:
+   ```python
+   import sys
+   sys.path.insert(0, "<skill folder>")
+   from plot_style import GROUPS, SPLITS, MUTED  # sets the style on import
+   ```
+4. **Draw** following § 4 to § 7, at the size of § 2.
+5. **Save** as PNG at `dpi=110` or more, then **open the PNG with the Read tool and look at it**: overlapping or cut
+   text, unreadable ticks, a colorbar of the wrong size, a legend on the data.
+6. **Run the checklist** (§ 9), fix, save and look again, until every box is ticked.
+
+To fix an existing figure, start at step 5: look at it, run the checklist, then go back to the step that failed.
+
+---
+
+## 2. FIGURES IN A REPORT OR ON A SLIDE
 
 | Rule                    | In practice                                                                                 |
 | ----------------------- | ------------------------------------------------------------------------------------------- |
 | Figures first           | every result comes with a figure; prefer a figure to a paragraph of numbers                 |
-| One figure, one message | on a slide, the title states the finding; in a report, no title: the caption says what is shown |
+| One figure, one message | no title on the figure: the caption states the finding (on a result slide, the caption or the box) |
 | Explanatory, not a dump | as many figures as there are messages; an exploratory sweep stays out of the report         |
 | Rawest data first       | show fields and samples before their summaries: the same statistics can hide anything       |
 | All the data            | no subset of runs, dates or zones without saying so: the pattern may be in what is cut      |
 | Same choices everywhere | one variable, model or zone keeps the same colour, name and order in the whole report       |
 | Table or figure         | a table for exact numbers, a heatmap or lines for a pattern, never bars with printed values |
-
-Metrics come from the project's metrics library (e.g. `albus`) rather than from a new implementation.
+| Metrics                 | from the project's metrics library (e.g. `albus`) rather than from a new implementation     |
+| Size in a report        | the text column (960 px): `figsize` about 10 to 11 inches wide, PNG at `dpi=110` or more    |
+| Size on a slide         | 16:9 deck at 1280×720, 50 to 100 % of the 1080 px text width: `figsize` 5 to 10 inches wide at `dpi=110`, at most about 3.5 inches high (below the text line, above the caption and the box) |
 
 ---
 
-## 2. CHOOSING THE PLOT
+## 3. CHOOSING THE PLOT
 
 | Message      | Plot                                                            | Example                           |
 | ------------ | --------------------------------------------------------------- | --------------------------------- |
@@ -82,39 +109,35 @@ Metrics come from the project's metrics library (e.g. `albus`) rather than from 
 
 ---
 
-## 3. ENCODING AND COLOURS
+## 4. ENCODING AND COLOURS
 
-Channels from the most to the least accurately read:
+Channels from the most to the least accurately read: **position on a common scale > position on unaligned scales >
+length > angle > area > depth > luminance, saturation > curvature, volume.** So a map, read through colour, shows
+**where**. To compare **how much**, add a line, a transect or a profile.
 
-**position on a common scale > position on unaligned scales > length > angle > area > depth > luminance, saturation >
-curvature, volume.**
-
-So a map, read through colour, shows **where**. To compare **how much**, add a line, a transect or a profile.
-
-| Data                         | Colormap                                                                 |
-| ---------------------------- | ------------------------------------------------------------------------ |
-| Ordered                      | sequential and perceptually uniform: `viridis`, `cividis`                |
-| Ordered, meaningful midpoint | diverging, centred on the midpoint: `RdBu_r`, `cmo.balance`              |
-| Unordered groups             | few colourblind-safe colours: `#0072B2`, `#E69F00`, `#009E73`, `#D55E00` |
-| Temperature, salinity        | `cmo.thermal`, `cmo.haline`                                              |
-| Chlorophyll, current speed   | `cmo.algae`, `cmo.speed`                                                 |
+| Data                         | Colormap                                                                           |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| Ordered                      | sequential and perceptually uniform: `viridis`, `cividis`                          |
+| Ordered, meaningful midpoint | diverging, centred on the midpoint: `RdBu_r`, `cmo.balance`                        |
+| Unordered groups             | few colourblind-safe colours, `GROUPS`: `#0072B2`, `#E69F00`, `#009E73`, `#D55E00` |
+| Ocean fields                 | `cmo.thermal`, `cmo.haline`, `cmo.algae`, `cmo.speed`: temperature, salinity, chlorophyll, current speed |
 
 - **Never `jet` or a rainbow**: it invents edges and bands that are not in the data.
 - A signed quantity (anomaly, bias) is diverging. A positive one (RMSE, CRPS, spread) is sequential.
 - An ordered quantity (lead time, noise level) gets a sequential colormap, not categorical colours.
 - **Colour never carries alone** what the reader must not miss (1 in 12 men has a colour vision deficiency):
   repeat it with position, shape or a label.
-- Colour can draw attention: everything in grey, the one thing to notice in colour.
+- Colour can draw attention: everything in grey (`MUTED`), the one thing to notice in colour.
 
 ---
 
-## 4. SCALES
+## 5. SCALES
 
 | Scale       | When                                 | Beware                                                         |
 | ----------- | ------------------------------------ | -------------------------------------------------------------- |
 | Linear      | by default                           | large values can dwarf the small ones                          |
 | Logarithmic | several orders of magnitude, spectra | hides absolute differences, no zero nor negative value; the ticks show it, never "(log scale)" in a label |
-| Quantile    | skewed data, equal-count classes     | says who is ahead, not by how much (not the limits of § 6)     |
+| Quantile    | skewed data, equal-count classes     | says who is ahead, not by how much (not the limits of § 7)     |
 
 - **Binning is a choice**: too few bins hide a group, too many show noise as structure. Try several.
 - **A value read against a limit** (memory against the size of a GPU, a threshold): linear scale, with a line
@@ -124,33 +147,25 @@ So a map, read through colour, shows **where**. To compare **how much**, add a l
 
 ---
 
-## 5. GUIDES, CAPTIONS AND UNCERTAINTY
+## 6. GUIDES, CAPTIONS AND UNCERTAINTY
 
 - **Label in place** rather than with a legend, and **annotate** the one thing the reader should notice.
 - A legend, if needed, never covers data. A colorbar or legend shared by panels is given once.
-- **Axes**: quantity and unit in `[]`, with maths in LaTeX, on every figure:
-
-| Quantity           | Label                                     |
-| ------------------ | ----------------------------------------- |
-| Temperature        | `r"Temperature [$^\circ\mathrm{C}$]"`     |
-| Current            | `r"Zonal current [$\mathrm{m\,s^{-1}}$]"` |
-| Wind stress        | `r"Wind stress [$\mathrm{N\,m^{-2}}$]"`   |
-| Oxygen, nutrients  | `r"Oxygen [$\mathrm{mmol\,m^{-3}}$]"`     |
-| Sea surface height | `r"Sea surface height [$\mathrm{m}$]"`    |
-
-These are examples: take the true unit from the metadata of the dataset.
-
+- **Axes**: quantity and unit in `[]`, with maths in LaTeX, on every figure, e.g.
+  `r"Temperature [$^\circ\mathrm{C}$]"`, `r"Zonal current [$\mathrm{m\,s^{-1}}$]"`,
+  `r"Wind stress [$\mathrm{N\,m^{-2}}$]"`, `r"Oxygen [$\mathrm{mmol\,m^{-3}}$]"`, `r"Sea surface height [$\mathrm{m}$]"`.
+  These are examples: take the true unit from the metadata of the dataset.
 - **All mathematics in LaTeX** (`$…$`), rendered in Computer Modern by `plot_style.py`, so that figures, text and
-  diagrams look the same: symbols, formulas and units, e.g. `r"Temperature [$^\circ\mathrm{C}$]"`, `r"$\sigma/\tau$"`.
+  diagrams look the same: symbols, formulas and units, e.g. `r"$\sigma/\tau$"`.
 - **A quantity without unit** (a ratio, a fraction, a normalised loss) gets `[$-$]`: `r"Fraction of the schedule [$-$]"`.
 - **Spell out** quantities and variables in labels and panel titles rather than acronyms:
   `r"Geometric embedding loss [$-$]"`, not `GME`; `Sea surface temperature`, not `SST`.
-- **Panels of the same quantity share their axes** (`sharex`, `sharey`): tick labels and axis labels only on the
-  outer panels, x on the bottom row and y on the first column. It removes repeated text and shows at once that the
-  panels are aligned. To share an x axis between runs of different lengths, use a common scale (e.g. a fraction of
-  the schedule) when it does not squeeze the information.
+- **Panels of the same quantity share their axes** (`sharex`, `sharey`), labelled only on the outer panels (x on the
+  bottom row, y on the first column): less repeated text, and the panels are seen aligned. Runs of different lengths
+  share a common x scale (e.g. a fraction of the schedule) when it does not squeeze the information.
 - **Caption**: first what the figure shows, in a few words (in semibold in a report); then how to read it: x axis,
   y axis, what each curve or colour is; then period, zone, depth, number of samples or members, colour limits.
+  On a slide, one short caption: the finding, and what to look at.
 - **Show the uncertainty**: a mean alone hides the data. Show the points with the mean and its interval.
 - **Always say what the error bars show**: the standard deviation is the spread of the data, the standard error the
   uncertainty on the mean. Print which one.
@@ -159,12 +174,10 @@ These are examples: take the true unit from the metadata of the dataset.
 - **Let it breathe**: one font size for titles, labels and legends (ticks one point smaller), space between ticks
   and axis labels and between panels. `plot_style.py` sets all of this.
 - **Text of figures in English**, made once, even in a French report.
-- **In a report**, a figure takes the width of the text column (960 px): a `figsize` about 10 to 11 inches wide,
-  saved as PNG at `dpi=110` or more, with no title of its own (the caption says what is shown).
 
 ---
 
-## 6. MAPS
+## 7. MAPS
 
 These are my own rules: they apply to **every figure showing a geographic zone**.
 
@@ -179,7 +192,7 @@ not on a second one.
 | Element  | Rule                                                                                       |
 | -------- | ------------------------------------------------------------------------------------------ |
 | Axes     | `Longitude [°E]`, `Latitude [°N]`                                                          |
-| Units    | in `[]`, with maths in LaTeX (§ 5)                                                         |
+| Units    | in `[]`, with maths in LaTeX (§ 6)                                                         |
 | Colorbar | **exactly the size of the axis** it sits on: the height on the side, the width below       |
 | Limits   | `vmin` and `vmax` are the **2% and 98% quantiles**, to keep contrast                       |
 | Extreme  | **except** when showing an extreme event: then the full range, or the limits would hide it |
@@ -192,9 +205,34 @@ And to stay honest with these limits:
 - Panels to compare **share their limits**, computed on all the panels, and a single colorbar spanning them.
 - A signed field stays centred on zero: `vmax = max(|q2|, |q98|)`, `vmin = -vmax`.
 
+### With `maps.py`
+
+`color_limits`, `plot_map` and `plot_zones` apply these rules; `add_geography` adds the contours and the axes. Always
+create the figure with `constrained_layout=True` (`plot_style.py` sets it) and the axis with
+`projection=ccrs.PlateCarree()`.
+
+```python
+import cartopy.crs as ccrs
+import matplotlib.pyplot as plt
+from maps import color_limits, plot_map, plot_zones  # after the sys.path line above
+
+on_map = dict(subplot_kw=dict(projection=ccrs.PlateCarree()))
+fig, ax = plt.subplots(figsize=(10.5, 5), **on_map)
+plot_zones(ax, extent=[-20, 40, 30, 70], zones={"North Sea": [-4, 9, 51, 61]})  # once, at the start
+fig, ax = plt.subplots(figsize=(10.5, 5), **on_map)
+vmin, vmax = color_limits(sst)  # extreme=True for an extreme event, diverging=True for a signed field
+plot_map(ax, lon, lat, sst, r"Sea surface temperature [$^\circ\mathrm{C}$]", vmin, vmax, cmap="cividis")
+fig.savefig("sst.png", dpi=110)
+```
+
+- `cartopy` (and `cmocean`) missing from the environment: ask me before adding them to `pyproject.toml` and
+  installing them (on a cluster, follow its skill).
+- `cartopy` downloads the contours of Natural Earth on first use: if a compute node has no internet access, run it once
+  on a login node.
+
 ---
 
-## 7. ANTI-PATTERNS
+## 8. ANTI-PATTERNS
 
 | Do not                          | Because                                              | Instead                      |
 | ------------------------------- | ---------------------------------------------------- | ---------------------------- |
@@ -208,116 +246,10 @@ And to stay honest with these limits:
 
 ---
 
-## 8. CODE
+## 9. CHECKLIST
 
-`plot_map` and `plot_zones` follow the rules of § 6, for every project.
-
-```python
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.patches import Rectangle
-from matplotlib.ticker import FormatStrFormatter
-
-
-def color_limits(field: np.ndarray, extreme: bool = False, diverging: bool = False) -> tuple[float, float]:
-    r"""Compute the limits of a colormap from the 2% and 98% quantiles of a field.
-
-    Arguments:
-        field     : Field or stack of panels sharing their limits, NaN on land.
-        extreme   : Whether the field shows an extreme event (full range instead of the quantiles).
-        diverging : Whether the field is signed (limits centred on zero).
-
-    Returns:
-        vmin : Lower limit of the colormap.
-        vmax : Upper limit of the colormap.
-    """
-    vmin, vmax = np.nanquantile(field, [0, 1] if extreme else [0.02, 0.98])
-    if diverging:
-        vmax = max(abs(vmin), abs(vmax))
-        vmin = -vmax
-    return vmin, vmax
-
-
-def add_geography(ax: plt.Axes, scale: str = "50m") -> None:
-    r"""Add the contours and the longitude and latitude axes to a map.
-
-    Arguments:
-        ax    : Map axis, with the projection PlateCarree.
-        scale : Resolution of Natural Earth ("10m", "50m" or "110m").
-    """
-    for feature in (cfeature.COASTLINE, cfeature.BORDERS, cfeature.LAKES):
-        ax.add_feature(feature.with_scale(scale), facecolor="none", edgecolor="black", linewidth=0.4)
-
-    gridlines = ax.gridlines(draw_labels=True, linewidth=0)
-    gridlines.top_labels = gridlines.right_labels = False
-    gridlines.xformatter = gridlines.yformatter = FormatStrFormatter("%g")
-
-    fraction = dict(xycoords="axes fraction", textcoords="offset points", va="center")
-    ax.annotate(r"Longitude [$^\circ$E]", (0.5, 0), (0, -30), ha="center", **fraction)
-    ax.annotate(r"Latitude [$^\circ$N]", (0, 0.5), (-35, 0), ha="right", rotation=90, **fraction)
-
-
-def plot_map(
-    ax: plt.Axes,
-    lon: np.ndarray,
-    lat: np.ndarray,
-    field: np.ndarray,
-    label: str,
-    vmin: float,
-    vmax: float,
-    cmap: str = "viridis",
-) -> None:
-    r"""Plot a field on a map, with a colorbar of the height of the axis.
-
-    Arguments:
-        ax    : Map axis, with the projection PlateCarree.
-        lon   : Longitudes (X) [°E].
-        lat   : Latitudes (Y) [°N].
-        field : Field to plot, NaN on land (Y, X).
-        label : Label of the colorbar, with the unit in brackets.
-        vmin  : Lower limit of the colormap.
-        vmax  : Upper limit of the colormap.
-        cmap  : Name of the colormap.
-    """
-    image = ax.pcolormesh(lon, lat, field, cmap=cmap, vmin=vmin, vmax=vmax, transform=ccrs.PlateCarree())
-    add_geography(ax)
-
-    # Bounds relative to the axis: same height for any projection or aspect ratio, arrows included.
-    clipped = (np.nanmin(field) < vmin, np.nanmax(field) > vmax)
-    extend = {(0, 0): "neither", (1, 0): "min", (0, 1): "max", (1, 1): "both"}[tuple(map(int, clipped))]
-    ax.figure.colorbar(image, cax=ax.inset_axes([1.02, 0, 0.03, 1]), label=label, extend=extend)
-
-
-def plot_zones(ax: plt.Axes, extent: list[float], zones: dict[str, list[float]]) -> None:
-    r"""Plot the map of all the zones named in a report.
-
-    Arguments:
-        ax     : Map axis, with the projection PlateCarree.
-        extent : Limits of the map [°E, °E, °N, °N].
-        zones  : Name and limits of each zone [°E, °E, °N, °N].
-    """
-    ax.set_extent(extent, crs=ccrs.PlateCarree())
-    add_geography(ax)
-
-    crs = ccrs.PlateCarree()
-    for name, (west, east, south, north) in zones.items():
-        ax.add_patch(Rectangle((west, south), east - west, north - south, fill=False, linewidth=1.5, transform=crs))
-        ax.text((west + east) / 2, north, name, ha="center", va="bottom", weight="bold", transform=crs)
-```
-
-- Always create the figure with `constrained_layout=True`, and the axis with `projection=ccrs.PlateCarree()`.
-- `cartopy` (and `cmocean`) missing from the environment: ask me before adding them to `pyproject.toml` and
-  installing them (on a cluster, follow its skill).
-- `cartopy` downloads the contours of Natural Earth on first use: if a compute node has no internet access, run it once
-  on a login node.
-
----
-
-## 9. BEFORE DELIVERING
-
-- [ ] Can the message of each figure be said in one sentence? Is it the title (slide) or the opening of the caption (report)?
+- [ ] Is the message said in one sentence, by the caption (or the box of a slide), with no title on the figure?
+- [ ] Did you open the saved PNG with the Read tool? Is it at the size of § 2, with no text overlapping or cut?
 - [ ] Is there a map of all the zones named in the text?
 - [ ] Do all the axes and colorbars have a quantity and a unit in `[]`?
 - [ ] Are the quantities spelled out, with `[$-$]` when they have no unit, and no "(log scale)" in a label?
@@ -326,8 +258,7 @@ def plot_zones(ax: plt.Axes, extent: list[float], zones: dict[str, list[float]])
 - [ ] Is each colorbar exactly the size of its axis?
 - [ ] Are the limits the 2% and 98% quantiles, or the full range for an extreme event? Does the caption say so?
 - [ ] Do the panels to compare share their scales?
-- [ ] Is the colormap perceptually uniform, and centred if the field is signed?
-- [ ] Would the figure still read without colour vision?
+- [ ] Is the colormap perceptually uniform, centred if the field is signed, and readable without colour vision?
 - [ ] Is the uncertainty shown, and is it said what the error bars are?
 - [ ] Is anything left out of the data? Is it said?
 
