@@ -36,7 +36,7 @@ the [CÉCI](https://www.ceci-hpc.be) pages (marked (CÉCI)) and Neptune. [verify
 | `references/modules.md`        | **Read** | only for modules, CUDA, MPI       |
 | `references/remote-session.md` | **Read** | only for a remote session (§ 10)  |
 
-Related: the `cluster-torch` skill (same section numbers), the `claude-remote` skill for a remote Claude session.
+Related: the `cluster-torch` skill (same section numbers), the `cluster-remote` skill for a remote Claude session.
 
 **Contents**
 
@@ -66,7 +66,7 @@ Related: the `cluster-torch` skill (same section numbers), the `claude-remote` s
    maintenance is less than 15 days away, warn me before writing to scratch (§ 6).
 6. **Files in projects and scratch must belong to the project group**, otherwise "Disk quota exceeded" (§ 6).
 7. **No computation on login nodes**; login through an SSH gateway (`gwceci.uliege.be`, ULiège VPN off campus).
-8. **Installs**: updating `albus` and `shaggy` as the `up-to-date` skill says is pre-approved; any other install,
+8. **Installs**: updating `albus` and `shaggy` as the `auto-update` skill says is pre-approved; any other install,
    ask me first. Containers: Apptainer only (`--nv` for GPUs); software through Lmod / EasyBuild modules (§ 8).
 9. **Neptune jobs go through dawgz**; go through the checklist of § 9 before submitting.
 
@@ -221,7 +221,7 @@ Ours on 2026-10-28 (`mmlsquota`, soft quota / hard limit):
 
 - **Neptune environment**: activate it before running anything, in a shell and in a job (§ 3):
   `eval "$(micromamba shell hook -s bash)"; micromamba activate neptune`.
-- **Installs**: updating `albus` and `shaggy` as the `up-to-date` skill says is pre-approved; any other install or
+- **Installs**: updating `albus` and `shaggy` as the `auto-update` skill says is pre-approved; any other install or
   upgrade in an environment, ask me first.
 - The [cybersecurity page](https://doc.lucia.cenaero.be/cyber/) asks to install nothing from unverified sources and
   to use only the modules and environments of the module managers: install only official releases (checksum
