@@ -34,6 +34,7 @@ Not for short messages, formatted ones, or scheduled and automatic messages.
    - a line `---`, then 2 to 4 lines of plain text: what is asked, and why if it was said;
    - a line `---`, then one short bullet per distinct thing asked or constraint given (what to keep, what not to do);
    - the heading "Ce que j'ai compris" (or "What I understood" in English) as the title is fine.
+
    Same language as the message. Very short, very simple: it is read in a few seconds.
 2. **Then start working at once**, in the same turn: the recap never waits for a confirmation. Ask a question only if
    the request cannot be started without the answer.

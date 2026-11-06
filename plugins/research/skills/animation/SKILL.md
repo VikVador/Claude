@@ -77,8 +77,7 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 - Same tensor, same position and same name in every step; same colour for the same role in the whole report.
 - Text in the drawing: short names and symbols only (13 to 14 px at the drawn scale); explanations go in the step text.
 - **All mathematics in LaTeX**, as in the text of the report: in the drawing, `$…$` inside any label or legend
-  (`Diagram.rich`, `Diagram.tex`, rendered by MathJax), e.g. `"$\\mathbf{Q} = \\boldsymbol\\beta_q\\mathbf{1}^T +
-  \\boldsymbol\\Omega_q\\mathbf{X}$"`; in the step texts, `\\( … \\)`. Matrices in bold, as in the book.
+  (`Diagram.rich`, `Diagram.tex`, rendered by MathJax), e.g. `"$\\mathbf{Q} = \\boldsymbol\\Omega_q\\mathbf{X}$"`; in the step texts, `\\( … \\)`. Matrices in bold, as in the book.
 - Draw inside `Diagram.ready(() => { … })`, so that MathJax is loaded before the labels are typeset.
 
 ## 3. ANIMATION

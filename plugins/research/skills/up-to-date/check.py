@@ -1,11 +1,10 @@
 r"""Tell whether the libraries of an environment are behind GitHub and list the latest pull requests of the projects.
 
 Run it with the Python of the project environment (standard library only), e.g.
-`python check.py --since 2026-11-04T08:00`.
+`python check.py --since 2026-11-04T08:00`. Python 3.6 or later; comparing the libraries needs 3.8 or later.
 """
 
 import argparse
-import importlib.metadata
 import json
 import re
 import urllib.error
@@ -16,8 +15,8 @@ import urllib.request
 # ----- Libraries compared with their branch on GitHub, projects whose pull requests are read
 #
 LIBRARIES = {
-    "albus"  : ("VikVador/albus",  "main"),
-    "shaggy" : ("VikVador/shaggy", "master"),
+    "albus"  : ("VikVador/Albus",  "main"),
+    "shaggy" : ("VikVador/Shaggy", "master"),
 }
 PROJECTS     = ["VikVador/Heimdall", "VikVador/Neptune"]
 NUMBER_PULLS = 3
@@ -25,7 +24,7 @@ MAX_FILES    = 15
 # fmt: on
 
 
-def github(path: str) -> dict | list:
+def github(path: str) -> "dict | list":
     r"""Read one endpoint of the public GitHub API, without any token.
 
     Arguments:
@@ -42,7 +41,7 @@ def github(path: str) -> dict | list:
         return json.load(response)
 
 
-def installed_commit(name: str) -> tuple[str | None, str]:
+def installed_commit(name: str) -> "tuple[str | None, str]":
     r"""Find the commit from which a library of the current environment was installed.
 
     Arguments:
@@ -52,6 +51,10 @@ def installed_commit(name: str) -> tuple[str | None, str]:
         commit : Installed commit, or None when it cannot be compared with GitHub.
         status : Why there is no commit, empty otherwise.
     """
+    try:
+        import importlib.metadata  # Python 3.8 or later
+    except ImportError:
+        return None, "Python 3.8 or later is needed to read the installed version"
     try:
         distribution = importlib.metadata.distribution(name)
     except importlib.metadata.PackageNotFoundError:
@@ -65,7 +68,7 @@ def installed_commit(name: str) -> tuple[str | None, str]:
     return commit, ""
 
 
-def report_library(name: str, repository: str, branch: str) -> list[str]:
+def report_library(name: str, repository: str, branch: str) -> "list[str]":
     r"""Describe how far an installed library is behind its branch on GitHub.
 
     Arguments:
@@ -110,7 +113,7 @@ def versions() -> str:
     return ", ".join(parts)
 
 
-def summary_of(body: str | None) -> str:
+def summary_of(body: "str | None") -> str:
     r"""Extract the "Summary" section of the body of a pull request.
 
     Arguments:
@@ -125,7 +128,7 @@ def summary_of(body: str | None) -> str:
     return " ".join(text.split())
 
 
-def report_project(repository: str, since: str) -> list[str]:
+def report_project(repository: str, since: str) -> "list[str]":
     r"""List the latest pull requests of a project.
 
     Arguments:

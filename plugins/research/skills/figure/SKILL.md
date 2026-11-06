@@ -308,7 +308,8 @@ def plot_zones(ax: plt.Axes, extent: list[float], zones: dict[str, list[float]])
 ```
 
 - Always create the figure with `constrained_layout=True`, and the axis with `projection=ccrs.PlateCarree()`.
-- `cartopy` (and `cmocean`) go into `pyproject.toml` if they are missing from the environment.
+- `cartopy` (and `cmocean`) missing from the environment: ask me before adding them to `pyproject.toml` and
+  installing them (on a cluster, follow its skill).
 - `cartopy` downloads the contours of Natural Earth on first use: if a compute node has no internet access, run it once
   on a login node.
 
