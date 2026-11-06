@@ -19,15 +19,18 @@ Tests pass locally, yet the CI on GitHub can still fail: another Python, another
 missing from `pyproject.toml`, a file that was never committed. Every pull request is watched until its checks end,
 and a failure is understood and fixed before I have to look at it.
 
+**Last checked: 2026-11-06** (the `ci.yml` and `pre-commit.yml` of Heimdall, Neptune, Poseidon, Shaggy and Albus;
+`gh pr checks` exit codes on a green and a red pull request).
+
 Related: the `up-to-date` skill (pull requests of the projects); the cluster skills for where tests can run.
 
 **Contents**
 
 0. In short
 1. Watch
-2. When a check fails
+2. Diagnose
 3. Fix
-4. What to tell me
+4. Report
 
 ---
 
@@ -62,7 +65,7 @@ Related: the `up-to-date` skill (pull requests of the projects); the cluster ski
 
 ---
 
-## 2. WHEN A CHECK FAILS
+## 2. DIAGNOSE
 
 1. Find the failed run and job: `gh pr checks <number> -R <owner>/<repo>` (the link names the run), or
    `gh run list -R <owner>/<repo> --branch <branch> -L 3`.
@@ -109,7 +112,7 @@ Related: the `up-to-date` skill (pull requests of the projects); the cluster ski
 
 ---
 
-## 4. WHAT TO TELL ME
+## 4. REPORT
 
 A few lines, in French, when the watch ends:
 
