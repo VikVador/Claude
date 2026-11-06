@@ -1,6 +1,6 @@
 ---
 name: animation
-description: Use before drawing a diagram or an animation that explains how a mechanism, an architecture or a probabilistic concept works (attention, cross-attention, convolution and receptive fields, graph networks, U-Net, encoders, autoencoders and VAEs, normalizing flows, diffusion models, stochastic interpolants, distributions and their transformations), on its own or in a report. Gives the style to follow, the one of the figures of the book Understanding Deep Learning (Prince, 2023), with the book's figures as examples, and a small library to draw tensors, modules and arrows and to play them step by step.
+description: "Use before drawing a diagram or a step-by-step animation that explains how a mechanism, an architecture or a probabilistic concept works (attention, convolutions and receptive fields, graph networks, U-Net, autoencoders and VAEs, normalizing flows, diffusion models, stochastic interpolants, distributions), for a report, a slide or on its own. Gives the style of the figures of Understanding Deep Learning (Prince, 2023), with the book's figures as examples, and diagram.js to draw tensors, modules and arrows and play them step by step. Not for plots of data or results (figure skill)."
 ---
 
 ```text
@@ -25,13 +25,33 @@ mathematics: show the tensors and how they are computed. **Follow the book's way
 the colours are lighter and cleaner here (a pale teal panel, the palette of the report), and another style is welcome
 when it explains a point better (a map for a spatial mechanism, a timeline for a pipeline).
 
-| File          | What                                                                                     |
-| ------------- | ---------------------------------------------------------------------------------------- |
-| `examples.md` | the figures of the book kept as examples (images in `examples/`), what each one teaches  |
-| `diagram.js`  | helpers: tensors as grids, modules, labels, arrows, heat map, step-by-step player        |
+| File          | Use                                                                          | When                          |
+| ------------- | ---------------------------------------------------------------------------- | ----------------------------- |
+| `examples.md` | **Read**: the figures of the book (images in `examples/`), what each teaches | before every diagram (§ 1)    |
+| `diagram.js`  | **Copy** next to the body: tensors as grids, modules, labels, arrows, player | when drawing (§ 4)            |
 
-Results (curves, maps, measures) are not diagrams: they follow the `figure` skill. A diagram in a report follows the
-`report` skill for the page, and this one for the drawing.
+Related: the `figure` skill for results (curves, maps, measures); the `report` skill for the page around a diagram.
+
+**Contents**
+
+0. In short
+1. Before drawing
+2. Style (from the book)
+3. Animation
+4. Code
+5. Credit
+6. Check
+
+---
+
+## 0. IN SHORT
+
+1. **Equations and shapes first**: write the mechanism as equations with the shape of every tensor (§ 1).
+2. **Open the closest example of the book** before drawing (§ 1), and follow its way of showing.
+3. **One operation per step**, the rest faded, never hidden; same tensor, same place, same name in every step.
+4. **A legend of the dimensions** at the bottom of every drawing; all mathematics in LaTeX.
+5. **Simplify the sizes, never the mechanism**: toy sizes (4 to 8 tokens and channels).
+6. **Look at the result** before showing it (§ 6), and credit the book when a diagram follows one of its figures.
 
 ---
 
@@ -44,6 +64,8 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
    `FlowIntro.png` (a density through a map), `DiffusionDensity.png` (a density over time), `AppJointMarg.png`
    (a joint and its marginals).
 3. Decide the steps: one operation per step, in the order of the computation.
+
+---
 
 ## 2. STYLE (FROM THE BOOK)
 
@@ -80,6 +102,8 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
   (`Diagram.rich`, `Diagram.tex`, rendered by MathJax), e.g. `"$\\mathbf{Q} = \\boldsymbol\\Omega_q\\mathbf{X}$"`; in the step texts, `\\( … \\)`. Matrices in bold, as in the book.
 - Draw inside `Diagram.ready(() => { … })`, so that MathJax is loaded before the labels are typeset.
 
+---
+
 ## 3. ANIMATION
 
 - **Step by step, like the panels a), b), c), d) of the book**: each step adds or highlights one operation; what is
@@ -97,6 +121,8 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 - Hand-written inline SVG drawn by a small script, no library, no external image: `diagram.js` gives the pieces.
   The drawing is at least 600 px wide: on a phone, it scrolls sideways rather than shrinking below legibility.
 
+---
+
 ## 4. CODE
 
 ```html
@@ -110,7 +136,7 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
   Diagram.label(s, X.x + X.w / 2, X.y + X.h + 20, ["Input,", "$\\mathbf{X}$"]);
   Diagram.legend(s, 30, 450, [["D", "channels of a token"], ["N", "tokens"], "$\\mathbf{X}$: $D \\times N$"]);
   Diagram.player(document.getElementById("anim"), [
-    { text: "<strong>Queries.</strong> … \\(\\mathbf{Q} = \\boldsymbol\\Omega_q\\mathbf{X}\\) …", draw: (tick) => {} },
+    { text: "<span lang='fr'><strong>Requêtes.</strong> …</span><span lang='en'><strong>Queries.</strong> …</span>", draw: (tick) => {} },
   ]);
   });
 </script>
@@ -119,9 +145,27 @@ Results (curves, maps, measures) are not diagrams: they follow the `figure` skil
 Copy `diagram.js` next to the body of the report: `build.py` of the report skill inlines it. The page style
 (`style.css` of the report skill) sizes the drawing and the player.
 
+- **On its own**: a report with one section, built with `build.py` of the `report` skill (it loads MathJax and the
+  style the drawing needs).
+- **On a slide**: a still diagram, exported as SVG or PNG into the talk's `figures/`. A played animation in a deck
+  has no tested path yet: ask me.
+
+---
+
 ## 5. CREDIT
 
 When a diagram follows a figure of the book, say so in its caption: "d'après Prince (2023), chapitre 12", and add
 the book to the sources: `Prince, S. J. D. (2023). Understanding Deep Learning. The MIT Press.
-https://udlbook.github.io/udlbook/`. The figures in `examples/` are the author's, under CC BY-NC-ND 4.0: shown
-unmodified, never redrawn as our own.
+https://udlbook.github.io/udlbook/`. The figures in `examples/` are the author's, under CC BY-NC-ND 4.0: they may
+be shown unmodified with this credit, never edited. A diagram drawn here may follow the way a figure shows a
+mechanism ("d'après Prince"), never copy the figure itself.
+
+---
+
+## 6. CHECK
+
+Open the built page and look at every step before showing it:
+
+- [ ] the labels and the legend are typeset (no raw `$…$`), nothing overlaps, the drawing is 600 px wide or more;
+- [ ] every step draws, the faded parts stay visible, the player buttons work;
+- [ ] the step texts exist in French and in English (in a report), and the caption says what the diagram shows.
