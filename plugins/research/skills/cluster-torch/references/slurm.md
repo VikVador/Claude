@@ -1,6 +1,6 @@
 # SLURM DETAILS
 
-Part of the `torch` skill (§ 4): read it before a preemptible job or a B200 test, for the CPU QoS, or to look up a
+Part of the `cluster-torch` skill (§ 4): read it before a preemptible job or a B200 test, for the CPU QoS, or to look up a
 Slurm command or a pending reason. The rules of § 4 still hold, and a preemptible job needs my approval first.
 
 ## CPU QoS

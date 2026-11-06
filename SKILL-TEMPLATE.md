@@ -135,6 +135,6 @@ SOURCES.
 Several skills ask to speak first. When more than one applies, in this order, in one message:
 
 1. the recap of a dictated request (`oral-recap`);
-2. the question "Es-tu sur ton téléphone ?" (`remote`, compact answer mode);
+2. the question "Es-tu sur ton téléphone ?" (`claude-remote`, compact answer mode);
 3. the "Quoi de neuf" (`up-to-date`);
 4. the questions a skill asks before working (e.g. `presentation`), then the work.

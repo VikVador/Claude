@@ -1,5 +1,5 @@
 #!/bin/bash
-# Multi-node DDP training on Torch: template from the `torch` skill (§ 9).
+# Multi-node DDP training on Torch: template from the `cluster-torch` skill (§ 9).
 # Two full H200 nodes of Courant = the 16 GPUs allowed per user (`lzanna`, capped at 8 GPUs, cannot run it).
 # More than 8 GPUs at once, or the preemption comment below: ask Victor first.
 #

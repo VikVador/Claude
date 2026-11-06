@@ -1,6 +1,6 @@
 #!/bin/bash
 # claude-remote: keep a Claude Code Remote Control session alive in tmux on a cluster login node,
-# to drive it from the Claude app or claude.ai/code. See the remote skill of the research plugin.
+# to drive it from the Claude app or claude.ai/code. See the claude-remote skill of the research plugin.
 set -euo pipefail
 
 PROJECT_DIR="${CLAUDE_REMOTE_DIR:-$PWD}"

@@ -63,4 +63,4 @@ scheduled and automatic messages (they start with `<`).
 ```
 
 Then the work. The final answer follows the usual rules (the compact style too when the compact answer mode of the
-`remote` skill is on).
+`claude-remote` skill is on).

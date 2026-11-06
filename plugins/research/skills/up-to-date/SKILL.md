@@ -28,7 +28,7 @@ working again after a while, each session catches up, for two goals:
 | `check.py`           | **Run** `python <skill folder>/check.py` with the Python of the project environment | § 0 to § 3, § 5 |
 | `hooks/up-to-date.py`| runs by itself on every message (plugin hook), never by hand           | reminds you every 6 h  |
 
-Related: the `resources` skill for what albus and shaggy contain; `torch` and `lucia` for where to install.
+Related: the `resources` skill for what albus and shaggy contain; `cluster-torch` and `cluster-lucia` for where to install.
 
 **Contents**
 
@@ -94,9 +94,9 @@ python -c "import albus, shaggy"                   # the environment still impor
 
 | Cluster | Where to run it                                                                                                  |
 | ------- | ---------------------------------------------------------------------------------------------------------------- |
-| Torch   | in a short CPU job, overlay mounted `:rw` with `--fakeroot` (login nodes: 2 GB), read the `torch` skill first:   |
+| Torch   | in a short CPU job, overlay mounted `:rw` with `--fakeroot` (login nodes: 2 GB), read the `cluster-torch` skill first:   |
 |         | `srun --account=torch_pr_347_general -c4 --mem=16G -t0:30:00 apptainer exec --fakeroot --overlay <overlay>:rw <image> bash -c "source /ext3/env.sh; pip ..."` |
-| Lucia   | in the micromamba environment of the project, read the `lucia` skill first                                       |
+| Lucia   | in the micromamba environment of the project, read the `cluster-lucia` skill first                                       |
 | Other   | in the environment named by the `CLAUDE.md` of the project                                                       |
 
 Then run `check.py` again with the environment mounted read-only: it must say `up to date`.
@@ -125,7 +125,7 @@ state (`open`, `merged`, `closed`), `NEW` when updated since the last check, lin
 
 ## 4. WHAT TO TELL THE USER
 
-Before answering my message, a very short block, in my language, in the compact style of the `remote` skill (after
+Before answering my message, a very short block, in my language, in the compact style of the `claude-remote` skill (after
 the recap of a dictated message, if any):
 
 - a title in bold, e.g. **Quoi de neuf depuis le 1er novembre**;

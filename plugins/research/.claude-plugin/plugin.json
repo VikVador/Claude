@@ -1,6 +1,6 @@
 {
   "name": "research",
-  "version": "1.7.0",
-  "description": "Claude Code skills for research: deep learning on real-world data, from preprocessing to high-dimensional generative models, on computing clusters.",
+  "version": "2.0.0",
+  "description": "Victor Mangeleer's Claude Code skills for PhD research in ocean deep learning: the NYU Torch and Lucia clusters, project context and library catch-up, scientific figures, mechanism diagrams, analysis reports, meeting talks, and remote Claude sessions on clusters.",
   "author": { "name": "Victor Mangeleer" }
 }

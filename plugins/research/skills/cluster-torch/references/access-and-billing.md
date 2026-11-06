@@ -1,6 +1,6 @@
 # ACCESS AND BILLING DETAILS
 
-Part of the `torch` skill: read it only when I ask about client configuration, external collaborators, sharing
+Part of the `cluster-torch` skill: read it only when I ask about client configuration, external collaborators, sharing
 files, RPS pricing or the publication acknowledgement.
 
 ## External collaborators
