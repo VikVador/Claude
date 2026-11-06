@@ -9,9 +9,8 @@ covers the setup; these are the Lucia facts, checked on 2026-10-28 and 2026-11-0
   is ours, heavy work goes through Slurm.
 - The docs allow "lightweight tasks" and say nothing on long, light processes such as tmux: ask support in case of
   doubt.
-- `tmux` is `/usr/bin/tmux` 2.7 and `python3` is `/usr/bin/python3` 3.6.8 on both login nodes. The remote-session
-  hooks (`phone-*.sh` of the `cluster-remote` skill) are pure bash; the plugin hooks of `auto-update` and `auto-recap` are
-  Python and need `python3` ≥ 3.6, which 3.6.8 meets.
+- `tmux` is `/usr/bin/tmux` 2.7 and `python3` is `/usr/bin/python3` 3.6.8 on both login nodes. The plugin hooks of
+  `auto-update` and `auto-message-format` are Python and need `python3` ≥ 3.6, which 3.6.8 meets.
 - A personal claude.ai account (Pro) allows Remote Control.
 - The client needs neither the ULiège VPN nor the SSH gateway: the login node only makes outbound HTTPS requests.
 - A maintenance reboots the login nodes: run `claude-remote` again afterwards.

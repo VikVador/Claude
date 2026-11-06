@@ -134,7 +134,6 @@ SOURCES.
 
 Several skills ask to speak first. When more than one applies, in this order, in one message:
 
-1. the recap of a dictated request (`auto-recap`);
-2. the question "Es-tu sur ton téléphone ?" (`cluster-remote`, compact answer mode);
-3. the "Quoi de neuf" (`auto-update`);
-4. the questions a skill asks before working (e.g. `create-slides`, `create-message`), then the work.
+1. the recap of a dictated request (`auto-message-format`);
+2. the "Quoi de neuf" (`auto-update`);
+3. the questions a skill asks before working (e.g. `create-slides`, `create-message`), then the work.
