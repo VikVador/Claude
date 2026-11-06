@@ -20,7 +20,7 @@ who do not know my work. Every part of the deck is an option, chosen in a fixed 
 
 | Repository | Visibility | Holds |
 | ---------- | ---------- | ----- |
-| [VikVador/Talks-template](https://github.com/VikVador/Talks-template) | private (licensed font) | the template, the palettes, the theme, `projects/` (one folder per project: recap videos and `project.yaml`), the logos, the team photos, the scripts, and the sources of every talk |
+| [VikVador/Talks-template](https://github.com/VikVador/Talks-template) | private (licensed font) | the template, the palettes, the theme, `projects/` (one folder per project: recap videos, their stills and `project.yaml`), the logos, the team photos, the scripts; never a talk |
 | [VikVador/Talks](https://github.com/VikVador/Talks) | public | the published talks: one folder per talk with its PDF and its figures, listed in the README |
 
 In Talks-template, `template.md` shows every slide rule in a yellow box and `docs/skill-brief.md` holds the workflow
@@ -62,7 +62,7 @@ a mechanism.
 2. `git pull` on `main`, then `npm install` if `node_modules/` is missing.
 3. **Read `template.md` and `docs/skill-brief.md` in full** before writing a single slide, every time.
 4. List the projects: one folder per project in `projects/`, each with a `project.yaml` (`title`, `university`,
-   `logo`, `paper`, `videos` in order). Question 4 offers exactly these, nothing hard-coded.
+   `logo`, `paper`, `videos` in order with their `stills`). Question 4 offers exactly these, nothing hard-coded.
 
 | Path                        | What                                                                              |
 | --------------------------- | --------------------------------------------------------------------------------- |
@@ -70,8 +70,8 @@ a mechanism.
 | `docs/skill-brief.md`       | The questions list, the deck structure, the checks, the paths.                   |
 | `projects/<project>/`       | Recap videos and posters of one project, and its `project.yaml`.                  |
 | `theme/`, `logos/`, `team/` | Theme and palettes (Arial Nova is licensed: never public), university logos, faces and `people.yaml`. |
-| `talks/YYYY-MM-DD-name/`    | One folder per talk: `talk.md` + `figures/`.                                      |
-| `scripts/build.sh`, `scripts/artifact.sh` | Build to HTML or PDF (`--pdf`); stage a deck for an artifact.        |
+| `talks/YYYY-MM-DD-name/`    | The local draft of a talk (`talk.md` + `figures/`), ignored by git: never committed. |
+| `scripts/build.sh`, `scripts/artifact.sh` | Build to HTML, or to PDF (`--pdf`: each recap video becomes its stills, one slide each, under one page number); stage a deck for an artifact. |
 
 ---
 
@@ -200,8 +200,8 @@ Then:
    under its path inside `OUTDIR`. Give me the link.
 3. **Iterate with me on that artifact**: after each change, rebuild, stage into the same `OUTDIR` and publish the same
    file path, so the link stays the same. It holds the licensed font: it stays private; share the PDF instead.
-4. When I approve the deck, commit it on `main` of Talks-template (`talk.md` and `figures/`; built HTML and PDF are
-   ignored; no branch per talk) and push.
+4. **Never commit a talk to Talks-template**: its draft folder stays local (git ignores `talks/`). A private talk
+   lives as its artifact; a public one goes to Talks (§ 6).
 
 ---
 
@@ -209,11 +209,12 @@ Then:
 
 Only if question 10 says yes (or I ask later), once the deck is approved:
 
-1. `bash scripts/build.sh talks/<talk>/talk.md --pdf` and check that the PDF uses Arial Nova (`pdffonts`).
+1. `bash scripts/build.sh talks/<talk>/talk.md --pdf` and check that the PDF uses Arial Nova (`pdffonts`) and that
+   each recap video became its stills, under one page number.
 2. In a clone of `VikVador/Talks` (on my Mac `~/Desktop/talks`), on `main`, create one folder named after the talk,
    `talks/YYYY-MM-DD-<name>/` (`<name>` = the file name I gave), holding exactly:
    - `YYYY-MM-DD-<name>.pdf`, the PDF, with the same name as its folder;
-   - `figures/`, every figure and animation of the talk (a copy of its `figures/` in Talks-template).
+   - `figures/`, every figure and animation of the talk (a copy of its local `figures/`).
 
    **Nothing else goes public**: never the Markdown, the fonts, the shared media, the recap videos or the team photos.
 3. Add one row at the top of the README table (keep the invisible spacer images in its header):
