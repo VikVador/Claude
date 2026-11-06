@@ -89,7 +89,7 @@ To fix an existing figure, start at step 5: look at it, run the checklist, then 
 | Table or figure         | a table for exact numbers, a heatmap or lines for a pattern, never bars with printed values |
 | Metrics                 | from the project's metrics library (e.g. `albus`) rather than from a new implementation     |
 | Size in a report        | the text column (960 px): `figsize` about 10 to 11 inches wide, PNG at `dpi=110` or more    |
-| Size on a slide         | 16:9 deck at 1280×720, 50 to 100 % of the 1080 px text width: `figsize` 5 to 10 inches wide at `dpi=110`, at most about 3.5 inches high (below the text line, above the caption and the box) |
+| Size on a slide         | a result slide (16:9, 1280×720) leaves the figure about **1080 × 350 px** above a one-line caption and box: draw it for that room, `figsize` about 9.8 × 3.2 inches at `dpi=110` (wide, about 3:1), font sizes kept; one figure per message, never a multi-row figure shrunk to fit |
 
 ---
 
@@ -249,7 +249,7 @@ fig.savefig("sst.png", dpi=110)
 ## 9. CHECKLIST
 
 - [ ] Is the message said in one sentence, by the caption (or the box of a slide), with no title on the figure?
-- [ ] Did you open the saved PNG with the Read tool? Is it at the size of § 2, with no text overlapping or cut?
+- [ ] Did you open the saved PNG with the Read tool? Is it at the size of § 2, with no text overlapping or cut, and no legend or label over the data?
 - [ ] Is there a map of all the zones named in the text?
 - [ ] Do all the axes and colorbars have a quantity and a unit in `[]`?
 - [ ] Are the quantities spelled out, with `[$-$]` when they have no unit, and no "(log scale)" in a label?
