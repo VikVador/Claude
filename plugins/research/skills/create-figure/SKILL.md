@@ -1,19 +1,19 @@
 ---
-name: figure
-description: "Use before drawing or fixing any figure meant to carry a scientific message (plots, charts, maps of results, data or diagnostics), for a report, a slide or on its own, in any project. Gives the rules to choose the plot, the colours, the scales, the captions, the uncertainty and the maps, the style of plot_style.py, the cartopy map helpers of maps.py, and a checklist. Not for diagrams of a mechanism (diagram skill)."
+name: create-figure
+description: "Use before drawing or fixing any figure meant to carry a scientific message (plots, charts, maps of results, data or diagnostics), for a report, a slide or on its own, in any project. Gives the rules to choose the plot, the colours, the scales, the captions, the uncertainty and the maps, the style of plot_style.py, the cartopy map helpers of maps.py, and a checklist. Not for diagrams of a mechanism (create-diagram skill)."
 ---
 
 ```text
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Figures: how to draw a figure that carries
+     └─┬───┬─┘       Create figure: how to draw a figure that carries
      ┌─┴───┴─┐       a scientific message.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# FIGURE
+# CREATE FIGURE
 
 Every figure carries one message, that the reader gets at a glance and cannot misread. Read this file before drawing
 any figure, for a report, a slide or on its own, and before fixing an existing one.
@@ -26,8 +26,8 @@ any figure, for a report, a slide or on its own, and before fixing an existing o
 | `maps.py`       | **Run** by importing it (§ 7): `color_limits`, `add_geography`, `plot_map`, `plot_zones` | every map                             |
 | `examples.md`   | **Read**, then open the matching images of `examples/` with the Read tool                | when choosing or checking a plot type |
 
-Related: the `report` skill for the structure of a report, the `presentation` skill for where a figure goes on a
-slide, the `diagram` skill for diagrams and animations that explain a mechanism.
+Related: the `create-report` skill for the structure of a report, the `create-slides` skill for where a figure goes on a
+slide, the `create-diagram` skill for diagrams and animations that explain a mechanism.
 
 **Contents**
 

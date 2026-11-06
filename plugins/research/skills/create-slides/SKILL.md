@@ -1,5 +1,5 @@
 ---
-name: presentation
+name: create-slides
 description: "Use when I ask for slides, a deck, a talk or a presentation (diapos, présentation, slides pour la réunion), for a progress meeting or a talk to people who do not know my work, built from the results of the session or a project; also to change, rebuild or publish one of my talks. Opens with a fixed list of questions with defaults, builds the deck from my Marp template in VikVador/Talks-template, drafts it as a private artifact and publishes the PDF to VikVador/Talks only if asked. Use it instead of PowerPoint or generic slide-deck tools unless a .pptx file is asked for."
 ---
 
@@ -7,13 +7,13 @@ description: "Use when I ask for slides, a deck, a talk or a presentation (diapo
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Presentation: a talk from my template,
+     └─┬───┬─┘       Create slides: a talk from my template,
      ┌─┴───┴─┐       so that I think and discuss instead of formatting.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# PRESENTATION
+# CREATE SLIDES
 
 This skill is the **procedure**, and it is modular: the same steps make a progress-meeting deck or a talk to people
 who do not know my work. Every part of the deck is an option, chosen in a fixed list of questions before any slide.
@@ -27,7 +27,7 @@ In Talks-template, `template.md` shows every slide rule in a yellow box and `doc
 and the decisions behind it. **Those two files win** over anything you remember: never change the design or the
 rules without asking me.
 
-Related: the `figure` skill for what goes in a figure and its size on a slide, the `diagram` skill for a diagram of
+Related: the `create-figure` skill for what goes in a figure and its size on a slide, the `create-diagram` skill for a diagram of
 a mechanism.
 
 **Contents**
@@ -180,7 +180,7 @@ Then:
 ## 4. CHECK THE FIGURES
 
 1. **Draw every result figure for its room on the slide**: about **1080 × 350 px** under a one-line caption and a
-   one-line box, so `figsize` about 9.8 × 3.2 in at dpi 110 (the `figure` skill, § 2). One figure per message: never
+   one-line box, so `figsize` about 9.8 × 3.2 in at dpi 110 (the `create-figure` skill, § 2). One figure per message: never
    a multi-row figure shrunk to fit, never "top row / bottom row" in the text.
 2. Build, serve the repository root (`python3 -m http.server 8765`), open
    `http://127.0.0.1:8765/talks/<talk>/talk.html` and look at every slide: nothing overflows, every box ends at the
@@ -188,7 +188,7 @@ Then:
 3. **Then launch one agent for the figures only**: give it the PNGs of `figures/` and a screenshot of each result
    slide, and ask it to list, per figure, legends or labels drawn over the data, overlapping or cut text, ticks
    unreadable at the size shown, and a figure that leaves the slide half empty. Nothing else.
-4. Fix what it finds (redraw with the `figure` skill), rebuild, and only then show me the draft.
+4. Fix what it finds (redraw with the `create-figure` skill), rebuild, and only then show me the draft.
 
 ---
 

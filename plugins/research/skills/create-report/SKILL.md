@@ -1,5 +1,5 @@
 ---
-name: report
+name: create-report
 description: "Use before writing an analysis report or a study summary to publish as an HTML artifact (results of an analysis, a diagnostic, a comparison of runs or designs, a summary of past work), in any project. Gives the fixed structure, the way of writing (the message first, details only when they serve), the look (the reef palette of my slides) and build.py, which turns the body into one bilingual page. Use it instead of a generic document or page. Not for a chat answer, a status update or a subagent report."
 ---
 
@@ -7,13 +7,13 @@ description: "Use before writing an analysis report or a study summary to publis
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Report: one structure and one look for every
+     └─┬───┬─┘       Create report: one structure and one look for every
      ┌─┴───┴─┐       report, readable in a minute, also on a phone.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# REPORT
+# CREATE REPORT
 
 Every report has the same structure, the same way of writing and the same look, in every project, so that I get the
 message in a minute, on a computer as on a phone. Each idea comes as its message first, then what makes it
@@ -27,7 +27,7 @@ restyling).
 | `style.css`          | the look of every report, inlined by `build.py`: never restyle by hand | never edited      |
 | `build.py`           | **Run** `python <skill folder>/build.py body.html report.html`          | § 5               |
 
-Related: the `figure` skill for every figure, the `diagram` skill for every diagram of a mechanism: read them before
+Related: the `create-figure` skill for every figure, the `create-diagram` skill for every diagram of a mechanism: read them before
 drawing the first one.
 
 **Contents**
@@ -120,7 +120,7 @@ Whenever results rely on literature or external pages, look for sources and cite
 ### Versions
 
 Last line of the page, small: `<strong>Versions :</strong> albus 32ebf6b, shaggy 6095950`, given by
-`python <up-to-date skill folder>/check.py --versions` in the environment the results were made with. Two
+`python <auto-update skill folder>/check.py --versions` in the environment the results were made with. Two
 environments (e.g. a run on another cluster) → one line each, saying which. Not needed when no code was run.
 
 ---
@@ -188,14 +188,14 @@ Fixed by `style.css`, in the reef palette of my slides, one job per colour:
 
 ## 4. FIGURES
 
-- Matplotlib figures following the `figure` skill (and its `plot_style.py`), saved as PNG at `dpi=110` or more,
+- Matplotlib figures following the `create-figure` skill (and its `plot_style.py`), saved as PNG at `dpi=110` or more,
   without a title of their own: `<figure><div class="plate"><img …></div><figcaption>…</figcaption></figure>`.
 - **Captions**: the style adds "Fig. A.", "Fig. B.", … in order. Then two parts:
   1. what the figure shows, in a few words, in semibold (it plays the role of the figure title);
   2. how to read it: the x axis, the y axis, and what each curve is, the word naming a curve in semibold and in the
      colour of that curve: `<span class="blue">entraînement</span>` (classes `blue`, `amber`, `green`, `vermilion`,
      `grey`, the colours of `plot_style.py`).
-- **Diagrams and animations** of a mechanism or an architecture follow the `diagram` skill: inline SVG drawn
+- **Diagrams and animations** of a mechanism or an architecture follow the `create-diagram` skill: inline SVG drawn
   with its `diagram.js` (copied next to the body, inlined by `build.py`), inside `<div class="plate">`, with a
   caption like any figure (lettered too).
 

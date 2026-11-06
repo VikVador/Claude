@@ -1,5 +1,5 @@
 ---
-name: oral-recap
+name: auto-recap
 description: "Use when my message looks dictated by voice: long (a paragraph or more), no formatting at all (no bullets, headings or code), spoken style with fillers and corrections (donc, en fait, bah, du coup, ok, so, basically). Before anything else, reply with a very short recap of what you understood of the request, then start working at once. Not for short, formatted, pasted (an email, an abstract, a log) or automatic messages."
 ---
 
@@ -7,20 +7,20 @@ description: "Use when my message looks dictated by voice: long (a paragraph or 
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Oral recap: say back in a few lines what was
+     └─┬───┬─┘       Auto recap: say back in a few lines what was
      ┌─┴───┴─┐       understood of a dictated request, then work.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# ORAL RECAP
+# AUTO RECAP
 
 I often dictate long requests by voice. Before working on one, show what you understood, so that I can read it while
 you work and correct you at once if needed.
 
 | File                  | Use                                                           | When                                 |
 | --------------------- | ------------------------------------------------------------- | ------------------------------------ |
-| `hooks/oral-recap.py` | runs by itself on every message (plugin hook), never by hand  | adds a reminder to a dictated message |
+| `hooks/auto-recap.py` | runs by itself on every message (plugin hook), never by hand  | adds a reminder to a dictated message |
 
 ---
 
@@ -63,4 +63,4 @@ scheduled and automatic messages (they start with `<`).
 ```
 
 Then the work. The final answer follows the usual rules (the compact style too when the compact answer mode of the
-`claude-remote` skill is on).
+`cluster-remote` skill is on).

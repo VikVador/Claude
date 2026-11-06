@@ -1,7 +1,7 @@
 // Helpers to draw mechanisms in the style of Understanding Deep Learning (Prince, 2023), as inline SVG.
 // Tensors are grids with their dimensions, modules are pale teal panels, arrows turn at right angles, weights are a
 // white-to-brown heat map, mathematics is LaTeX rendered by MathJax, and a player goes through the steps.
-// Load it with a script tag pointing to this file: build.py of the report skill inlines it.
+// Load it with a script tag pointing to this file: build.py of the create-report skill inlines it.
 const Diagram = (() => {
   const NS = "http://www.w3.org/2000/svg";
   const COLORS = {

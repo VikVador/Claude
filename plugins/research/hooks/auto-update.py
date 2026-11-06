@@ -24,7 +24,7 @@ FORMAT       = "%Y-%m-%dT%H:%M"
 # fmt: on
 
 REMINDER = (
-    "This project folder was {last}. Follow the up-to-date skill before answering: "
+    "This project folder was {last}. Follow the auto-update skill before answering: "
     "check whether albus and shaggy in the project environment are behind GitHub (update them if so), read the "
     "last pull requests of Heimdall and Neptune (python check.py{since}), give a very short 'Quoi de "
     "neuf' first (with a short question for each change of the other project worth reusing here), then "

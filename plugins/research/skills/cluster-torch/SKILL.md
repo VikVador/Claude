@@ -248,7 +248,7 @@ Apptainer + overlay: the environment is a single file ⇒ no inode problem. Buil
 - **Which image**: for Heimdall, always the Heimdall image above (its overlay goes with it); the generic
   `/share/apps/images/cuda-13.3.1-ubuntu-26.04.sif` only to build a new environment.
 - No Docker, Apptainer only. Add `--nv` for GPUs.
-- **Installs**: updating `albus` and `shaggy` as the `up-to-date` skill says is pre-approved; any other install or
+- **Installs**: updating `albus` and `shaggy` as the `auto-update` skill says is pre-approved; any other install or
   upgrade in an environment, ask me first.
 - **Install packages on a compute node**: login nodes cap memory at **2 GB/user** and run a *different OS*
   (`srun --account=<acct> -c4 --mem=16GB -t2:00:00 --pty bash`).

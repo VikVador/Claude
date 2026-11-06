@@ -1,7 +1,7 @@
 # BUILDING AN ENVIRONMENT ON TORCH
 
 Part of the `cluster-torch` skill (§ 8): read it when building or changing an environment. The rules of § 8 still hold: any
-install or upgrade needs my approval (except `albus` and `shaggy` through the `up-to-date` skill), on a compute node,
+install or upgrade needs my approval (except `albus` and `shaggy` through the `auto-update` skill), on a compute node,
 never on a login node.
 
 ## Generic recipe

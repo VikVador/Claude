@@ -1,19 +1,19 @@
 ---
-name: diagram
-description: "Use before drawing a diagram or a step-by-step animation that explains how a mechanism, an architecture or a probabilistic concept works (attention, convolutions and receptive fields, graph networks, U-Net, autoencoders and VAEs, normalizing flows, diffusion models, stochastic interpolants, distributions), for a report, a slide or on its own. Gives the style of the figures of Understanding Deep Learning (Prince, 2023), with the book's figures as examples, and diagram.js to draw tensors, modules and arrows and play them step by step. Not for plots of data or results (figure skill)."
+name: create-diagram
+description: "Use before drawing a diagram or a step-by-step animation that explains how a mechanism, an architecture or a probabilistic concept works (attention, convolutions and receptive fields, graph networks, U-Net, autoencoders and VAEs, normalizing flows, diffusion models, stochastic interpolants, distributions), for a report, a slide or on its own. Gives the style of the figures of Understanding Deep Learning (Prince, 2023), with the book's figures as examples, and diagram.js to draw tensors, modules and arrows and play them step by step. Not for plots of data or results (create-figure skill)."
 ---
 
 ```text
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Diagram: show what happens inside a mechanism, 
+     └─┬───┬─┘       Create diagram: show what happens inside a mechanism, 
      ┌─┴───┴─┐       tensor by tensor, in the style of a textbook.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# DIAGRAM
+# CREATE DIAGRAM
 
 A diagram of a mechanism shows **what happens inside**: which tensors exist, their shapes, which ones are combined and
 how, step by step. Simplify the sizes, never the mechanism. The model to follow is the book of **Simon J. D. Prince,
@@ -30,7 +30,7 @@ when it explains a point better (a map for a spatial mechanism, a timeline for a
 | `examples.md` | **Read**: the figures of the book (images in `examples/`), what each teaches | before every diagram (§ 1)    |
 | `diagram.js`  | **Copy** next to the body: tensors as grids, modules, labels, arrows, player | when drawing (§ 4)            |
 
-Related: the `figure` skill for results (curves, maps, measures); the `report` skill for the page around a diagram.
+Related: the `create-figure` skill for results (curves, maps, measures); the `create-report` skill for the page around a diagram.
 
 **Contents**
 
@@ -142,10 +142,10 @@ Related: the `figure` skill for results (curves, maps, measures); the `report` s
 </script>
 ```
 
-Copy `diagram.js` next to the body of the report: `build.py` of the report skill inlines it. The page style
-(`style.css` of the report skill) sizes the drawing and the player.
+Copy `diagram.js` next to the body of the report: `build.py` of the create-report skill inlines it. The page style
+(`style.css` of the create-report skill) sizes the drawing and the player.
 
-- **On its own**: a report with one section, built with `build.py` of the `report` skill (it loads MathJax and the
+- **On its own**: a report with one section, built with `build.py` of the `create-report` skill (it loads MathJax and the
   style the drawing needs).
 - **On a slide**: a still diagram, exported as SVG or PNG into the talk's `figures/`. A played animation in a deck
   has no tested path yet: ask me.

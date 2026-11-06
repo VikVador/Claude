@@ -1,5 +1,5 @@
 ---
-name: ci-watch
+name: auto-ci
 description: "Use as soon as a pull request is opened, or new commits are pushed to one, in a repository with GitHub Actions (a .github/workflows folder: Heimdall, Neptune, Poseidon, Shaggy, Albus, ...), whether you opened it or I did; also when I say a PR is up or ask whether the CI passed. Watches the checks in the background, and when one fails, reads the failing log on GitHub, finds the cause, reproduces it locally, pushes the fix to the same branch and watches again. Not for merging, reviewing or changing the CI itself."
 ---
 
@@ -7,13 +7,13 @@ description: "Use as soon as a pull request is opened, or new commits are pushed
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       CI watch: after a pull request, check that the
+     └─┬───┬─┘       Auto CI: after a pull request, check that the
      ┌─┴───┴─┐       CI passes online, and fix it when it does not.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# CI WATCH
+# AUTO CI
 
 Tests pass locally, yet the CI on GitHub can still fail: another Python, another version of a tool, a dependency
 missing from `pyproject.toml`, a file that was never committed. Every pull request is watched until its checks end,
@@ -22,7 +22,7 @@ and a failure is understood and fixed before I have to look at it.
 **Last checked: 2026-11-06** (the `ci.yml` and `pre-commit.yml` of Heimdall, Neptune, Poseidon, Shaggy and Albus;
 `gh pr checks` exit codes on a green and a red pull request).
 
-Related: the `up-to-date` skill (pull requests of the projects); the cluster skills for where tests can run.
+Related: the `auto-update` skill (pull requests of the projects); the cluster skills for where tests can run.
 
 **Contents**
 

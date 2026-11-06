@@ -1,5 +1,5 @@
 ---
-name: resources
+name: research
 description: "Use at the start of every session in one of my projects or libraries (Heimdall, Neptune, shaggy, albus), and whenever you need: what my projects study, who my supervisors are, which library to use before writing code (azula diffusion, zuko flows, shaggy training tools and autoencoders, albus metrics) and what it contains, the documentation links, or how to read my Weights & Biases runs (training curves, divergence, comparing runs)."
 ---
 
@@ -7,13 +7,13 @@ description: "Use at the start of every session in one of my projects or librari
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Resources: my projects, my supervisors and the
+     └─┬───┬─┘       Research: my projects, my supervisors and the
      ┌─┴───┴─┐       libraries to know and reuse before coding.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# RESOURCES
+# RESEARCH
 
 My projects, the people I work with, the libraries I build on and where my runs are logged. Check here before asking
 me, and check the libraries before writing code: what you need may already exist.
@@ -31,7 +31,7 @@ me, and check the libraries before writing code: what you need may already exist
 | ------------------------- | -------- | ------------------------------------------------------------------------- |
 | `references/libraries.md` | **Read** | before writing code that a library could cover, or when its API is needed |
 
-Related: the `up-to-date` skill updates `shaggy` and `albus` and asks to update § 3 when their API changes; the
+Related: the `auto-update` skill updates `shaggy` and `albus` and asks to update § 3 when their API changes; the
 `cluster-torch` and `cluster-lucia` skills for the clusters.
 
 **Contents**

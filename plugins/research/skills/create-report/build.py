@@ -61,7 +61,7 @@ def inline_script(match: re.Match, folder: Path) -> str:
 
 def build(body: Path, output: Path) -> None:
     content = body.read_text()
-    # Local scripts (e.g. diagram.js of the diagram skill) are inlined, as the page must be self-contained
+    # Local scripts (e.g. diagram.js of the create-diagram skill) are inlined, as the page must be self-contained
     content = re.sub(r'<script src="(?!https?:)([^"]+)"></script>', lambda m: inline_script(m, body.parent), content)
     # The first title is the French one
     title = re.search(r"<h1[^>]*>(.*?)</h1>", content, re.S).group(1).strip()

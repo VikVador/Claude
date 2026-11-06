@@ -1,19 +1,19 @@
 ---
-name: up-to-date
-description: "Use when a session starts or resumes after a while in a Heimdall, Neptune, albus or shaggy folder (the hook up-to-date.py reminds you), when asked what changed in the libraries or the projects, before a task that needs the latest albus or shaggy, and to write the library versions next to a result. Checks and updates albus and shaggy, reads the last pull requests of Heimdall and Neptune, and gives a very short Quoi de neuf with a question for each change worth reusing."
+name: auto-update
+description: "Use when a session starts or resumes after a while in a Heimdall, Neptune, albus or shaggy folder (the hook auto-update.py reminds you), when asked what changed in the libraries or the projects, before a task that needs the latest albus or shaggy, and to write the library versions next to a result. Checks and updates albus and shaggy, reads the last pull requests of Heimdall and Neptune, and gives a very short Quoi de neuf with a question for each change worth reusing."
 ---
 
 ```text
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Up to date: before working again on a project,
+     └─┬───┬─┘       Auto update: before working again on a project,
      ┌─┴───┴─┐       check what moved in the libraries and the projects.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# UP TO DATE
+# AUTO UPDATE
 
 I work on several projects at once (Heimdall on Torch, Neptune on Lucia), with one Claude session per project. The
 libraries they share (`albus`, `shaggy`) change often, and so do the projects. Before
@@ -26,9 +26,9 @@ working again after a while, each session catches up, for two goals:
 | File                 | Use                                                                    | When                   |
 | -------------------- | ---------------------------------------------------------------------- | ---------------------- |
 | `check.py`           | **Run** `python <skill folder>/check.py` with the Python of the project environment | § 0 to § 3, § 5 |
-| `hooks/up-to-date.py`| runs by itself on every message (plugin hook), never by hand           | reminds you every 6 h  |
+| `hooks/auto-update.py`| runs by itself on every message (plugin hook), never by hand           | reminds you every 6 h  |
 
-Related: the `resources` skill for what albus and shaggy contain; `cluster-torch` and `cluster-lucia` for where to install.
+Related: the `research` skill for what albus and shaggy contain; `cluster-torch` and `cluster-lucia` for where to install.
 
 **Contents**
 
@@ -58,7 +58,7 @@ Related: the `resources` skill for what albus and shaggy contain; `cluster-torch
 
 ## 1. WHEN
 
-- The hook `up-to-date.py` of this plugin adds a reminder to the first message of a session in a folder of Heimdall,
+- The hook `auto-update.py` of this plugin adds a reminder to the first message of a session in a folder of Heimdall,
   Neptune, albus or shaggy (found from its git remote) when it was not brought up to date for **6 hours** or more (time in UTC kept in `~/.claude/up-to-date/<folder>.txt`, written when
   reminding, so the reminder comes only once). It gives the time of the last check, to pass to `--since`.
 - The check is quick (a few seconds); I change the libraries often, so do it every time it is asked.
@@ -102,7 +102,7 @@ python -c "import albus, shaggy"                   # the environment still impor
 Then run `check.py` again with the environment mounted read-only: it must say `up to date`.
 
 **When the public API of a library changed** (new module, function renamed or removed, see the files changed): check
-that its description in § 3 of the `resources` skill still holds; if not, propose the change to me, then make it in
+that its description in § 3 of the `research` skill still holds; if not, propose the change to me, then make it in
 a clone of VikVador/Claude through a pull request.
 
 ---
@@ -125,7 +125,7 @@ state (`open`, `merged`, `closed`), `NEW` when updated since the last check, lin
 
 ## 4. WHAT TO TELL THE USER
 
-Before answering my message, a very short block, in my language, in the compact style of the `claude-remote` skill (after
+Before answering my message, a very short block, in my language, in the compact style of the `cluster-remote` skill (after
 the recap of a dictated message, if any):
 
 - a title in bold, e.g. **Quoi de neuf depuis le 1er novembre**;
@@ -152,7 +152,7 @@ change of the code from a change of a library, every result says which commits i
 
 - `python <skill folder>/check.py --versions` (Python of the project environment, no network) prints e.g.
   `albus 32ebf6b, shaggy 6095950`.
-- **Reports**: this line at the bottom of the page (`<p class="versions">`, see the `report` skill).
+- **Reports**: this line at the bottom of the page (`<p class="versions">`, see the `create-report` skill).
 - **Runs**: in the configuration logged with the run (WandB config, saved `config.yml`) and at the top of the log.
 - **Comparing two results** made with different versions: say it, and check the commits in between before blaming
   the model.

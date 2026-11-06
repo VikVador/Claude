@@ -16,7 +16,7 @@ FORMATTING = r"^\s*([-*•>#]|\d+[.)])\s|```"
 # fmt: on
 
 REMINDER = (
-    "This message looks dictated (long, no formatting, spoken style). Follow the oral-recap skill: before anything "
+    "This message looks dictated (long, no formatting, spoken style). Follow the auto-recap skill: before anything "
     "else, reply with a very short recap of what you understood of the request (not of what you plan to do), in the "
     "compact style: bold title, ---, 2 to 4 plain lines, ---, one short bullet per thing asked. Then start working "
     "at once, without waiting for a confirmation."

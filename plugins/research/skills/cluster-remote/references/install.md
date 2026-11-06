@@ -44,6 +44,6 @@ The hooks act only where `CLAUDE_REMOTE=1`, so they change nothing in the other 
 ## After a change of a script
 
 - The copies in `~/bin` and `~/.claude/` are not updated by a plugin update: copy the changed scripts again (step 2).
-- A change made on a machine goes back into a clone of VikVador/Claude, at `plugins/research/skills/claude-remote/scripts/`,
+- A change made on a machine goes back into a clone of VikVador/Claude, at `plugins/research/skills/cluster-remote/scripts/`,
   on a branch, through a pull request, so that every machine and the skill stay identical. Never edit
   `~/.claude/plugins/`: that copy is overwritten at the next update.

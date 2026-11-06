@@ -1,4 +1,4 @@
-r"""Map helpers following the rules of the figure skill (§ 7): import or copy into the analysis script.
+r"""Map helpers following the rules of the create-figure skill (§ 7): import or copy into the analysis script.
 
 `color_limits` only needs numpy; the other helpers need cartopy, imported when first called so that a missing
 cartopy gives a clear error instead of breaking the import of this module.

@@ -33,7 +33,7 @@ order and delete the optional ones the skill does not need. This file is not a s
 |              | OPEN QUESTIONS.                                                                                            |
 | Last checked | `**Last checked: YYYY-MM-DD** (what was checked)` when the facts can change; the "Keep this file up to    |
 |              | date" box only when they change within months (clusters, quotas, people).                                |
-| References   | "§ 4" inside a skill, "the `figure` skill" across skills.                                                  |
+| References   | "§ 4" inside a skill, "the `create-figure` skill" across skills.                                                  |
 | Size         | Target: 250 lines and 12 000 characters. Limit: 400 lines and 20 000 characters (about 5 000 tokens, what |
 |              | Claude Code keeps of a skill after a compaction). Above it, move out, in this order: code longer than 20  |
 |              | lines (to a script), a section only one sub-task needs (to `references/<topic>.md`), catalogues. Never    |
@@ -134,7 +134,7 @@ SOURCES.
 
 Several skills ask to speak first. When more than one applies, in this order, in one message:
 
-1. the recap of a dictated request (`oral-recap`);
-2. the question "Es-tu sur ton téléphone ?" (`claude-remote`, compact answer mode);
-3. the "Quoi de neuf" (`up-to-date`);
-4. the questions a skill asks before working (e.g. `presentation`), then the work.
+1. the recap of a dictated request (`auto-recap`);
+2. the question "Es-tu sur ton téléphone ?" (`cluster-remote`, compact answer mode);
+3. the "Quoi de neuf" (`auto-update`);
+4. the questions a skill asks before working (e.g. `create-slides`, `create-message`), then the work.

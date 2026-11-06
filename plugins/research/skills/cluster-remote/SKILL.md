@@ -1,5 +1,5 @@
 ---
-name: claude-remote
+name: cluster-remote
 description: "Use to start, check, reattach, stop or repair my Claude Code session kept alive in tmux on a cluster login node and reached through Remote Control (claude.ai/code, the Claude app), also when it is unreachable or says 'not running' because it runs on another login node; for /phone on or off (compact answers for a phone); to install the setup on a new machine. Gives the commands to hand me, the checks and the compact style. Not for git remotes or plain SSH work."
 ---
 
@@ -7,13 +7,13 @@ description: "Use to start, check, reattach, stop or repair my Claude Code sessi
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Claude remote: keep Claude Code running on a
+     └─┬───┬─┘       Cluster remote: keep Claude Code running on a
      ┌─┴───┴─┐       remote machine, driven from anywhere.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# CLAUDE REMOTE
+# CLUSTER REMOTE
 
 Claude Code runs on a distant machine (typically the login node of a cluster) inside tmux, and stays reachable through
 its **Remote Control** from https://claude.ai/code or the Claude app, on a computer or a phone. When the client is a
