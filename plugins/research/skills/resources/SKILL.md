@@ -1,6 +1,6 @@
 ---
 name: resources
-description: Use at the start of every session in one of my projects or libraries (Heimdall, Neptune, Poseidon, shaggy, albus), and whenever you need to know my projects, my supervisors, the libraries to check before coding (azula, zuko, shaggy, albus) and what they contain, the documentation links, or how to read my Weights & Biases runs.
+description: "Use at the start of every session in one of my projects or libraries (Heimdall, Neptune, shaggy, albus), and whenever you need: what my projects study, who my supervisors are, which library to use before writing code (azula diffusion, zuko flows, shaggy training tools and autoencoders, albus metrics) and what it contains, the documentation links, or how to read my Weights & Biases runs (training curves, divergence, comparing runs)."
 ---
 
 ```text
@@ -15,7 +15,24 @@ description: Use at the start of every session in one of my projects or librarie
 
 # RESOURCES
 
+My projects, the people I work with, the libraries I build on and where my runs are logged. Check here before asking
+me, and check the libraries before writing code: what you need may already exist.
+
 **Last checked: 2026-11-04** (every link below was opened and verified on that day).
+
+> **Keep this file up to date.** People, links and library APIs change. If the date above is more than one month
+> old, before relying on this file:
+> 1. launch an agent to open every link below and to check the module tables of `references/libraries.md` against
+>    the installed libraries;
+> 2. propose the changes to me, then, after my approval, make them in a clone of VikVador/Claude through a pull
+>    request, never in `~/.claude/plugins/`: that copy is overwritten at the next update.
+
+| File                      | Use      | When                                                                      |
+| ------------------------- | -------- | ------------------------------------------------------------------------- |
+| `references/libraries.md` | **Read** | before writing code that a library could cover, or when its API is needed |
+
+Related: the `up-to-date` skill updates `shaggy` and `albus` and asks to update § 3 when their API changes; the
+`torch` and `lucia` skills for the clusters.
 
 **Contents**
 
@@ -25,16 +42,22 @@ description: Use at the start of every session in one of my projects or librarie
 3. Libraries
 4. Documentation
 5. Monitoring runs (WandB)
+6. Open questions
 
 ---
 
 ## 0. IN SHORT
 
-1. **Two projects**: Heimdall (global ocean, NYU, cluster Torch) and Neptune (Black Sea, ULiège, cluster Lucia).
-2. **Three supervisors**: Gilles Louppe (SAIL) and Marilaure Grégoire (MAST) at ULiège, Laure Zanna (M²LInES) at NYU.
+1. **Two projects**: Heimdall (global ocean, NYU, cluster Torch) and Neptune (Black Sea, ULiège, cluster Lucia) (§ 1).
+2. **Three supervisors**: Gilles Louppe (SAIL) and Marilaure Grégoire (MAST) at ULiège, Laure Zanna (M²LInES) at NYU
+   (§ 2).
 3. **Check the libraries before coding**: diffusion → `azula`, flows → `zuko`, training tools, autoencoders and
-   losses → `shaggy`, metrics → `albus`.
-4. **You can read my WandB runs yourself** (§ 5): check the curves before asking me for screenshots.
+   losses → `shaggy`, metrics → `albus`; read their module tables in `references/libraries.md` (§ 3).
+4. **You can read my WandB runs yourself**: check the curves before asking me for screenshots (§ 5).
+5. **Never touch the WandB key**: never ask for it, print it or set it; if `wandb.Api()` fails, tell me (§ 5).
+6. **Runs are read only**: never delete, edit, tag or move a run (§ 5).
+7. **Edits to this file**: ask me first, then a pull request in a clone of VikVador/Claude, never in
+   `~/.claude/plugins/`.
 
 ---
 
@@ -61,21 +84,24 @@ description: Use at the start of every session in one of my projects or librarie
 
 *"Mastering the Black Sea Physics and Biogeochemistry with latent generative models"*
 
-| Item   | Details                                                                                           |
-| ------ | ------------------------------------------------------------------------------------------------- |
-| Goal   | a generative **emulator of the Black Sea** forecasting the next daily state                       |
-| Data   | daily NEMO 4.2.0 simulation (576 × 256 grid, 48 levels, 1998–2023), ERA5 atmospheric forcing      |
-| Splits | training 1998–2017, validation 2018–2020, test 2021–2022 (2023 set aside, being recomputed)       |
-| State  | surface: wind stress, sea surface height                                                          |
-|        | physics: currents, temperature, salinity                                                          |
-|        | biogeochemistry: chlorophyll, oxygen, light, phosphate, silicate, nitrate                         |
-| Model  | **FGN** (`experiments/forecast-ambient-increments`): two `shaggy` ConvAEs (surface 2D, ocean 3D)  |
-|        | and an `azula` DiT, trained end to end to output the daily increments                             |
-|        | **Latent** (`experiments/forecast-latent-states`): staged, encoders trained with the GME loss,    |
-|        | then a noise-conditioned processor of the latent state, then a decoder                            |
-| Train  | FGN: ensemble members with a fair CRPS, conditioned on the date (and ERA5 for the surface),       |
-|        | then fine-tuned on autoregressive rollouts                                                        |
-| Where  | data in `/gpfs/projects/acad/bsmfc/nemo4.2.0`, trainings on Lucia (jobs submitted with `dawgz`)   |
+| Item                    | Details                                                                                         |
+| ----------------------- | ----------------------------------------------------------------------------------------------- |
+| Goal                    | a generative **emulator of the Black Sea** forecasting the next daily state                     |
+| Data                    | daily NEMO 4.2.0 simulation (576 × 256 grid, 48 levels, 1998–2023), ERA5 atmospheric forcing    |
+| Splits                  | training 1998–2017, validation 2018–2020, test 2021–2022 (2023 set aside, being recomputed)     |
+| State (surface)         | wind stress, sea surface height                                                                 |
+| State (physics)         | currents, temperature, salinity                                                                 |
+| State (biogeochemistry) | chlorophyll, oxygen, light, phosphate, silicate, nitrate                                        |
+| Model                   | two approaches, **FGN** and **Latent** (below)                                                  |
+| Where                   | data in `/gpfs/projects/acad/bsmfc/nemo4.2.0`, trainings on Lucia (jobs submitted with `dawgz`) |
+
+**Good to know**
+
+- **FGN** (`experiments/forecast-ambient-increments`): two `shaggy` ConvAEs (surface 2D, ocean 3D) and an `azula`
+  DiT, trained end to end to output the daily increments. Training: ensemble members with a fair CRPS, conditioned on
+  the date (and ERA5 for the surface), then fine-tuned on autoregressive rollouts.
+- **Latent** (`experiments/forecast-latent-states`): staged, encoders trained with the GME loss, then a
+  noise-conditioned processor of the latent state, then a decoder.
 
 ---
 
@@ -99,77 +125,37 @@ description: Use at the start of every session in one of my projects or librarie
 
 ## 3. LIBRARIES
 
-Check these **before writing new code**: what you need may already exist.
+Check these **before writing new code**: what you need may already exist. Their modules are in
+`references/libraries.md`.
 
-| Library  | For                          | Author       |
-| -------- | ---------------------------- | ------------ |
-| `azula`  | diffusion models             | probabilists |
-| `zuko`   | normalizing flows            | probabilists |
-| `shaggy` | training tools, autoencoders | me           |
-| `albus`  | metrics                      | me           |
+| Library  | For                                                 | Author       | Links                                    |
+| -------- | --------------------------------------------------- | ------------ | ---------------------------------------- |
+| `azula`  | diffusion models: noise schedule, denoiser, sampler | probabilists | [GitHub][azula-gh], [docs][azula-docs]   |
+| `zuko`   | normalizing flows on top of `torch.distributions`   | probabilists | [GitHub][zuko-gh], [docs][zuko-docs]     |
+| `shaggy` | training tools, autoencoders, losses                | me           | [GitHub][shaggy-gh], [docs][shaggy-docs] |
+| `albus`  | metrics                                             | me           | [GitHub][albus-gh], [docs][albus-docs]   |
 
-### azula — diffusion models
+[azula-gh]: https://github.com/probabilists/azula
+[azula-docs]: https://azula.readthedocs.io
+[zuko-gh]: https://github.com/probabilists/zuko
+[zuko-docs]: https://zuko.readthedocs.io
+[shaggy-gh]: https://github.com/VikVador/Shaggy
+[shaggy-docs]: https://shaggy.readthedocs.io
+[albus-gh]: https://github.com/VikVador/Albus
+[albus-docs]: https://albus-metrics.readthedocs.io
 
-[GitHub](https://github.com/probabilists/azula) · [docs](https://azula.readthedocs.io)
+### How to check a library before coding
 
-One interface for diffusion models: a **noise schedule**, a **denoiser** and a **sampler**.
+1. **Read its module table** in `references/libraries.md`: find the module that could hold what you need.
+2. **Confirm the API** in its docs (links above) or in the installed source, from the project environment:
+   `python -c "import shaggy, os; print(os.path.dirname(shaggy.__file__))"` (same for `albus`, `azula`, `zuko`),
+   then read the module there.
+3. **Reuse it** when it exists; write new code only for what is missing.
 
-| Module           | Contents                                                                                            |
-| ---------------- | --------------------------------------------------------------------------------------------------- |
-| `azula.noise`    | `VPSchedule`, `VESchedule`, `CosineSchedule`, `RectifiedSchedule`, …                                |
-| `azula.denoise`  | `GaussianDenoiser`, `KarrasDenoiser`, … (denoisers and training losses)                             |
-| `azula.sample`   | `DDPMSampler`, `DDIMSampler`, `EulerSampler`, `HeunSampler`, `PCSampler`, …                         |
-| `azula.guidance` | posterior sampling and guidance: `MMPSDenoiser`, `DPSSampler`, `CFGDenoiser`, …                     |
-| `azula.nn`       | `DiT`, `ViT`, `UNet`, `MultiheadSelfAttention` with RoPE, `Patchify`, `RMSNorm`, `SwiGLU`, `ConvNd` |
-| `azula.linalg`   | structured covariances, `cg`, `gmres`                                                               |
-| `azula.plugins`  | pre-trained models (unstable)                                                                       |
+**Good to know**
 
-### zuko — normalizing flows
-
-[GitHub](https://github.com/probabilists/zuko) · [docs](https://zuko.readthedocs.io)
-
-Normalizing flows as `nn.Module`s on top of `torch.distributions`: `flow(context).log_prob(x)`, `.sample()`.
-
-| Module                        | Contents                                                   |
-| ----------------------------- | ---------------------------------------------------------- |
-| `zuko.flows`, `zuko.mixtures` | `MAF`, `NSF`, `RealNVP`, `NICE`, `NAF`, `CNF`, … and `GMM` |
-| `zuko.transforms`             | the transformations the flows are built from               |
-| `zuko.distributions`          | `DiagNormal`, `BoxUniform`, …                              |
-| `zuko.nn`                     | `MLP`, `MaskedMLP`, …                                      |
-
-### shaggy — training tools and autoencoders (mine)
-
-[GitHub](https://github.com/VikVador/shaggy) · [documentation](https://shaggy.readthedocs.io) (tutorials) · tutorial data on the
-[`master-demo`](https://github.com/VikVador/shaggy/tree/master-demo) branch
-
-| Module                | Contents                                                                                           |
-| --------------------- | -------------------------------------------------------------------------------------------------- |
-| `shaggy.models`       | `ConvEncoder`, `ConvDecoder`, `ConvAE`, `create_ConvAE`, `AutoEncoder`, `FusionAE`                 |
-|                       | `ConvAE`: residual blocks per level, N spatial dimensions, stride per level and per axis,          |
-|                       | patching, boundaries per axis (`periodic=(-1,)`, `reflect=(...)`), optional modulation             |
-| `shaggy.layers`       | `BoundaryConv`, `FRMSNorm`, `ResidualBlock`, `ModulatedSequential`                                 |
-| `shaggy.loss`         | `loss_reconstruction`, `loss_geometry_embedding` (GME), `loss_continuous_ranked_probability_score` |
-| `shaggy.optimizers`   | `SOAP`, `Muon`, `HybridMA`, `safe_gradient_step`                                                   |
-| `shaggy.schedulers`   | `warmup_cosine_decay`                                                                              |
-| `shaggy.distributed`  | `setup_distributed`, `reduce_mean` (trainings under torchrun)                                      |
-| `shaggy.dataloader`   | `infinite_dataloader`, `get_fixed_indices` (fixed validation samples)                              |
-| `shaggy.training`     | `has_stagnated` (stopping), `save_state`, `load_state` (resume a training)                         |
-| `shaggy.tools`        | `save`, `load`, `load_config`, `load_weights` (weights and configuration in one directory)         |
-
-### albus — metrics (mine)
-
-[GitHub](https://github.com/VikVador/albus) · [documentation](https://albus-metrics.readthedocs.io) (one tutorial per module)
-
-| Module               | Contents                                                                                   |
-| -------------------- | ------------------------------------------------------------------------------------------ |
-| `albus.metrics`      | all with masks: `mean_square_error`, `root_mean_square_error`, `skill`,                    |
-|                      | `standard_deviation`, `spread`, `spread_skill_ratio`,                                      |
-|                      | `continuous_ranked_probability_score`, `power_spectrum`                                    |
-| `albus.ocean.oxygen` | `hypoxia` (detection scores, ROC and PR curves)                                            |
-| `albus.visuals`      | per field: `peak_signal_to_noise_ratio`, `structural_similarity`; between two sets:        |
-|                      | `frechet_inception_distance`, `kernel_inception_distance`, and on any features (latents):  |
-|                      | `frechet_distance`, `kernel_distance`                                                      |
-| `albus.tools`        | `apply_mask`, `axes`, `drop` (named axes such as `"T C Y X"`, `names=`), `nanmean`         |
+- The repositories are `VikVador/Shaggy` and `VikVador/Albus` (capitals); the Python packages stay lowercase:
+  `import shaggy`, `import albus`.
 
 ---
 
@@ -188,7 +174,8 @@ Normalizing flows as `nn.Module`s on top of `torch.distributions`: `flow(context
 ## 5. MONITORING RUNS (WANDB)
 
 You can read my runs on [wandb.ai/sail-nyu](https://wandb.ai/sail-nyu) with the Python API of `wandb`, from the project
-environment: the key is already set up on the cluster (`wandb login`), so no setup is needed.
+environment: the key is already set up on the cluster (`wandb login`), so no setup is needed. Which clusters exactly
+is not written down: **[verify]** (§ 6).
 
 | Project                      | Runs                                                        |
 | ---------------------------- | ----------------------------------------------------------- |
@@ -211,8 +198,18 @@ runs = api.runs("sail-nyu/heimdall-training-encoders")
 history = runs[0].history(keys=["Training/Loss", "Validation/Loss"])  # pandas DataFrame
 ```
 
-**Rules**
+### Rules
 
 - **Read only**: never delete, edit, tag or move a run.
-- Never read nor print the key (`~/.netrc`): the library finds it by itself.
-- Use it to check a training (divergence, overfitting, a run that stopped) and to compare runs with numbers.
+- **Never read nor print the key** (`~/.netrc`): the library finds it by itself.
+- **If `wandb.Api()` fails or no key is set**: stop and tell me, with the error. Never ask me for the key, print it
+  or set it (`wandb login`, `WANDB_API_KEY`): I set it up myself.
+- **Use it** to check a training (divergence, overfitting, a run that stopped) and to compare runs with numbers.
+
+---
+
+## 6. OPEN QUESTIONS
+
+| #   | Question                                                     | Status                                                          |
+| --- | ------------------------------------------------------------ | --------------------------------------------------------------- |
+| 1   | On which clusters is the WandB key set (Torch, Lucia, both)? | **open**, ask me, or check that `wandb.Api()` works on each one |

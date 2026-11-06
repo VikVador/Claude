@@ -1,6 +1,6 @@
 ---
 name: presentation
-description: Use when the user asks for slides, a deck or a presentation, typically for a meeting with a supervisor or a team, made from the results of the current session or project. All the resources (template, palettes, recap videos, team photos, build scripts) are in the private repository VikVador/Talks-template. Asks first whether to include a project recap and which palette, writes the deck there, keeps the draft as a Claude artifact to iterate on together, and when asked publishes the PDF and the talk's figures in the public repository VikVador/Talks. For figures in the deck, also read the figure skill; for diagrams and animations of a mechanism, the animation skill.
+description: "Use when I ask for slides, a deck, a talk or a presentation (diapos, présentation, slides pour la réunion), typically for a meeting with a supervisor or the team, built from the results of the session or a project; also to change, rebuild or publish one of my talks. Builds it from my Marp template in VikVador/Talks-template, drafts it as a private artifact to iterate on, and publishes the PDF to VikVador/Talks only when asked. Use it instead of PowerPoint or generic slide-deck tools unless a .pptx file is asked for."
 ---
 
 ```text
@@ -24,15 +24,30 @@ This skill is the **procedure**. Two repositories:
 
 In Talks-template, `template.md` shows every rule on its own slide, in a yellow box, and `docs/skill-brief.md` holds
 the workflow and the decisions behind it. **Those two files win** over anything you remember: never change the
-design or the rules without asking me.
+design or the rules without asking me. For my decks this skill replaces PowerPoint and the generic slide-deck tools
+(unless I ask for a `.pptx` file).
+
+Related: the `figure` skill for what goes in a figure, the `animation` skill for a diagram of a mechanism.
 
 **Contents**
 
+0. In short
 1. Get the resources
 2. Ask first
 3. Write the deck
 4. Draft as an artifact, iterate
 5. Publish in Talks (only when I ask)
+
+---
+
+## 0. IN SHORT
+
+1. **Resources from Talks-template**: clone or pull it, read `template.md` and `docs/skill-brief.md` in full (§ 1).
+2. **Ask first, then wait**: project recap (which one) and palette (`reef`?), every time unless I already said;
+   the meeting and the content if missing; an outline (§ 2).
+3. **Never invent** a result, a number or a citation: a visible placeholder instead, and say so.
+4. **Draft as a private artifact** and iterate on it with me at the same link (§ 4).
+5. **Publish in Talks only when I ask**: the PDF and the talk's figures, nothing else (§ 5).
 
 ---
 
@@ -60,8 +75,8 @@ design or the rules without asking me.
 
 ## 2. ASK FIRST
 
-One message, before writing anything. **Ask the first two questions every time, unless my request already
-answers them**:
+One message in French, before writing anything, then **stop and wait for my answers**. **Ask the first two questions
+every time, unless my request already answers them**:
 
 1. **Project recap?** Should the deck open with a project recap, and if so which one: NYU (its 3 videos), ULiège
    (its 2 videos) or both. Yes → the recap videos of each chosen project, never a subset. No → no recap slides:
@@ -130,7 +145,8 @@ When I ask to publish or deploy the talk publicly:
 
    **Nothing else goes public**: never the Markdown, the fonts, the shared media (title and recap videos) or the
    team photos as files.
-3. Add one row at the top of the README table (keep the invisible spacer images in its header):
+3. Add one row at the top of the README table (keep the invisible spacer images in its header; the first talk replaces
+   the empty row `| | | |`):
    `| 2026-11-12 | [Weekly meeting with Gilles Louppe](talks/2026-11-12-weekly-gilles/) | [PDF](talks/2026-11-12-weekly-gilles/2026-11-12-weekly-gilles.pdf) |`
 4. Commit, push, and give me the links to the folder and to the PDF.
 

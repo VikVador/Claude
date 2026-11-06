@@ -1,6 +1,6 @@
 ---
 name: report
-description: Use before writing any report, analysis page or study summary meant to be read by the user or shared (published as an HTML artifact), in any project. Gives the fixed structure of a report, its look, the writing rules, and a builder that turns the content into one self-contained bilingual page. For each figure of the report, also read the figure skill; for each diagram or animation of a mechanism, the animation skill.
+description: "Use before writing an analysis report or a study summary to publish as an HTML artifact (results of an analysis, a diagnostic, a comparison of runs, a summary of past work), in any project. Gives the fixed structure, the look, the writing rules (French first, English last, all maths in LaTeX) and build.py, which turns the body into one bilingual page. Use it instead of a generic document or page. Not for a chat answer, a status update or a subagent report."
 ---
 
 ```text
@@ -16,26 +16,43 @@ description: Use before writing any report, analysis page or study summary meant
 # REPORT
 
 Every report has the same structure and the same look, in every project, so that it reads quickly, on a computer as
-on a phone. **Every figure follows the `figure` skill**, and **every diagram or animation of a mechanism the
-`animation` skill**: read them before drawing the first one.
+on a phone. For my reports, this skill replaces the generic document and artifact design guidance: publish the page
+`build.py` makes as it is (no dark mode, no restyling).
 
-| File                 | What                                                                                         |
-| -------------------- | -------------------------------------------------------------------------------------------- |
-| `body-template.html` | skeleton of a report, bilingual, with every element below: copy it and fill                  |
-| `style.css`          | the look of every report: never restyle a report by hand                                     |
-| `build.py`           | `python build.py body.html report.html`: style, title, fonts, MathJax, FR / EN toggle, images and scripts inlined |
+| File                 | Use                                                                         | When                |
+| -------------------- | --------------------------------------------------------------------------- | ------------------- |
+| `body-template.html` | **Copy** next to the analysis and fill: every element below, bilingual      | start of a report   |
+| `style.css`          | the look of every report, inlined by `build.py`: never restyle by hand      | never edited        |
+| `build.py`           | **Run** `python <skill folder>/build.py body.html report.html`              | § 5                 |
+
+Related: the `figure` skill for every figure, the `animation` skill for every diagram of a mechanism: read them before
+drawing the first one.
 
 **Contents**
 
+0. In short
 1. Structure
 2. Look
 3. Writing
 4. Figures
-5. Work order: build and publish
+5. Work order
 
 ---
 
-## 1. STRUCTURE (ALWAYS THIS ORDER)
+## 0. IN SHORT
+
+1. **Always the same order**: header, Résumé, one section per question, Conclusion and Pour aller plus loin,
+   Sources, Versions (§ 1).
+2. **Every section ends with a figure and its caption**; remarks sit beside what they concern, never at the end.
+3. **French first, English last**: write the whole report in French, translate it only when the French is final (§ 5).
+4. **All mathematics in LaTeX**, never Unicode maths; numbers rather than adjectives (§ 3).
+5. **Never invent a reference**: cite only sources that were found and read.
+6. **Build, look, publish**: `build.py`, check at phone and computer width, publish as an artifact, give me the link
+   (§ 5).
+
+---
+
+## 1. STRUCTURE
 
 | Part                             | Element                                 | Content                                           |
 | -------------------------------- | --------------------------------------- | ------------------------------------------------- |
@@ -83,7 +100,7 @@ computer it sits in the right margin at that level, in thin dark red; on a phone
 - **Conclusion** (orange, `box conclusion`): the conclusion of each section in one sentence, numbered, each opening
   with the name of the section in semibold. The violet summary covers the whole report; the orange conclusion
   gathers what each section found. The orange box is always the conclusion.
-- **Pour aller plus loin** (teal, `box next`): my notes and remarks for the reader, opening with "À vérifier." (the
+- **Pour aller plus loin** (teal, `box next`): your notes and remarks for the reader, opening with "À vérifier." (the
   remarks of the margin may come back here), then "Ensuite." with what comes next, when it was already discussed.
 - Side by side on a computer, stacked on a phone.
 
@@ -102,12 +119,14 @@ Whenever results rely on literature or external pages, look for sources and cite
 ### Versions
 
 Last line of the page, small and grey: `Versions : albus 32ebf6b, shaggy 6095950`, given by
-`python check.py --versions` of the `up-to-date` skill in the environment the results were made with. Two
+`python <up-to-date skill folder>/check.py --versions` in the environment the results were made with. Two
 environments (e.g. a run on another cluster) → one line each, saying which. Not needed when no code was run.
 
 ---
 
-## 2. LOOK (FIXED BY `style.css`)
+## 2. LOOK
+
+Fixed by `style.css`:
 
 - **One typeface everywhere: Inter**, for titles, text, tables and captions; a monospace only for code and file
   names. **Two weights**: regular and semibold (titles, opening words of a key point, figure letters). No italic,
@@ -139,7 +158,7 @@ environments (e.g. a run on another cluster) → one line each, saying which. No
 - Figures first: the text explains the figure, not the other way around.
 - **Spell out every variable and acronym** whose meaning is known, at least at its first use, in the text and in
   the figures: "la température de surface de la mer (SST)", so that a reader from outside the project understands.
-- Say what was measured and what was estimated; give my own conclusions, not only the results.
+- Say what was measured and what was estimated; give your own conclusions, not only the results.
 - Small tables only for exact numbers (4 to 5 columns, short cells, inside `<div class="table-wrap">`); never a
   table where a figure works. One question, one figure: an exploratory sweep stays out of the report.
 
@@ -160,14 +179,17 @@ environments (e.g. a run on another cluster) → one line each, saying which. No
 
 ---
 
-## 5. WORK ORDER: BUILD AND PUBLISH
+## 5. WORK ORDER
 
-1. Write the analysis script and the figures in the analysis folder of the project, never in the repository.
+1. Write the analysis script and the figures in the analysis folder of the project, never in the repository (named in
+   the `CLAUDE.md` of the project; none named → ask me once where, then reuse it).
 2. Copy `body-template.html` next to them and write the whole report **in French only**: gather the data, run the
    analysis, draw the figures (in English), write the text. Leave the `lang="en"` elements empty for now.
-3. When the French draft is final, the one I would hand over, **translate it into English as the last step**: fill
+3. When the French draft is final, the one you would hand over, **translate it into English as the last step**: fill
    every `lang="en"` element next to its French one; nothing else changes.
 4. `python build.py body.html report.html`.
 5. When a browser is available, look at the page at phone width (about 400 px) and at computer width (about
    1440 px), in both languages: no horizontal scroll, remarks in place, boxes side by side or stacked.
-6. Publish it as an artifact; keep the same file path to update the same artifact, and give the link.
+6. Publish it as an artifact (at most 16 MB: `build.py` prints the size; above, lower the dpi of the figures or split
+   the report); keep the same file path to update the same artifact.
+7. Reply in French with the link and the bullets of the Résumé.
