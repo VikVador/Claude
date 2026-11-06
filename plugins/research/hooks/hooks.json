@@ -3,7 +3,7 @@
     "UserPromptSubmit": [
       {
         "hooks": [
-          { "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/auto-recap.py\"", "timeout": 5 },
+          { "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/auto-message-format.py\"", "timeout": 5 },
           { "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/auto-update.py\"", "timeout": 5 }
         ]
       }

@@ -10,36 +10,34 @@ Everything lives outside any repository and serves every project of the machine.
 | From `<skill folder>/scripts/` | To                            | Role                                                                     |
 | ------------------------------ | ----------------------------- | ------------------------------------------------------------------------ |
 | `claude-remote`                | `~/bin/claude-remote`         | the script (in `PATH`); sets `CLAUDE_REMOTE=1` in the tmux session       |
-| `phone-prompt.sh`              | `~/.claude/hooks/`            | hook on every prompt: 2 h check, reminder when the mode is on            |
-| `phone-start.sh`               | `~/.claude/hooks/`            | hook at startup: the first prompt of a new session always asks           |
-| `phone-mode.sh`                | `~/.claude/hooks/`            | turns the mode on / off (state file `~/.claude/phone/mode`)              |
-| `phone.md`                     | `~/.claude/commands/phone.md` | the `/phone` command                                                     |
-| `settings-hooks.json`          | merged into `~/.claude/settings.json` | declares the two hooks (keep what is there)                      |
 
-The hooks act only where `CLAUDE_REMOTE=1`, so they change nothing in the other sessions.
+The answer format of every session (also the remote one) comes from the plugin itself: the `auto-message-format`
+skill and its hook, nothing to install.
 
 ## Steps
 
-1. Check the requirements of the skill (§ 6): `claude --version` (≥ 2.1, standalone), `command -v tmux`.
+1. Check the requirements of the skill (§ 5): `claude --version` (≥ 2.1, standalone), `command -v tmux`.
 2. Copy the scripts (replace `<skill folder>` with the real path):
 
    ```bash
-   mkdir -p ~/bin ~/.claude/hooks ~/.claude/commands
-   cp <skill folder>/scripts/claude-remote ~/bin/ && cp <skill folder>/scripts/phone-*.sh ~/.claude/hooks/
-   cp <skill folder>/scripts/phone.md ~/.claude/commands/ && chmod +x ~/bin/claude-remote ~/.claude/hooks/phone-*.sh
+   mkdir -p ~/bin
+   cp <skill folder>/scripts/claude-remote ~/bin/ && chmod +x ~/bin/claude-remote
    ```
 
 3. Check that `~/bin` is in `PATH` (`command -v claude-remote`). If not, **ask me** before adding
    `export PATH="$HOME/bin:$PATH"` to `~/.bashrc`: it is persistent configuration.
-4. **Merge the hooks, after asking me** (`~/.claude/settings.json` is persistent configuration of every session):
-   1. read `~/.claude/settings.json` (it may not exist) and `<skill folder>/scripts/settings-hooks.json`;
-   2. add the `SessionStart` entry (matcher `startup`, `~/.claude/hooks/phone-start.sh`) and the `UserPromptSubmit`
-      entry (`~/.claude/hooks/phone-prompt.sh`) to the lists already there, unless they are already in it; change
-      nothing else;
-   3. show me the resulting `hooks` block, write it only after my yes, then check that the file parses:
-      `python3 -m json.tool ~/.claude/settings.json > /dev/null`.
-5. Test: `claude-remote status` from a project folder says "not running"; then I start it in my own terminal
+4. Test: `claude-remote status` from a project folder says "not running"; then I start it in my own terminal
    (§ 1 of the skill).
+
+## Remove the old phone mode
+
+The phone mode (`/phone`, "Es-tu sur ton téléphone ?") was removed on 2026-11-06: the format of `auto-message-format`
+now applies to every answer. On a machine where it was installed, **after asking me** (persistent configuration):
+
+1. remove the files: `rm -f ~/.claude/hooks/phone-*.sh ~/.claude/commands/phone.md && rm -rf ~/.claude/phone`;
+2. in `~/.claude/settings.json`, remove the `SessionStart` and `UserPromptSubmit` entries whose command is
+   `~/.claude/hooks/phone-start.sh` or `~/.claude/hooks/phone-prompt.sh` (and a list left empty), change nothing
+   else, show me the result, write it after my yes, then check: `python3 -m json.tool ~/.claude/settings.json > /dev/null`.
 
 ## After a change of a script
 

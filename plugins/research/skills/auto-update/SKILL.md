@@ -125,22 +125,23 @@ state (`open`, `merged`, `closed`), `NEW` when updated since the last check, lin
 
 ## 4. WHAT TO TELL THE USER
 
-Before answering my message, a very short block, in my language, in the compact style of the `cluster-remote` skill (after
+Before answering my message, a block in my language, in the long format of the `auto-message-format` skill (after
 the recap of a dictated message, if any):
 
-- a title in bold, e.g. **Quoi de neuf depuis le 1er novembre**;
-- `---`, then 1 to 2 plain lines: the libraries (updated, or why not) and the main news;
-- `---`, then one bullet per thing worth knowing: a library updated (from which commit to which, docs only or code),
-  a pull request merged or opened (number, one sentence), and what it changes for the current project, if anything.
-- Then, for each change of the other project that could help here, **one question**: clear, simple, concise, saying
-  what changed there and why it would help here, e.g.
+- title and summary: e.g. **Quoi de neuf depuis le 1er novembre :**, then 1 to 2 lines: the libraries (updated, or
+  why not) and the main news; then `**État :**`;
+- one numbered point per thing worth knowing: a library updated (from which commit to which, docs only or code), a
+  pull request merged or opened (number, one sentence), and what it changes for the current project, if anything;
+- for each change of the other project that could help here, **one question** naming its point: clear, simple,
+  concise, saying what changed there and why it would help here, e.g.
 
-  > Neptune #38 retire la mise à l'échelle σ/τ des distances de la GME pour l'océan : l'encodeur océan
-  > n'apprenait plus avec. Heimdall l'a encore pour les observations ; on teste sans aussi ?
+  > ❓ **(2)** Neptune #38 retire la mise à l'échelle σ/τ des distances de la GME pour l'océan : l'encodeur océan
+  > n'apprenait plus avec. Heimdall l'a encore pour les observations ; on teste sans aussi ? (oui / non)
 
   At most 3 questions, the most useful first; none when nothing applies.
 
-Nothing changed → a single line ("Tout est à jour : albus, shaggy, aucune nouvelle PR."). Then answer the message.
+Nothing changed → the short format ("**Quoi de neuf :** tout est à jour : albus, shaggy, aucune nouvelle PR.").
+Then answer the message.
 Never present as done an update that was not run and checked.
 
 ---

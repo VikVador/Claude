@@ -41,7 +41,7 @@ Related: the `auto-update` skill (pull requests of the projects); the cluster sk
 3. **Fix it on the PR's branch**, one commit, push, watch again; at most 3 rounds, then stop and tell me (§ 3).
 4. **Never** weaken a test, skip it, add an ignore rule, change the workflow or the pre-commit config, force-push,
    merge, or touch `main` without asking me first.
-5. **Tell me** in a few lines, in French: passed, or what failed, why, and the fix pushed (§ 4).
+5. **Tell me** in French, short or long format: passed, or what failed, why, and the fix pushed (§ 4).
 6. **Already watched by the app** (Claude desktop app with Auto-fix or a CI monitor on the PR): let it do the work,
    do not start a second watcher.
 
@@ -114,9 +114,10 @@ Related: the `auto-update` skill (pull requests of the projects); the cluster sk
 
 ## 4. REPORT
 
-A few lines, in French, when the watch ends:
+In French, when the watch ends, in the format of the `auto-message-format` skill:
 
-- **Passed**: "CI verte sur #<n>." and nothing more.
-- **Fixed**: what failed (job, test), the cause in one sentence, the fix and its commit, "CI relancée" then the
-  result.
-- **Not fixed**: what failed, the cause if known, what was tried, and the one decision I need to take.
+- **Passed**: the short format, "**CI de la PR #<n> :** tous les checks sont verts." and nothing more.
+- **Fixed**: the long format: what failed (job, test), the cause in one sentence, the fix and its commit, "CI
+  relancée" then the result.
+- **Not fixed**: the long format: what failed, the cause if known, what was tried, and the one decision I need to
+  take, as the question.
