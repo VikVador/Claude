@@ -1,6 +1,6 @@
 ---
 name: presentation
-description: Use when the user asks for slides, a deck or a presentation, typically for a meeting with a supervisor or a team, made from the results of the current session or project. Builds a Marp Markdown deck in the user's private repository VikVador/Talks-template, following its template and its brief, builds it to HTML and PDF, and once approved publishes the PDF in the public repository VikVador/Talks. For figures in the deck, also read the figure skill; for diagrams and animations of a mechanism, the animation skill.
+description: Use when the user asks for slides, a deck or a presentation, typically for a meeting with a supervisor or a team, made from the results of the current session or project. All the resources (template, palettes, recap videos, team photos, build scripts) are in the private repository VikVador/Talks-template. Asks first whether to include a project recap and which palette, writes the deck there, keeps the draft as a Claude artifact to iterate on together, and when asked publishes the PDF and the talk's figures in the public repository VikVador/Talks. For figures in the deck, also read the figure skill; for diagrams and animations of a mechanism, the animation skill.
 ---
 
 ```text
@@ -15,69 +15,79 @@ description: Use when the user asks for slides, a deck or a presentation, typica
 
 # PRESENTATION
 
-This skill is the **procedure**. The details live in the repository
-[VikVador/Talks-template](https://github.com/VikVador/Talks-template) (private: it holds a licensed font): `template.md` shows every rule on its own slide,
-in a yellow box; `docs/skill-brief.md` holds the workflow and the decisions behind it. **Those two files win** over
-anything you remember: never change the design or the rules without asking me. Only the PDFs go public, in
-[VikVador/Talks](https://github.com/VikVador/Talks).
+This skill is the **procedure**. Two repositories:
+
+| Repository | Visibility | Holds |
+| ---------- | ---------- | ----- |
+| [VikVador/Talks-template](https://github.com/VikVador/Talks-template) | private (licensed font) | **every resource to make a deck**: the template, the palettes, the recap videos, the team photos, the build scripts, and the sources of every talk |
+| [VikVador/Talks](https://github.com/VikVador/Talks) | public | the published talks: one folder per talk with its PDF and its figures, listed in the README |
+
+In Talks-template, `template.md` shows every rule on its own slide, in a yellow box, and `docs/skill-brief.md` holds
+the workflow and the decisions behind it. **Those two files win** over anything you remember: never change the
+design or the rules without asking me.
 
 **Contents**
 
-1. Get the repository
+1. Get the resources
 2. Ask first
 3. Write the deck
-4. Build and check
-5. Finish and publish
+4. Draft as an artifact, iterate
+5. Publish in Talks (only when I ask)
 
 ---
 
-## 1. GET THE REPOSITORY
+## 1. GET THE RESOURCES
 
-1. Find a clone: on my Mac it is `~/Desktop/victor-slides`; elsewhere, look for a folder whose remote is
-   `VikVador/Talks-template`. None → `gh repo clone VikVador/Talks-template ~/talks-template`.
+1. Find a clone of Talks-template: on my Mac it is `~/Desktop/victor-slides`; elsewhere, look for a folder whose
+   remote is `VikVador/Talks-template`. None → `gh repo clone VikVador/Talks-template ~/talks-template`.
 2. `git pull` on `main`, then `npm install` if `node_modules/` is missing.
 3. **Read `template.md` and `docs/skill-brief.md` in full** before writing a single slide, every time.
 
-| Path                        | What                                                                                   |
-| --------------------------- | -------------------------------------------------------------------------------------- |
-| `template.md`               | The template: each slide shows one rule in its yellow box.                             |
-| `palettes.md`               | The four palettes side by side: `reef` (default), `slate`, `liege`, `violet`.          |
-| `docs/skill-brief.md`       | The workflow and the decisions behind this skill.                                      |
-| `theme/`                    | `base.css`, one CSS per palette, Arial Nova (licensed: never copy it out), `video-controls.js`. |
-| `media/title/`, `media/recap/` | Title-slide video; recap videos and posters, NYU (3) and ULiège (2).                |
-| `animations/`               | HTML sources of the recap videos and their 4K render script (see its README).          |
-| `team/`                     | `people.yaml` (name, university, team, photo) and the photos.                          |
-| `logos/`                    | University logos, not used in decks.                                                   |
-| `talks/YYYY-MM-DD-meeting/` | One folder per talk: `talk.md` + `figures/`.                                           |
-| `scripts/build.sh`          | Build a deck to HTML (videos get play/pause and a seek bar) or PDF (`--pdf`).          |
+| Path                           | What                                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| `template.md`                  | The template: each slide shows one rule in its yellow box.                            |
+| `palettes.md`                  | The four palettes side by side: `reef` (default), `slate`, `liege`, `violet`.         |
+| `docs/skill-brief.md`          | The workflow and the decisions behind this skill.                                     |
+| `theme/`                       | `base.css`, one CSS per palette, Arial Nova (licensed: never copy it to Talks), `video-controls.js`. |
+| `media/title/`, `media/recap/` | Title-slide video; project recap videos and posters, NYU (3) and ULiège (2).          |
+| `animations/`                  | HTML sources of the recap videos and their 4K render script (see its README).         |
+| `team/`                        | `people.yaml` (name, university, team, photo) and the photos.                         |
+| `talks/YYYY-MM-DD-meeting/`    | One folder per talk: `talk.md` + `figures/` (its figures and animations).             |
+| `scripts/build.sh`             | Build a deck to HTML (videos get play/pause and a seek bar) or PDF (`--pdf`).         |
+| `scripts/artifact.sh`          | Stage a deck as a self-contained folder to publish as an artifact.                    |
 
 ---
 
 ## 2. ASK FIRST
 
-One message, before writing anything, with the questions still open and a proposed outline:
+One message, before writing anything. **Ask the first two questions every time, unless my request already
+answers them**:
 
-| Ask                                  | Rule                                                                                    |
-| ------------------------------------ | --------------------------------------------------------------------------------------- |
-| Which project recaps                 | **Always ask**: NYU (its 3 videos), ULiège (its 2 videos), both or none. Never a subset. |
-| Meeting name and date                | Gives the folder `talks/YYYY-MM-DD-meeting/` (e.g. `2026-11-12-weekly-gilles`).          |
-| Palette                              | Do not ask. `theme: reef`, unless I name `slate`, `liege` or `violet`.                   |
-| Content                              | What to show, if not given: results, problems, choices to make together.                |
-| Faces of colleagues                  | Never add any unless I ask, and then only the people I name.                            |
+1. **Project recap?** Should the deck open with a project recap, and if so which one: NYU (its 3 videos), ULiège
+   (its 2 videos) or both. Yes → the recap videos of each chosen project, never a subset. No → no recap slides:
+   each project starts directly with `## Progress`, then the results.
+2. **Palette?** "Default palette, `reef`?" Yes → `theme: reef`. No → ask which one among `slate`, `liege` and
+   `violet` (offer to show `palettes.md`, built to HTML).
+3. **Meeting name and date**, if not given: they name the folder `talks/YYYY-MM-DD-meeting/`
+   (e.g. `2026-11-12-weekly-gilles`).
+4. **Content**, if not given: what to show, results, problems, choices to make together.
 
-**The outline**: from the results of the session (figures made, numbers, problems met, open choices), one line per
-slide, grouped by project, each result slide with its box (`key` result, `alert` problem, `question` choice).
-**Never invent a result, a number or a citation**: what I did not give becomes a visible placeholder, and you say so.
+Never add colleagues' faces unless I ask, and then only the people I name.
+
+In the same message, **propose the outline**: from the results of the session (figures made, numbers, problems
+met, open choices), one line per slide, grouped by project, each result slide with its box (`key` result, `alert`
+problem, `question` choice). **Never invent a result, a number or a citation**: what I did not give becomes a visible
+placeholder, and you say so.
 
 ---
 
 ## 3. WRITE THE DECK
 
-- Copy `template.md` into `talks/YYYY-MM-DD-meeting/talk.md`, keep its front matter (change `theme` and `title`)
+- Copy `template.md` into `talks/YYYY-MM-DD-meeting/talk.md`, keep its front matter (set `theme` and `title`)
   and its **title slide exactly**, then delete every other slide you do not use.
 - **Remove every yellow `rule` box and every `guides` div**: they exist only in the template.
-- Paths from a talk: shared assets are `../../media/…` and `../../team/…`; the deck's own figures go in
-  `talks/YYYY-MM-DD-meeting/figures/` and are linked as `figures/…`.
+- Paths from a talk: shared assets are `../../media/…` and `../../team/…`; the talk's own figures and animations go
+  in `talks/YYYY-MM-DD-meeting/figures/` and are linked as `figures/…`.
 - Structure, once per project: recap videos (if asked) → `## Progress` → one slide per result, each with exactly
   one box → `## Summary` (every `key` left, every `alert` and open `question` right) → dark `## What's next`.
   No separate issues slide, no final discussion slide. About 6 to 12 slides per project.
@@ -89,25 +99,37 @@ slide, grouped by project, each result slide with its box (`key` result, `alert`
 
 ---
 
-## 4. BUILD AND CHECK
+## 4. DRAFT AS AN ARTIFACT, ITERATE
 
-1. `bash scripts/build.sh talks/YYYY-MM-DD-meeting/talk.md` (add `--pdf` for a PDF).
-2. Look at it: serve the repository root (`python3 -m http.server 8765`) and open
-   `http://127.0.0.1:8765/talks/YYYY-MM-DD-meeting/talk.html`. A snapshot of the file cannot load relative media.
-   Check that the videos play, the figures and faces load, the maths renders, and no text overflows a slide.
-   An HTML deck only works from inside the repository (relative media paths). For a live preview while
-   editing, I can use *Marp for VS Code* (themes registered in `.vscode/settings.json`).
-3. Show me the deck (a few slides) and fix what I ask.
+1. Build and check: `bash scripts/build.sh talks/YYYY-MM-DD-meeting/talk.md`, then serve the repository root
+   (`python3 -m http.server 8765`) and open `http://127.0.0.1:8765/talks/YYYY-MM-DD-meeting/talk.html`: the videos
+   play, the figures and faces load, the maths renders, no text overflows a slide.
+2. Stage it: `bash scripts/artifact.sh talks/YYYY-MM-DD-meeting/talk.md OUTDIR`, with `OUTDIR` a folder of your
+   scratchpad (or of the working directory), e.g. `<scratchpad>/talk-2026-11-12-weekly-gilles`.
+3. **Publish it as an artifact** (private): `OUTDIR/index.html` as the page, and every other file of `OUTDIR` in
+   `files`, under its path inside `OUTDIR` (`media/…`, `theme/fonts/…`, `figures/…`). Give me the link.
+4. **Iterate with me on that artifact**: after each change, rebuild, stage again into the same `OUTDIR` and publish
+   the same file path, so the link stays the same. The artifact holds the licensed font: it stays private; to show
+   the deck to someone, send the PDF.
+5. When I approve the deck, commit it on `main` of Talks-template (the deck and its `figures/`; built HTML and PDF
+   are ignored; no branch per talk) and push.
 
 ---
 
-## 5. FINISH AND PUBLISH
+## 5. PUBLISH IN TALKS (ONLY WHEN I ASK)
 
-1. Commit on `main` (no branch per talk) with the deck and its figures; built HTML and PDF are ignored.
-   Push when I approve the deck.
-2. **Publish, only when I approve**: `bash scripts/build.sh talks/YYYY-MM-DD-meeting/talk.md --pdf`, check that the
-   PDF uses Arial Nova (`pdffonts`), then in a clone of `VikVador/Talks` (on my Mac `~/Desktop/talks`)
-   copy it to `talks/YYYY-MM-DD-meeting.pdf`, add one row to its README table, newest first
-   (`| 2026-11-12 | Weekly meeting with Gilles Louppe | [PDF](talks/2026-11-12-weekly-gilles.pdf) |`),
-   commit and push. **Only the PDF goes public**: never the Markdown, the fonts, the media or the figures' sources.
-3. If the theme or the template had to change, ask me first, then tag the repository `theme-vN`.
+When I ask to publish or deploy the talk publicly:
+
+1. `bash scripts/build.sh talks/YYYY-MM-DD-meeting/talk.md --pdf` and check that the PDF uses Arial Nova
+   (`pdffonts`).
+2. In a clone of `VikVador/Talks` (on my Mac `~/Desktop/talks`), create the folder `talks/YYYY-MM-DD-meeting/` with
+   - the PDF, named `YYYY-MM-DD-meeting.pdf`;
+   - `figures/`: the figures and animations made for this talk (a copy of its `figures/` in Talks-template).
+
+   **Nothing else goes public**: never the Markdown, the fonts, the shared media (title and recap videos) or the
+   team photos as files.
+3. Add one row at the top of the README table (keep the invisible spacer images in its header):
+   `| 2026-11-12 | [Weekly meeting with Gilles Louppe](talks/2026-11-12-weekly-gilles/) | [PDF](talks/2026-11-12-weekly-gilles/2026-11-12-weekly-gilles.pdf) |`
+4. Commit, push, and give me the links to the folder and to the PDF.
+
+If the theme or the template had to change, ask me first, then tag Talks-template `theme-vN`.
