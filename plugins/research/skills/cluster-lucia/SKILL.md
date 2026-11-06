@@ -1,5 +1,5 @@
 ---
-name: lucia
+name: cluster-lucia
 description: "Use as soon as you work on Lucia, the CÉCI Tier-1 supercomputer of Cenaero (Wallonia) where Neptune runs (hostname frontal01 or frontal02, compute nodes cna, cni, cns), before any Slurm or dawgz job, choice of account, partition or GPU, BUh credit check, data transfer, storage or scratch operation, or install. Gives the rules so that jobs run and nothing gets lost. Not for Torch (NYU), which has its own skill."
 ---
 
@@ -13,7 +13,7 @@ description: "Use as soon as you work on Lucia, the CÉCI Tier-1 supercomputer o
      └─┘   └─┘
 ```
 
-# LUCIA HPC
+# CLUSTER LUCIA (CENAERO)
 
 How Lucia works, so that Neptune's jobs run and nothing gets lost. From the [Lucia docs](https://doc.lucia.cenaero.be),
 the [CÉCI](https://www.ceci-hpc.be) pages (marked (CÉCI)) and Neptune. [verify] = missing or ambiguous.
@@ -36,7 +36,7 @@ the [CÉCI](https://www.ceci-hpc.be) pages (marked (CÉCI)) and Neptune. [verify
 | `references/modules.md`        | **Read** | only for modules, CUDA, MPI       |
 | `references/remote-session.md` | **Read** | only for a remote session (§ 10)  |
 
-Related: the `torch` skill (same section numbers), the `remote` skill for a remote Claude session.
+Related: the `cluster-torch` skill (same section numbers), the `claude-remote` skill for a remote Claude session.
 
 **Contents**
 

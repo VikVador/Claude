@@ -27,7 +27,7 @@ any figure, for a report, a slide or on its own, and before fixing an existing o
 | `examples.md`   | **Read**, then open the matching images of `examples/` with the Read tool                | when choosing or checking a plot type |
 
 Related: the `report` skill for the structure of a report, the `presentation` skill for where a figure goes on a
-slide, the `animation` skill for diagrams and animations that explain a mechanism.
+slide, the `diagram` skill for diagrams and animations that explain a mechanism.
 
 **Contents**
 

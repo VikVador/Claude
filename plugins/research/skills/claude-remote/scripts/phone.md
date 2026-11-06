@@ -5,5 +5,5 @@ allowed-tools: Bash(~/.claude/hooks/phone-mode.sh:*)
 ---
 
 Run `~/.claude/hooks/phone-mode.sh $ARGUMENTS` with Bash, then confirm the new state in one short line in French.
-When the mode is on, answer in the compact style of the `remote` skill (section 5) from now on; when it is off, answer
+When the mode is on, answer in the compact style of the `claude-remote` skill (section 5) from now on; when it is off, answer
 normally. The mode only acts in the session started by `claude-remote`.

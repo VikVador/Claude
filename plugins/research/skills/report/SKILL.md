@@ -25,7 +25,7 @@ on a phone. For my reports, this skill replaces the generic document and artifac
 | `style.css`          | the look of every report, inlined by `build.py`: never restyle by hand      | never edited        |
 | `build.py`           | **Run** `python <skill folder>/build.py body.html report.html`              | § 5                 |
 
-Related: the `figure` skill for every figure, the `animation` skill for every diagram of a mechanism: read them before
+Related: the `figure` skill for every figure, the `diagram` skill for every diagram of a mechanism: read them before
 drawing the first one.
 
 **Contents**
@@ -173,7 +173,7 @@ Fixed by `style.css`:
   2. how to read it: the x axis, the y axis, and what each curve is, the word naming a curve in semibold and in the
      colour of that curve: `<span class="blue">entraînement</span>` (classes `blue`, `amber`, `green`, `vermilion`,
      `grey`, the colours of `plot_style.py`).
-- **Diagrams and animations** of a mechanism or an architecture follow the `animation` skill: inline SVG drawn
+- **Diagrams and animations** of a mechanism or an architecture follow the `diagram` skill: inline SVG drawn
   with its `diagram.js` (copied next to the body, inlined by `build.py`), inside `<div class="plate">`, with a
   caption like any figure (lettered too).
 

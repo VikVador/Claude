@@ -1,5 +1,5 @@
 ---
-name: torch
+name: cluster-torch
 description: "Use as soon as you work on Torch (not PyTorch), the HPC cluster of New York University (hostname torch-*, or a compute node gh*, gr*, gl*), before any Slurm job, choice of account or GPU, storage or quota operation, data transfer or Apptainer environment. Also for the Open Storage Network (S3-compatible object storage, pod nyu1.osn.mghpcc.org): endpoint, public and private buckets, reading and writing. Not for Lucia."
 ---
 
@@ -13,7 +13,7 @@ description: "Use as soon as you work on Torch (not PyTorch), the HPC cluster of
      └─┘   └─┘
 ```
 
-# NYU TORCH HPC
+# CLUSTER TORCH (NYU)
 
 How Torch works and what not to do there, so that jobs run and nothing gets lost.
 **[verify]** = not in the docs or ambiguous: check before relying on it.
@@ -35,7 +35,7 @@ How Torch works and what not to do there, so that jobs run and nothing gets lost
 | `references/access-and-billing.md` | **Read** | only when asked (SSH, RPS, …)            |
 | `scripts/ddp-job.sbatch`           | **Copy** | a multi-GPU or multi-node training (§ 9) |
 
-Related: the `lucia` skill for the other cluster (same section numbers).
+Related: the `cluster-lucia` skill for the other cluster (same section numbers).
 
 **Contents**: 0. In short · 1. Access · 2. Hardware · 3. Our resources · 4. Slurm · 5. Allocations · 6. Storage ·
 7. Data and transfers · 8. Software environment · 9. Job template · 10. Misc · 11. Open questions

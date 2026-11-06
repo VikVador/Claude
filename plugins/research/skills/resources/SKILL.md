@@ -32,7 +32,7 @@ me, and check the libraries before writing code: what you need may already exist
 | `references/libraries.md` | **Read** | before writing code that a library could cover, or when its API is needed |
 
 Related: the `up-to-date` skill updates `shaggy` and `albus` and asks to update § 3 when their API changes; the
-`torch` and `lucia` skills for the clusters.
+`cluster-torch` and `cluster-lucia` skills for the clusters.
 
 **Contents**
 

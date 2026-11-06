@@ -27,7 +27,7 @@ the workflow and the decisions behind it. **Those two files win** over anything 
 design or the rules without asking me. For my decks this skill replaces PowerPoint and the generic slide-deck tools
 (unless I ask for a `.pptx` file).
 
-Related: the `figure` skill for what goes in a figure, the `animation` skill for a diagram of a mechanism.
+Related: the `figure` skill for what goes in a figure, the `diagram` skill for a diagram of a mechanism.
 
 **Contents**
 
@@ -112,7 +112,7 @@ placeholder, and you say so.
   maths in LaTeX with the notation slides, one centred figure with a caption, credits in one footnote.
   No speaker notes, no logos, English only.
 - **Figures**: what goes *in* a figure follows the `figure` skill; a diagram or an animation of a mechanism, the
-  `animation` skill. Read them before making the first one. The template only says where it goes.
+  `diagram` skill. Read them before making the first one. The template only says where it goes.
 
 ---
 

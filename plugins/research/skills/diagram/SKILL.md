@@ -1,5 +1,5 @@
 ---
-name: animation
+name: diagram
 description: "Use before drawing a diagram or a step-by-step animation that explains how a mechanism, an architecture or a probabilistic concept works (attention, convolutions and receptive fields, graph networks, U-Net, autoencoders and VAEs, normalizing flows, diffusion models, stochastic interpolants, distributions), for a report, a slide or on its own. Gives the style of the figures of Understanding Deep Learning (Prince, 2023), with the book's figures as examples, and diagram.js to draw tensors, modules and arrows and play them step by step. Not for plots of data or results (figure skill)."
 ---
 
@@ -7,13 +7,13 @@ description: "Use before drawing a diagram or a step-by-step animation that expl
      ┌───────┐
      │ ◉   ◉ │       C   L   A   U   D   E
      │   ▿   │
-     └─┬───┬─┘       Animation: show what happens inside a mechanism,
+     └─┬───┬─┘       Diagram: show what happens inside a mechanism, 
      ┌─┴───┴─┐       tensor by tensor, in the style of a textbook.
      │ ▓▓▓▓▓ │
      └─┘   └─┘
 ```
 
-# ANIMATION
+# DIAGRAM
 
 A diagram of a mechanism shows **what happens inside**: which tensors exist, their shapes, which ones are combined and
 how, step by step. Simplify the sizes, never the mechanism. The model to follow is the book of **Simon J. D. Prince,

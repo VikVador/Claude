@@ -1,6 +1,6 @@
 # OSN POD
 
-Open Storage Network, S3-compatible object storage of M²LInES. Part of the `torch` skill (§ 7): read it when working
+Open Storage Network, S3-compatible object storage of M²LInES. Part of the `cluster-torch` skill (§ 7): read it when working
 with the OSN pod.
 
 | Item       | Details                                                                                                                              |

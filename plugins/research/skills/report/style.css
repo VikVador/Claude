@@ -83,7 +83,7 @@ td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space:
 .trio > div { border-top: 2px solid var(--rule); padding-top: 8px; min-width: 0; }
 .trio .label { display: block; font-size: 14px; font-weight: 600; color: var(--ink-2); margin-bottom: 4px; }
 @media (max-width: 640px) { .trio { grid-template-columns: 1fr; } }
-/* Diagrams and animations of the animation skill: never smaller than readable, scrolled sideways on a phone */
+/* Diagrams and animations of the diagram skill: never smaller than readable, scrolled sideways on a phone */
 svg.diagram { display: block; width: 100%; min-width: 600px; height: auto; font-family: var(--font); }
 /* An animation: controls, text of the step and drawing held together in a light frame */
 .plate.anim { border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 8px; padding: 12px; }
