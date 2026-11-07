@@ -31,7 +31,7 @@ subagents:                   # bounds of each search subagent
 
 look:
   logo: logos/papers.svg     # header logo, inline SVG
-  logo_width: 62             # logo in pixels (the height follows the SVG viewBox)
+  logo_width: 124            # logo in pixels (the height follows the SVG viewBox)
   logo_cell: 150             # width of its header cell, as for the university newsletter
   abstract_chars: 480        # characters of the abstract shown on each card, about 5 lines on a computer
   decoration: circuit        # margins (scripts/decorations.py): circuit, network, mesh, streamlines, diffusion,

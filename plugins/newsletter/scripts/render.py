@@ -99,8 +99,10 @@ def settings():
 LEFT, RIGHT, CELLS = settings()  # labels in the order of the config, half per column; one cell per possible paper
 ON, OFF = "#c2603d", "#d9dff1"
 WORDS = {
-    "en": dict(t_issue="Issue", t_new="new papers", t_published="Published"),
-    "fr": dict(t_issue="Numéro", t_new="nouveaux papiers", t_published="Publié le"),
+    "en": dict(t_issue="Issue", t_new="new papers", t_published="Published", t_title="Daily newsletter",
+               t_review="Review of", t_link="Link"),
+    "fr": dict(t_issue="Numéro", t_new="nouveaux papiers", t_published="Publié le", t_title="Newsletter journalière",
+               t_review="Revue du", t_link="Lien"),
 }
 MONTHS = {
     "en": "January February March April May June July August September October November December".split(),
@@ -179,21 +181,21 @@ def papers(src, dst, lang, deco=None):
         return pair
 
     def card_height(p):
-        """A card's row on a computer, to the pixel when its line counts are right (measured on 2026-11-07): 88 px of
+        """A card's row on a computer, to the pixel when its line counts are right (measured on 2026-11-07): 70.5 px of
         fixed parts, a title of 17 px plus 19 px per extra line, an abstract of 17.2 px per line. Line counts are
         estimated low (a title line holds 80 to 90 characters, an abstract line about 100), so a wrong guess leaves a
         small gap in the margin, never a taller card."""
         title = math.ceil(len(p["title"]) / 90)
         abstract = math.ceil(len(excerpt(p["abstract" if lang == "en" else "abstract_fr"], chars)) / 100)
-        return 88 + 17 + 19 * (title - 1) + round(17.2 * abstract)
+        return round(70.5 + 17 + 19 * (title - 1) + 17.2 * abstract)
 
-    head_margins, stats_margins = margins(-1, 84), margins(0, 153)
+    head_margins, stats_margins = margins(-1, 83), margins(0, 153)
     counts = {k: 0 for k in LEFT + RIGHT}
     items = []
     for i, p in enumerate(c["papers"], 1):
         counts[p["label"]] += 1
-        names = p["authors"][:3]
-        items.append({**p, "number": i, "et_al": bool(p.get("et_al")) or len(p["authors"]) > 3,
+        names = p["authors"][:2]  # one line: the first two authors, then et al.
+        items.append({**p, "number": i, "et_al": bool(p.get("et_al")) or len(p["authors"]) > 2,
                       "authors": [{"name": n, "sep": ", " if j < len(names) - 1 else ""} for j, n in enumerate(names)],
                       "published": day(p.get("published", ""), lang, short=True),
                       "abstract": excerpt(p["abstract" if lang == "en" else "abstract_fr"], chars),

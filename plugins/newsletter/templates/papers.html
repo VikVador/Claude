@@ -16,13 +16,16 @@
     .margin { display: none !important; width: 0 !important; }
     .content { padding-left: 8px !important; padding-right: 8px !important; }
     .logo { width: 84px !important; padding: 10px 6px 8px 10px !important; }
-    .logo svg { width: 38px !important; height: 34px !important; }
+    .logo svg { width: 76px !important; height: 29px !important; }
     .t-head { font-size: 11px !important; }
     .t-date { font-size: 8px !important; }
-    .t-label { font-size: 7px !important; }
     .t-title { font-size: 10px !important; line-height: 13px !important; }
-    .t-authors { font-size: 8px !important; }
     .t-meta { font-size: 7px !important; }
+    .stats-box { padding: 8px 8px 4px 10px !important; }
+    .stats-col { width: 49% !important; max-width: none !important; }
+    .stats-cell { padding: 0 6px 4px 0 !important; }
+    .stats-bar { height: 4px !important; border-radius: 1px !important; }
+    .t-label { font-size: 5.5px !important; letter-spacing: .4px !important; margin-bottom: 2px !important; }
     .t-abstract { font-size: 8.5px !important; line-height: 11.5px !important; }
     .t-card { padding: 10px 4px 10px 12px !important; }
     .t-chevron { width: 16px !important; font-size: 18px !important; }
@@ -52,8 +55,8 @@
                     {{{logo}}}
                   </td>
                   <td style="padding:20px 20px 18px 18px; vertical-align:middle; border-left:1px solid #e3e6eb;">
-                    <div class="t-head" style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1a1f2e;">Newsletter</div>
-                    <div class="t-date" style="font-size:13px; color:#6b7390; margin-top:6px;">{{date}}</div>
+                    <div class="t-head" style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1a1f2e;">{{t_title}}</div>
+                    <div class="t-date" style="font-size:13px; color:#6b7390; margin-top:6px;">{{t_review}} {{date}}</div>
                   </td>
                 </tr>
               </table>
@@ -70,29 +73,29 @@
             <div style="background-color:#eaeffc; border-radius:12px; overflow:hidden;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
                 <tr>
-                  <td style="padding:14px 18px 8px 18px; font-size:0;">
+                  <td class="stats-box" style="padding:14px 18px 8px 18px; font-size:0;">
 
-                    <div style="display:inline-block; vertical-align:top; width:100%; max-width:308px;">
+                    <div class="stats-col" style="display:inline-block; vertical-align:top; width:100%; max-width:308px;">
                       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                         {{#themes_left}}
                         <tr>
-                          <td style="padding:0 20px 7px 0;">
+                          <td class="stats-cell" style="padding:0 20px 7px 0;">
                             <p class="t-label" style="margin:0 0 4px 0; font-size:9px; line-height:1.3; letter-spacing:0.8px; text-transform:uppercase; font-weight:bold; color:{{#count}}#4a5169{{/count}}{{^count}}#8f95aa{{/count}};">{{label}}</p>
                             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                              <tr>{{#cells}}<td width="6.66%" style="padding:{{pad}}; font-size:0; line-height:0;"><div style="height:7px; background-color:{{colour}}; border-radius:2px;"></div></td>{{/cells}}</tr>
+                              <tr>{{#cells}}<td width="6.66%" style="padding:{{pad}}; font-size:0; line-height:0;"><div class="stats-bar" style="height:7px; background-color:{{colour}}; border-radius:2px;"></div></td>{{/cells}}</tr>
                             </table>
                           </td>
                         </tr>
                         {{/themes_left}}
                       </table>
-                    </div><div style="display:inline-block; vertical-align:top; width:100%; max-width:288px;">
+                    </div><div class="stats-col" style="display:inline-block; vertical-align:top; width:100%; max-width:288px;">
                       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                         {{#themes_right}}
                         <tr>
-                          <td style="padding:0 0 7px 0;">
+                          <td class="stats-cell" style="padding:0 0 7px 0;">
                             <p class="t-label" style="margin:0 0 4px 0; font-size:9px; line-height:1.3; letter-spacing:0.8px; text-transform:uppercase; font-weight:bold; color:{{#count}}#4a5169{{/count}}{{^count}}#8f95aa{{/count}};">{{label}}</p>
                             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                              <tr>{{#cells}}<td width="6.66%" style="padding:{{pad}}; font-size:0; line-height:0;"><div style="height:7px; background-color:{{colour}}; border-radius:2px;"></div></td>{{/cells}}</tr>
+                              <tr>{{#cells}}<td width="6.66%" style="padding:{{pad}}; font-size:0; line-height:0;"><div class="stats-bar" style="height:7px; background-color:{{colour}}; border-radius:2px;"></div></td>{{/cells}}</tr>
                             </table>
                           </td>
                         </tr>
@@ -109,7 +112,7 @@
         </tr>
 
         <!-- ================================ PAPERS: one card per paper ================================
-             title (link), authors, DOI and date, the first lines of the abstract | chevron (link) -->
+             title (link), one line with the first two authors, the DOI link and the date, the first lines of the abstract | chevron (link) -->
         {{#papers}}
         <tr>
           <td class="margin" width="{{margin}}" valign="top" style="width:{{margin}}px;">{{{left}}}</td>
@@ -126,12 +129,9 @@
                         </td>
                       </tr>
                     </table>
+                    <p class="t-meta" style="margin:6px 0 0 0; font-size:10px; line-height:1.4; color:#6b7390; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><span style="color:#9a4424;">{{#authors}}{{name}}{{sep}}{{/authors}}{{#et_al}} et al.{{/et_al}}</span> &nbsp;&middot;&nbsp; <a href="{{doi_url}}" target="_blank" style="color:#6b7390; text-decoration:underline;">{{t_link}}</a> &nbsp;&middot;&nbsp; {{t_published}} {{published}}</p>
 
-                    <p class="t-authors" style="margin:6px 0 0 0; font-size:10.5px; line-height:1.4; color:#9a4424;">{{#authors}}{{name}}{{sep}}{{/authors}}{{#et_al}} et al.{{/et_al}}</p>
-
-                    <p class="t-meta" style="margin:2px 0 0 0; font-size:9.5px; line-height:1.45; color:#6b7390;">DOI <a href="{{doi_url}}" target="_blank" style="color:#6b7390; text-decoration:underline;">{{doi}}</a> &nbsp;&middot;&nbsp; <span style="white-space:nowrap;">{{t_published}} {{published}}</span></p>
-
-                    <p class="t-abstract" style="margin:9px 0 0 0; font-size:11.5px; line-height:1.5; color:#2f3546;">{{abstract}}</p>
+                    <p class="t-abstract" style="margin:8px 0 0 0; font-size:11.5px; line-height:1.5; color:#2f3546; text-align:justify;">{{abstract}}</p>
 
                   </td>
                   <td class="t-chevron" style="width:24px; vertical-align:middle; text-align:center; padding-right:8px;">
