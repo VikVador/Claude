@@ -48,10 +48,10 @@
         <tr>
           <td class="margin" width="{{margin}}" valign="top" style="width:{{margin}}px;">{{{head_left}}}</td>
           <td class="content" valign="top" style="padding:0 {{gap}}px;">
-            <div style="border:1px solid #c5cde6; border-left:4px solid #c2603d; border-radius:8px; overflow:hidden;">
+            <div style="border:1px solid #26343A; border-left:4px solid #c2603d; border-radius:8px; overflow:hidden;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; border-collapse:collapse;">
                 <tr>
-                  <td class="logo" align="center" style="padding:14px 14px 12px 16px; vertical-align:middle; width:{{logo_cell}}px;">
+                  <td class="logo" align="center" style="padding:16px 14px 14px 16px; vertical-align:middle; width:{{logo_cell}}px;">
                     {{{logo}}}
                   </td>
                   <td style="padding:20px 20px 18px 18px; vertical-align:middle; border-left:1px solid #e3e6eb;">
@@ -112,12 +112,13 @@
         </tr>
 
         <!-- ================================ PAPERS: one card per paper ================================
-             title (link), one line with the first two authors, the DOI link and the date, the first lines of the abstract | chevron (link) -->
+             the whole card is the link: title, one line with the first two authors and the date, the first lines of the abstract | chevron -->
         {{#papers}}
         <tr>
           <td class="margin" width="{{margin}}" valign="top" style="width:{{margin}}px;">{{{left}}}</td>
           <td class="content" valign="top" style="padding:10px {{gap}}px 0;">
-            <div style="border:1px solid #c5cde6; border-radius:12px; overflow:hidden;">
+            <a href="{{url}}" target="_blank" style="display:block; text-decoration:none; color:#1a1f2e;">
+            <div style="border:1px solid #26343A; border-radius:12px; overflow:hidden;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; border-collapse:collapse;">
                 <tr>
                   <td class="t-card" style="padding:14px 6px 14px 18px; vertical-align:top;">
@@ -125,21 +126,20 @@
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                       <tr>
                         <td valign="top">
-                          <a class="t-title" href="{{url}}" target="_blank" style="font-size:14.5px; line-height:1.32; font-weight:600; color:#1a1f2e; text-decoration:none;">{{title}}</a>
+                          <span class="t-title" style="font-size:14.5px; line-height:1.32; font-weight:600; color:#1a1f2e;">{{title}}</span>
                         </td>
                       </tr>
                     </table>
-                    <p class="t-meta" style="margin:6px 0 0 0; font-size:10px; line-height:1.4; color:#6b7390; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><span style="color:#9a4424;">{{#authors}}{{name}}{{sep}}{{/authors}}{{#et_al}} et al.{{/et_al}}</span> &nbsp;&middot;&nbsp; <a href="{{doi_url}}" target="_blank" style="color:#6b7390; text-decoration:underline;">{{t_link}}</a> &nbsp;&middot;&nbsp; {{t_published}} {{published}}</p>
+                    <p class="t-meta" style="margin:6px 0 0 0; font-size:10px; line-height:1.4; color:#6b7390; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><span style="color:#9a4424;">{{#authors}}{{name}}{{sep}}{{/authors}}{{#et_al}} et al.{{/et_al}}</span> &nbsp;&middot;&nbsp; {{t_published}} {{published}}</p>
 
                     <p class="t-abstract" style="margin:8px 0 0 0; font-size:11.5px; line-height:1.5; color:#2f3546; text-align:justify;">{{abstract}}</p>
 
                   </td>
-                  <td class="t-chevron" style="width:24px; vertical-align:middle; text-align:center; padding-right:8px;">
-                    <a href="{{url}}" target="_blank" style="font-size:26px; line-height:26px; color:#b9bfca; text-decoration:none;">&rsaquo;</a>
-                  </td>
+                  <td class="t-chevron" style="width:24px; vertical-align:middle; text-align:center; padding-right:8px; font-size:26px; line-height:26px; color:#b9bfca;">&rsaquo;</td>
                 </tr>
               </table>
             </div>
+            </a>
           </td>
           <td class="margin" width="{{margin}}" valign="top" style="width:{{margin}}px;">{{{right}}}</td>
         </tr>

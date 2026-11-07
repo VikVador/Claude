@@ -100,9 +100,9 @@ LEFT, RIGHT, CELLS = settings()  # labels in the order of the config, half per c
 ON, OFF = "#c2603d", "#d9dff1"
 WORDS = {
     "en": dict(t_issue="Issue", t_new="new papers", t_published="Published", t_title="Daily newsletter",
-               t_review="Review of", t_link="Link"),
+               t_review="Review of"),
     "fr": dict(t_issue="Numéro", t_new="nouveaux papiers", t_published="Publié le", t_title="Newsletter journalière",
-               t_review="Revue du", t_link="Lien"),
+               t_review="Revue du"),
 }
 MONTHS = {
     "en": "January February March April May June July August September October November December".split(),
@@ -189,7 +189,7 @@ def papers(src, dst, lang, deco=None):
         abstract = math.ceil(len(excerpt(p["abstract" if lang == "en" else "abstract_fr"], chars)) / 100)
         return round(70.5 + 17 + 19 * (title - 1) + 17.2 * abstract)
 
-    head_margins, stats_margins = margins(-1, 83), margins(0, 153)
+    head_margins, stats_margins = margins(-1, 87), margins(0, 153)
     counts = {k: 0 for k in LEFT + RIGHT}
     items = []
     for i, p in enumerate(c["papers"], 1):
