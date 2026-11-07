@@ -99,30 +99,80 @@ def none(side, colour, i, height, top, offset=0, width=WIDTH):
 STYLES = {"shards": shards, "ribbon": ribbon, "column": column, "waves": waves, "none": none}
 
 
-# ---------------------------------------------------------------- bands (Daily Paper Digest) --------------------------
-# Thin vertical bands in the margins, like the lines of a spectrum or a data stream. They are table cells with a
-# background colour, so they always run the full height of their row, on any screen. From the outside in:
-# (width, kind, zone); "band" cells get a colour, "gap" cells stay white; "out" cells (class o) disappear on a
-# phone, "in" cells (class i) stay.
-BAND_LAYOUT = [(6, "gap", "out"), (2, "band", "out"), (7, "gap", "out"), (1, "band", "out"), (6, "gap", "out"),
-               (3, "band", "in"), (5, "gap", "in"), (1, "band", "in"), (4, "gap", "in"), (2, "band", "in")]
-BAND_PALETTE = ["#c2603d", "#d58a6f", "#e7b9a6", "#4a5169", "#8f95aa", "#c5cde6", "#9a4424"]
-BAND_OFF = .3  # chance that a band is blank in a row: the gaps give the rhythm
+# ---------------------------------------------------------------- Daily Paper Digest -----------------------------------
+# Small scientific figures in the digest's colours, one per block, at the top of its margin. Same signature as above.
+DIGEST = ["#c2603d", "#d58a6f", "#e7b9a6", "#4a5169", "#8f95aa", "#c5cde6"]
 
 
-def bands(side, i):
-    """The cells of one margin for row i: [{w, c, cls}], outside first on the left, mirrored on the right. Next white
-    cells of the same zone are merged into one, to keep the email small (Gmail clips it above 102 KB)."""
-    rng = random.Random(f'bands-{side}-{i}')
-    cells = []
-    for w, kind, zone in BAND_LAYOUT:
-        c = "#ffffff" if kind == "gap" or rng.random() < BAND_OFF else rng.choice(BAND_PALETTE)
-        cls = "o" if zone == "out" else "i"
-        if cells and c == "#ffffff" and cells[-1]["c"] == c and cells[-1]["cls"] == cls:
-            cells[-1]["w"] += w
-        else:
-            cells.append({"w": w, "c": c, "cls": cls})
-    return cells if side == 'left' else cells[::-1]
+def histogram(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Histogrammes: the logo's histogram turned on its side, bars growing from the outer edge towards the content."""
+    rng = random.Random(f'histogram-{side}-{i}')
+    bar, gap = 3, 2
+    n = min(20, int((min(height, 130) - 8) // (bar + gap)))
+    mu1, mu2 = rng.uniform(.2, .45) * n, rng.uniform(.55, .85) * n
+    body = ''
+    for k in range(n):
+        v = math.exp(-((k - mu1) / (n * .12)) ** 2) + .7 * math.exp(-((k - mu2) / (n * .1)) ** 2)
+        length = max(2, v * (width - 10) * .9)
+        x = 4 if side == 'left' else width - 4 - length
+        c = DIGEST[0] if v > .75 else DIGEST[1] if v > .45 else DIGEST[2] if v > .2 else DIGEST[5]
+        body += f'<rect x="{x:.0f}" y="{4 + k * (bar + gap)}" width="{length:.0f}" height="{bar}" fill="{c}"/>'
+    return svg(height, body, width), ''
 
 
-BANDS_WIDTH = sum(w for w, _, _ in BAND_LAYOUT)
+def scatter(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Nuage de points: noisy observations around one slow fitted curve that runs down the whole margin, from the
+    header to the last paper (offset places each block on the same curve), drawn over the full height of the block."""
+    rng = random.Random(f'scatter-{side}-{i}')
+    phase = 0 if side == 'left' else math.pi
+    a = width * .26
+    xs = lambda y: width / 2 + a * math.sin(phase + (offset + y) / 95)  # noqa: E731
+    path = ' '.join(f'{"M" if k == 0 else "L"}{xs(y):.0f},{y}' for k, y in enumerate(range(0, int(height) + 1, 14)))
+    body = f'<path d="{path}" fill="none" stroke="{DIGEST[3]}" stroke-width="1.1" stroke-opacity=".45"/>'
+    groups = {c: '' for c in DIGEST[:3]}  # one <g fill> per colour: shorter than a fill on every point
+    y = rng.uniform(2, 10)
+    while y < height - 3:
+        x = min(max(xs(y) + rng.gauss(0, width * .1), 3), width - 3)
+        groups[rng.choice(DIGEST[:3])] += f'<circle cx="{x:.0f}" cy="{y:.0f}" r="{rng.choice([1.5, 2, 2.5])}"/>'
+        y += rng.uniform(12, 28)
+    body += ''.join(f'<g fill="{c}">{pts}</g>' for c, pts in groups.items() if pts)
+    return svg(height, body, width), ''
+
+
+CONTINUOUS = {"scatter"}  # styles drawn on both sides over the full height; the others: one figure per block
+
+
+def density(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Densité: a two-bump probability density drawn along the margin, filled, with a rug of samples on its axis."""
+    rng = random.Random(f'density-{side}-{i}')
+    h = min(height, 130) - 8
+    m1, m2, w2 = rng.uniform(.2, .4), rng.uniform(.6, .8), rng.uniform(.5, .9)
+    pdf = lambda t: math.exp(-((t - m1) / .1) ** 2) + w2 * math.exp(-((t - m2) / .08) ** 2)  # noqa: E731
+    base = 4 if side == 'left' else width - 4
+    sign = 1 if side == 'left' else -1
+    pts = [(base + sign * pdf(k / 24) * (width - 14) * .85, 4 + k / 24 * h) for k in range(25)]
+    d = f'M{base},4 ' + ' '.join(f'L{x:.0f},{y:.0f}' for x, y in pts) + f' L{base},{4 + h:.0f} Z'
+    body = (f'<path d="{d}" fill="{DIGEST[2]}" fill-opacity=".55" stroke="{DIGEST[0]}" stroke-width="1.2"/>'
+            f'<rect x="{base - (1 if side == "left" else 0):.1f}" y="4" width="1" height="{h:.1f}" fill="{DIGEST[4]}"/>')
+    for _ in range(9):
+        t = rng.gauss(m1, .07) if rng.random() < .6 else rng.gauss(m2, .06)
+        if 0 < t < 1:
+            body += f'<rect x="{base - sign * 6 - (0 if side == "left" else 4):.0f}" y="{4 + t * h:.0f}" width="4" height="1" fill="{DIGEST[3]}"/>'
+    return svg(height, body, width), ''
+
+
+def signal(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Signal: a vertical time series with its samples, like a sensor or a forecast trace."""
+    rng = random.Random(f'signal-{side}-{i}')
+    h = min(height, 130) - 8
+    x, pts = width / 2, []
+    for k in range(int(h // 6) + 1):
+        x = min(max(x + rng.gauss(0, width * .08) - (x - width / 2) * .25, 4), width - 4)
+        pts.append((x, 4 + k * 6))
+    d = ' '.join(f'{"M" if k == 0 else "L"}{px:.0f},{py:.0f}' for k, (px, py) in enumerate(pts))
+    body = f'<path d="{d}" fill="none" stroke="{DIGEST[0]}" stroke-width="1.3" stroke-linejoin="round"/>'
+    body += ''.join(f'<circle cx="{px:.0f}" cy="{py:.0f}" r="1.5" fill="{DIGEST[3]}"/>' for k, (px, py) in enumerate(pts) if k % 3 == 0)
+    return svg(height, body, width), ''
+
+
+STYLES.update({"histogram": histogram, "scatter": scatter, "density": density, "signal": signal})

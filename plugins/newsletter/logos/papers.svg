@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 84" role="img" aria-label="Daily Paper Digest">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 10 78 70" role="img" aria-label="Daily Paper Digest">
 
-  <!-- Mark: the digest's histogram (a mixture of two Gaussians), one bar every 4.6 units, on a baseline at y = 74 -->
+  <!-- The digest's histogram (a mixture of two Gaussians), one bar every 4.6 units, on a baseline at y = 74 -->
   <g id="mark">
     <rect x="20.0" y="70.9" width="3.2" height="3.1" rx="1" fill="#d5ddf4"/>
     <rect x="24.6" y="67.8" width="3.2" height="6.2" rx="1" fill="#d4d9f0"/>
@@ -20,10 +20,5 @@
     <rect x="18" y="75" width="70" height="1.2" fill="#c5cde6"/>
   </g>
 
-  <!-- Wordmark -->
-  <g id="wordmark" font-family="Arial, Helvetica, sans-serif">
-    <text x="98" y="44" font-size="38" font-weight="750" letter-spacing="-1.2" fill="#1a1f2e">PAPERS</text>
-    <text x="99" y="66" font-size="21" font-weight="600" letter-spacing="-0.3" fill="#c2603d">daily digest</text>
-  </g>
 
 </svg>

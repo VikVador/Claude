@@ -31,8 +31,9 @@ subagents:                   # bounds of each search subagent
 
 look:
   logo: logos/papers.svg     # header logo, inline SVG
-  logo_width: 150            # in pixels; the height follows the SVG viewBox
+  logo_width: 72             # in pixels; the height follows the SVG viewBox
   abstract_chars: 480        # characters of the abstract shown on each card, about 5 lines on a computer
+  decoration: scatter        # margins: scatter (continuous), histogram, density, signal or none (scripts/decorations.py)
 
 # ---------------------------------------------------------------- research --------------------------------------------
 group: >

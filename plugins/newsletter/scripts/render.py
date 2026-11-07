@@ -27,6 +27,7 @@ import argparse
 import datetime as dt
 import html as H
 import json
+import math
 import os
 import re
 import sys
@@ -154,13 +155,37 @@ def logo(path, width):
     return svg.replace('<svg ', f'<svg width="{w}" height="{round(w * vb[3] / vb[2])}" style="display:block;" ', 1)
 
 
-def papers(src, dst, lang):
+def papers(src, dst, lang, deco=None):
     c = json.load(open(src, encoding='utf-8'))
     errors = check_papers(c, lang)
     if errors:
         sys.exit("\n".join(errors))
     look = config_block('papers', 'look')
     chars = int(look.get('abstract_chars', 480))
+    style = deco or look.get('decoration', 'scatter')
+    draw = decorations.STYLES[style]
+    offset = [0]
+
+    def margins(row, height):
+        """The two margins of a block of `height` px (a little under its real height). A continuous style is drawn on
+        both sides over the full height, along one curve from top to bottom; the others draw one small figure per
+        block, on the left for even rows and on the right for odd ones (keeps the email under Gmail's 102 KB)."""
+        if style in decorations.CONTINUOUS:
+            pair = (draw("left", "", row, height, 0, offset[0])[0], draw("right", "", row, height, 0, offset[0])[0])
+        else:
+            fig = draw("left" if row % 2 == 0 else "right", "", row, min(height, 120), 0)[0]
+            pair = (fig, '&nbsp;') if row % 2 == 0 else ('&nbsp;', fig)
+        offset[0] += height + 3
+        return pair
+
+    def card_height(p):
+        """A card's row on a computer, under-estimated: 80 px of fixed parts, 18 px per title line, 16 px per abstract
+        line (measured on 2026-11-07: 196 px for a 2-line title and a 5-line abstract)."""
+        title = math.ceil(len(p["title"]) / 72)
+        abstract = math.ceil(len(excerpt(p["abstract" if lang == "en" else "abstract_fr"], chars)) / 100)
+        return 80 + 18 * title + 16 * abstract - 3
+
+    head_margins, stats_margins = margins(-1, 94), margins(0, 150)
     counts = {k: 0 for k in LEFT + RIGHT}
     items = []
     for i, p in enumerate(c["papers"], 1):
@@ -170,7 +195,7 @@ def papers(src, dst, lang):
                       "authors": [{"name": n, "sep": ", " if j < len(names) - 1 else ""} for j, n in enumerate(names)],
                       "published": day(p.get("published", ""), lang, short=True),
                       "abstract": excerpt(p["abstract" if lang == "en" else "abstract_fr"], chars),
-                      "bl": decorations.bands("left", i + 1), "br": decorations.bands("right", i + 1)})
+                      **dict(zip(("left", "right"), margins(i + 1, card_height(p))))})
 
     def theme(k):
         return {"label": k, "count": counts[k],
@@ -178,13 +203,13 @@ def papers(src, dst, lang):
                           for j in range(CELLS)]}
 
     gap = 28
+    (head_left, head_right), (stats_left, stats_right) = head_margins, stats_margins
     ctx = {**WORDS[lang], "lang": lang, "issue": c["issue"], "date": day(c["date"], lang), "count": len(items),
            "papers": items, "themes_left": [theme(k) for k in LEFT], "themes_right": [theme(k) for k in RIGHT],
            "logo": logo(look.get('logo', 'logos/papers.svg'), look.get('logo_width', 150)),
            "logo_width": look.get('logo_width', 150), "gap": gap,
-           "frame_width": 640 + 2 * (decorations.BANDS_WIDTH + gap),
-           "head_bl": decorations.bands("left", -1), "head_br": decorations.bands("right", -1),
-           "stats_bl": decorations.bands("left", 0), "stats_br": decorations.bands("right", 0)}
+           "margin": decorations.WIDTH, "frame_width": 640 + 2 * (decorations.WIDTH + gap),
+           "head_left": head_left, "head_right": head_right, "stats_left": stats_left, "stats_right": stats_right}
     size = finish("papers", ctx, dst)
     print(f"OK {lang}: {len(items)} papers, {size:.0f} KB, dominant label {max(counts, key=counts.get)}")
 
@@ -287,6 +312,6 @@ if __name__ == "__main__":
     ap.add_argument("src")
     ap.add_argument("dst")
     ap.add_argument("--lang", choices=["en", "fr"], default="en")
-    ap.add_argument("--decoration", choices=sorted(decorations.STYLES), help="university: override the config")
+    ap.add_argument("--decoration", choices=sorted(decorations.STYLES), help="override the config's decoration")
     a = ap.parse_args()
-    papers(a.src, a.dst, a.lang) if a.name == "papers" else university(a.src, a.dst, a.decoration)
+    papers(a.src, a.dst, a.lang, a.decoration) if a.name == "papers" else university(a.src, a.dst, a.decoration)
