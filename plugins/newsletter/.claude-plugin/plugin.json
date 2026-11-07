@@ -1,6 +1,6 @@
 {
   "name": "newsletter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Claude Code skills that prepare and send newsletters with the Resend connector: a daily digest of new research papers and a weekly summary of university events, with their HTML templates, settings and state in the plugin folder.",
   "author": { "name": "Victor Mangeleer" }
 }

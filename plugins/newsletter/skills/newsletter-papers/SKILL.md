@@ -1,6 +1,6 @@
 ---
 name: newsletter-papers
-description: "Use when a scheduled task or I ask to prepare and send the daily paper digest (Daily Paper Digest, newsletter de papiers, veille scientifique du jour). Collects recent papers from arXiv, journals and labs with subagents, selects and orders them by research interest, renders the light HTML email in English and French, sends it with the Resend connector to me and the subscribers, and records the papers on GitHub. Not for the weekly university newsletter (newsletter-uliege skill)."
+description: "Use when a scheduled task or I ask to prepare and send the daily paper digest (Daily Paper Digest, newsletter de papiers, veille scientifique du jour). Collects recent papers from arXiv, journals and labs with subagents, selects and orders them by research interest, renders the light HTML email in English and French, sends it with the Resend connector to me and the subscribers, and records the papers on GitHub. Not for the weekly university newsletter (newsletter-university skill)."
 ---
 
 ```text
@@ -18,7 +18,7 @@ description: "Use when a scheduled task or I ask to prepare and send the daily p
 Every day, the Daily Paper Digest brings me and its subscribers recent papers that matter for my research, each with
 a short summary. You do everything in one run: collect, select, write, send, record. You usually run alone, at night,
 from a scheduled task: never ask a question, decide with these rules and go to the end. This file says **how**; every
-setting (interests, sources, bounds, recipients) is in `config/papers.yaml`.
+setting (interests, sources, bounds) is in `config/papers.yaml`, and every recipient in `data/subscribers.yaml`.
 
 Everything lives in `VikVador/Claude`, folder `plugins/newsletter/` (called `NL` below), always used from a fresh
 clone: the installed plugin copy is stale.
@@ -26,12 +26,12 @@ clone: the installed plugin copy is stale.
 | File in `NL`               | Use                                                                         | When        |
 | -------------------------- | --------------------------------------------------------------------------- | ----------- |
 | `config/papers.yaml`       | **Read**: sending, bounds, research group, projects, themes, sources        | § 1         |
-| `scripts/state.py`         | **Run**: next issue, exclusion list, recipients, record                     | § 1, 5, 6   |
+| `scripts/state.py`         | **Run**: next issue, exclusion list, sending plan, record                   | § 1, 6      |
 | `scripts/render.py`        | **Run** `python3 scripts/render.py papers content.json <out> --lang <en/fr>`| § 4         |
 | `templates/papers.html`    | the structure of the email, filled by `render.py`: never edited by hand     | never       |
 | `data/papers/*.json`, `data/subscribers.yaml` | the state, read and written by `state.py`                | never by hand |
 
-Related: the `newsletter-uliege` skill for the weekly university newsletter.
+Related: the `newsletter-university` skill for the weekly university newsletter.
 
 **Contents**
 
@@ -55,7 +55,7 @@ Related: the `newsletter-uliege` skill for the weekly university newsletter.
 4. **Only verified papers**: existence checked by DOI, arXiv id or OpenReview id; never an invented metadata, write
    `non disponible` instead (§ 3).
 5. **Between `papers.min` and `papers.max`**, never filler to reach a number (§ 3).
-6. **Recipients come from the data only**: `sending.to` and `state.py recipients`, never an address you make up (§ 5).
+6. **Recipients from `state.py plan` only**, never an address you make up or remember (§ 1, § 5).
 7. **Record after sending**, in one commit pushed to `main` (§ 6).
 
 ---
@@ -73,6 +73,9 @@ python3 scripts/state.py status
    `last_two_dominant_labels` must differ from today's dominant label; `backup` counts the already-checked candidates
    of `data/papers/backup.json`: take them first if they still fit.
 3. `python3 scripts/state.py exclude > /tmp/exclude.txt`: the strict exclusion list.
+4. `python3 scripts/state.py plan config/papers.yaml > /tmp/plan.json`: the `owner` (gets every issue and the
+   reports) and one email per language to send, each with its `to` and `bcc` (only the owner in test mode). Its
+   languages are the ones to write (§ 4).
 
 If the clone fails, go on without exclusion and add ` | no history check` to the subject (§ 5).
 
@@ -93,7 +96,7 @@ If the clone fails, go on without exclusion and add ` | no history check` to the
   `https://arxiv.org/list/<category>/recent?show=2000`. **Never** `export.arxiv.org` nor `arxiv.org/search`: both
   are closed to robots.
 - **Journals**: one Crossref request with all the group's ISSNs, the date and the keywords, titles only:
-  `https://api.crossref.org/works?filter=issn:<ISSN1>,issn:<ISSN2>,...,from-pub-date:<YYYY-MM-DD>&query.bibliographic=<keywords>&select=DOI,title,container-title,published&rows=<crossref_rows>&mailto=<crossref_mailto>`;
+  `https://api.crossref.org/works?filter=issn:<ISSN1>,issn:<ISSN2>,...,from-pub-date:<YYYY-MM-DD>&query.bibliographic=<keywords>&select=DOI,title,container-title,published&rows=<crossref_rows>&mailto=<crossref_mailto decoded by state.py decode>`;
   sort on titles, then read the abstract of the kept papers only, through their DOI.
 - **Labs**: read the publication page, then check each kept paper on arXiv or by its DOI.
 - **Light reading**: no PDF; open a detail page only to settle a real doubt.
@@ -126,7 +129,7 @@ If the clone fails, go on without exclusion and add ` | no history check` to the
 2. **summary**: your own paragraph in English, `summary.characters` long, problem, then proposed solution, then
    conclusion, with `summary.bold_key_phrases` short key phrases in `**bold**`. Plain text (`render.py` escapes
    `& < >`). No em dash (—) nor en dash (–): commas, colons or parentheses.
-3. **summary_fr**: the same summary in French, same rules, if a French copy is needed (§ 5).
+3. **summary_fr**: the same summary in French, same rules, if `plan.json` has a `fr` email.
 4. Render each needed language: `python3 scripts/render.py papers /tmp/content.json /tmp/digest-<lang>.html --lang <lang>`.
    It checks the labels, summaries, dashes, placeholders and size, and forces the light colours. On an error, fix
    `content.json` and run again: never edit the HTML.
@@ -135,12 +138,8 @@ If the clone fails, go on without exclusion and add ` | no history check` to the
 
 ## 5. SEND
 
-1. **Who gets which language**:
-   - `sending.to` gets the `sending.to_language` copy;
-   - if `sending.subscribers` is `true`: `python3 scripts/state.py recipients <lang> --not <sending.to>` for `en` and
-     for `fr`; each list goes in `bcc` of its language's email, cut to `sending.max_bcc` (say it in the report if
-     cut). If `false`: test mode, no `bcc`.
-   - A language with subscribers but not the language of `to` still goes to `sending.to` (I get both copies).
+1. **Recipients**: the emails of `/tmp/plan.json`, as they are: one per language, its `to` and its `bcc`. Each
+   person gets only the language they chose. `cut` lists the subscribers over `max_bcc`: say it in the report.
 2. **Subject**: `Newsletter | Papers | #XXX`, plus ` | no history check` if § 1 failed, plus ` | N papers` if under
    `papers.min`.
 3. **Send** each email once with the Resend connector, `send-email`: `from` = `sending.from`; `to`, `bcc`, `subject`
@@ -160,14 +159,14 @@ git add data && git commit -m "📰 Papers #<issue>" && git push
 
 `record` appends the issue to `data/papers/sent.json` and replaces `data/papers/backup.json` by the `backup` list.
 If the push is rejected, `git pull --rebase` and push once more. If you cannot push (no GitHub credentials), send
-`sending.report_to` a text email, subject `Newsletter | Papers | #XXX | not recorded`, with the content of the two
+the owner a text email, subject `Newsletter | Papers | #XXX | not recorded`, with the content of the two
 files, so that I commit them by hand.
 
 ---
 
 ## 7. WHEN SOMETHING FAILS
 
-- **No relevant paper at all**: no email to the subscribers; send `sending.report_to` a text email, subject
+- **No relevant paper at all**: no email to the subscribers; send the owner a text email, subject
   `Newsletter | Papers | DD-MM-YYYY | not generated`, one sentence on why.
 - **Resend connector missing or refusing**: do not work around it (no other mail tool); stop, give the error in the
   report.
@@ -184,5 +183,5 @@ Never write to anyone else, never ask a question.
 - [ ] Between `papers.min` and `papers.max` (or the subject says how many), none excluded, each checked by its id?
 - [ ] Dominant label different from the last two (or relaxed to reach the minimum)?
 - [ ] Ordered by the projects, numbered #1 to #N, every needed language rendered `OK`?
-- [ ] Each email sent once with an id back, `bcc` only from `state.py recipients`?
+- [ ] Each email of the plan sent once with an id back, to its `to` and `bcc` only?
 - [ ] `state.py record` run and pushed, or the "not recorded" email sent?
