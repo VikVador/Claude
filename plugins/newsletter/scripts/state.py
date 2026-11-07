@@ -1,16 +1,20 @@
-"""State of the Daily Paper Digest: what was sent, what is kept for later, who receives it.
+"""State of the newsletters: who receives them, what was sent, what is kept for later.
 
 Usage (from plugins/newsletter/):
-  python3 scripts/state.py status                   next issue, sent today?, last dominant labels, back-up size
-  python3 scripts/state.py exclude                  every id already sent, one per line (the strict exclusion list)
-  python3 scripts/state.py recipients <en|fr> [--not a@b.c ...]
-                                                    active subscribers of one language, one per line
-  python3 scripts/state.py record content.json      append the issue to data/papers/sent.json and replace
-                                                    data/papers/backup.json by content.json "backup"
+  python3 scripts/state.py plan config/<newsletter>.yaml
+                          who gets which email: the owner (in `to`, gets the reports) and, out of test mode, the
+                          active subscribers of that newsletter in `bcc`, one email per language (JSON)
+  python3 scripts/state.py encode <address>         the base64 to write in data/subscribers.yaml
+  python3 scripts/state.py decode <base64>          the address back
+  python3 scripts/state.py status                   papers digest: next issue, sent today?, last dominant labels
+  python3 scripts/state.py exclude                  papers digest: every id already sent, one per line
+  python3 scripts/state.py record content.json      papers digest: append the issue to data/papers/sent.json and
+                                                    replace data/papers/backup.json by content.json "backup"
 
-Files: data/papers/sent.json, data/papers/backup.json, data/subscribers.yaml. Standard library only.
+Files: data/subscribers.yaml, data/papers/sent.json, data/papers/backup.json. Standard library only.
 """
 import argparse
+import base64
 import collections
 import datetime as dt
 import json
@@ -76,8 +80,26 @@ def exclude():
                 print(p['id'].lower())
 
 
+def encode(address):
+    return base64.b64encode(address.strip().encode('utf-8')).decode('ascii')
+
+
+def decode(value):
+    try:
+        return base64.b64decode(value.strip(), validate=True).decode('utf-8')
+    except Exception:
+        return value.strip()  # written in clear by mistake: still usable
+
+
+def scalar(v):
+    v = v.strip().strip('"\'')
+    if v.startswith('[') and v.endswith(']'):
+        return [x.strip().strip('"\'') for x in v[1:-1].split(',') if x.strip()]
+    return {'true': True, 'false': False}.get(v.lower(), v)
+
+
 def subscribers():
-    """Parse data/subscribers.yaml: a list of {email, active, language}, the only shape it ever has."""
+    """Parse data/subscribers.yaml: a list of {email, newsletters, language, active, owner}, its only shape."""
     out, cur = [], None
     for line in open(SUBSCRIBERS, encoding='utf-8'):
         line = line.split('#', 1)[0].rstrip()
@@ -88,18 +110,49 @@ def subscribers():
             cur = {}
             out.append(cur)
         if cur is not None:
-            cur[m.group(2)] = m.group(3).strip().strip('"\'')
+            cur[m.group(2)] = scalar(m.group(3))
+    for s in out:
+        s['email'] = decode(str(s.get('email', '')))
+        n = s.get('newsletters', [])
+        s['newsletters'] = n if isinstance(n, list) else [n]
     return out
 
 
-def recipients(lang, skip):
-    seen = {s.lower() for s in skip}
-    for s in subscribers():
-        email = s.get('email', '').strip()
-        if (s.get('active', '').lower() == 'true' and s.get('language', 'en').lower() == lang
-                and EMAIL.match(email) and email.lower() not in seen):
-            seen.add(email.lower())
-            print(email)
+def sending(config):
+    """The `sending:` block of a config YAML, as a flat dict."""
+    text = open(config, encoding='utf-8').read()
+    block = re.search(r'^sending:\s*\n((?:[ \t].*\n|\s*\n)*)', text, re.M)
+    out = {}
+    for line in (block.group(1) if block else '').splitlines():
+        m = re.match(r'^\s+(\w+):\s*(.*?)\s*(?:#.*)?$', line)
+        if m:
+            out[m.group(1)] = scalar(m.group(2))
+    return out
+
+
+def plan(config):
+    cfg = sending(config)
+    name, test, cap = cfg['newsletter'], cfg.get('test', True), int(cfg.get('max_bcc', 49))
+    fixed = cfg.get('language')  # a newsletter written in one language only
+    subs = [s for s in subscribers() if s.get('active') is True and name in s['newsletters']
+            and EMAIL.match(s['email'])]
+    owners = [s for s in subs if s.get('owner') is True]
+    if not owners:
+        sys.exit(f"no active owner subscribed to {name!r} in data/subscribers.yaml")
+    owner = owners[0]
+    lang_of = lambda s: fixed or s.get('language', 'en')  # noqa: E731
+    emails, seen = {lang_of(owner): []}, {owner['email'].lower()}
+    cut = []
+    if not test:
+        for s in subs:
+            if s['email'].lower() in seen:
+                continue
+            seen.add(s['email'].lower())
+            bcc = emails.setdefault(lang_of(s), [])
+            (bcc if len(bcc) < cap else cut).append(s['email'])
+    print(json.dumps({'newsletter': name, 'test': test, 'owner': owner['email'],
+                      'emails': [{'language': k, 'to': [owner['email']], 'bcc': v} for k, v in emails.items()],
+                      'cut': cut}, indent=1, ensure_ascii=False))
 
 
 def record(src):
@@ -118,15 +171,20 @@ def record(src):
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     sub = ap.add_subparsers(dest='cmd', required=True)
+    sub.add_parser('plan').add_argument('config')
+    sub.add_parser('encode').add_argument('address')
+    sub.add_parser('decode').add_argument('value')
     sub.add_parser('status')
     sub.add_parser('exclude')
-    r = sub.add_parser('recipients')
-    r.add_argument('lang', choices=['en', 'fr'])
-    r.add_argument('--not', dest='skip', nargs='*', default=[])
     sub.add_parser('record').add_argument('src')
     a = ap.parse_args()
-    {'status': status, 'exclude': exclude}.get(a.cmd, lambda: None)()
-    if a.cmd == 'recipients':
-        recipients(a.lang, a.skip)
-    if a.cmd == 'record':
+    if a.cmd == 'plan':
+        plan(a.config)
+    elif a.cmd == 'encode':
+        print(encode(a.address))
+    elif a.cmd == 'decode':
+        print(decode(a.value))
+    elif a.cmd == 'record':
         record(a.src)
+    else:
+        {'status': status, 'exclude': exclude}[a.cmd]()

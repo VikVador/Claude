@@ -2,7 +2,7 @@
 
 Usage:
   python3 render.py papers content.json digest.html --lang en|fr
-  python3 render.py uliege contenu.json newsletter.html
+  python3 render.py university contenu.json newsletter.html
 
 The HTML structure lives in ../templates/<name>.html; this script only fills it. On a problem it prints the list of
 problems and exits with 1: fix the JSON and run again, never edit the HTML by hand.
@@ -21,7 +21,7 @@ papers content.json (plain text everywhere: render.py escapes & < > itself):
   "backup": [ ... same fields, the candidates kept for the next issue ... ]
 }
 
-uliege contenu.json: see the newsletter-uliege skill (week, deadlines, seminars, workshops, events, brief, infos).
+university contenu.json: see the newsletter-university skill (week, deadlines, seminars, workshops, events, brief, infos).
 """
 import argparse
 import datetime as dt
@@ -162,10 +162,10 @@ def papers(src, dst, lang):
     print(f"OK {lang}: {len(items)} papers, {size:.0f} KB, dominant label {max(counts, key=counts.get)}")
 
 
-# ---------------------------------------------------------------- uliege ----------------------------------------------
+# ---------------------------------------------------------------- university ------------------------------------------
 ORDER = ["deadlines", "seminars", "workshops", "events", "brief", "infos"]
 TITLES = {"deadlines": "À ne pas manquer", "seminars": "Séminaires & talks", "workshops": "Workshops & conférences",
-          "events": "Événements ULiège", "brief": "En bref", "infos": "Infos pratiques"}
+          "events": "Événements", "brief": "En bref", "infos": "Infos pratiques"}
 COLOURS = {"deadlines": "#F48245", "seminars": "#00707F", "workshops": "#FAA919", "events": "#0066B2",
            "brief": "#2CA449", "infos": "#585EA9"}
 EMPTY = {"deadlines": "Aucune date limite dans les 10 prochains jours.",
@@ -183,13 +183,27 @@ def nodetect(t):
     return re.sub(r'(\d+)', '\\1&zwnj;', H.escape(t, quote=False))
 
 
-def uliege(src, dst):
+def identity():
+    """The `university:` block of config/university.yaml (standard library only)."""
+    text = open(os.path.join(HERE, '..', 'config', 'university.yaml'), encoding='utf-8').read()
+    block = re.search(r'^university:\s*\n((?:[ \t].*\n|\s*\n)*)', text, re.M)
+    out = {}
+    for line in (block.group(1) if block else '').splitlines():
+        m = re.match(r'^\s+(\w+):\s*(.*?)\s*(?:#.*)?$', line)
+        if m:
+            out[m.group(1)] = m.group(2).strip().strip('"\'')
+    return out
+
+
+def university(src, dst):
     c = json.load(open(src, encoding='utf-8'))
+    who = identity()
+    titles = {**TITLES, "events": who.get("events_title", TITLES["events"])}
     unescape = lambda s: H.unescape(s) if isinstance(s, str) else s  # noqa: E731  (old files wrote &amp;)
     sections = []
     for k in ORDER:
         raw = [{f: unescape(v) for f, v in it.items()} for it in (c.get(k) or [])]
-        sec = {"key": k, "title": TITLES[k], "colour": COLOURS[k], "empty": not raw, "empty_text": EMPTY[k],
+        sec = {"key": k, "title": titles[k], "colour": COLOURS[k], "empty": not raw, "empty_text": EMPTY[k],
                "deadlines": [], "rows": []}
         for i, it in enumerate(raw):
             sep = '' if i == 0 else 'border-top:1px solid #E3E6EB;'
@@ -206,15 +220,17 @@ def uliege(src, dst):
             sec["rows"].append({**it, "link": it.get("link") or "#", "sep": sep, "height": height,
                                 "lines": lines, "speaker": it.get("speaker", ""), "desc_mt": 4 if nl > 1 else 2})
         sections.append(sec)
-    size = finish("uliege", {"week": nodetect(unescape(c["week"])), "sections": sections}, dst)
-    print(f"OK uliege: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, 0 image")
+    size = finish("university", {"week": nodetect(unescape(c["week"])), "sections": sections,
+                                 "logo_big": who.get("logo_big", ""), "logo_small": who.get("logo_small", ""),
+                                 "footer": who.get("footer", "")}, dst)
+    print(f"OK university: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, 0 image")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("name", choices=["papers", "uliege"])
+    ap.add_argument("name", choices=["papers", "university"])
     ap.add_argument("src")
     ap.add_argument("dst")
     ap.add_argument("--lang", choices=["en", "fr"], default="en")
     a = ap.parse_args()
-    papers(a.src, a.dst, a.lang) if a.name == "papers" else uliege(a.src, a.dst)
+    papers(a.src, a.dst, a.lang) if a.name == "papers" else university(a.src, a.dst)

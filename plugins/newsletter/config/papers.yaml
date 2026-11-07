@@ -4,11 +4,9 @@
 # ---------------------------------------------------------------- sending ---------------------------------------------
 sending:
   from: "Daily Paper Digest <onboarding@resend.dev>"   # a verified Resend domain, e.g. papers@newsletter.<domain>
-  to: victormangeleer@nyu.edu                          # main recipient, gets every issue
-  to_language: en                                      # language of the main recipient's copy: en or fr
-  subscribers: false                                   # false: test mode, only `to`; true: also data/subscribers.yaml
+  newsletter: science                                  # the key of data/subscribers.yaml `newsletters`
+  test: true                                           # true: only the owner receives it; false: every subscriber
   max_bcc: 49                                          # Resend: 50 recipients per email, `to` included
-  report_to: victormangeleer@nyu.edu                   # where problems are reported
 
 # ---------------------------------------------------------------- bounds ----------------------------------------------
 papers:
@@ -152,4 +150,4 @@ sources:
       - {name: Ai2, url: "https://allenai.org/papers"}
       - {name: M2LInES, url: "https://m2lines.github.io/publications/"}
 
-crossref_mailto: vmangeleerpapers@gmail.com
+crossref_mailto: dm1hbmdlbGVlcnBhcGVyc0BnbWFpbC5jb20=   # base64: python3 scripts/state.py decode <it>

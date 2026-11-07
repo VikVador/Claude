@@ -1,15 +1,29 @@
-# Weekly ULiège newsletter: everything you may want to change, outside the skill.
-# The skill newsletter-uliege reads this file at every run (fresh from GitHub).
+# Weekly university newsletter: everything you may want to change, outside the skill.
+# The skill newsletter-university reads this file at every run (fresh from GitHub). Everything specific to one
+# university (name, mailbox, agendas, sections) lives here.
 
 # ---------------------------------------------------------------- sending ---------------------------------------------
 sending:
   from: "Newsletter ULiège <onboarding@resend.dev>"    # a verified Resend domain, e.g. uliege@newsletter.<domain>
-  to: vmangeleer@uliege.be
+  newsletter: university                               # the key of data/subscribers.yaml `newsletters`
+  language: fr                                         # written in this language only
+  test: true                                           # true: only the owner receives it; false: every subscriber
+  max_bcc: 49
+
+# ---------------------------------------------------------------- identity --------------------------------------------
+university:
+  name: Université de Liège           # in the subject: Newsletter | <name> | Semaine du ...
+  short: ULiège                      # the place written in the date column, the events section title
+  logo_big: Liège                    # the two words of the header logo
+  logo_small: université
+  footer: "Résumé de la newsletter de l'Université de Liège, généré par Victor Mangeleer et Claude."
+  events_title: Événements ULiège
+  events_senders: [qualitedevie]             # senders (start of the address) whose well-being actions go to events
 
 # ---------------------------------------------------------------- inputs ----------------------------------------------
-mailbox:                     # read-only, through the Microsoft 365 connector
-  address: vmangeleer@uliege.be
+mailbox:                     # read-only, through the Microsoft 365 connector (my university mailbox)
   folder: Newsletter
+  examples: [university agendas, AGO, CÉCI, Montefiore, LUMI]   # the kind of broadcast emails found there
   folder_id: "AQMkADIxYjVhMzhjLTFiN2EtNDM4ZS05ZTdjLTI1NmU2NDAxM2QzNAAuAAADAjLvROUzB0CRhbGyTp_yUQEAi-4wmLwDE0CzXlJPwR_SmgAC1tCFkQAAAA=="
 
 timezone: Europe/Brussels    # the period is the previous Monday 00:00 to Sunday 23:59 in this time zone

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Newsletter hebdomadaire ULiège: filled by scripts/render.py only, never by hand. No image: everything is drawn
+<!-- Weekly university newsletter: filled by scripts/render.py only, never by hand. No image: everything is drawn
      with tables and bgcolor. render.py forces the light colours in every mail client. -->
 <html lang="fr">
 <head>
@@ -19,8 +19,8 @@
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:separate; border:1px solid #26343A; border-left:4px solid #00707F; border-radius:8px;">
               <tr>
                 <td style="border-radius:7px 0 0 7px; padding:20px 18px 18px 22px; vertical-align:middle; width:80px;">
-                  <div style="font-size:30px; line-height:30px; font-weight:800; letter-spacing:-.6px; color:#1D3B4A;">Liège</div>
-                  <div style="font-size:13px; line-height:15px; font-weight:600; letter-spacing:.3px; color:#6B7480; margin-top:3px;">université</div>
+                  <div style="font-size:30px; line-height:30px; font-weight:800; letter-spacing:-.6px; color:#1D3B4A;">{{logo_big}}</div>
+                  <div style="font-size:13px; line-height:15px; font-weight:600; letter-spacing:.3px; color:#6B7480; margin-top:3px;">{{logo_small}}</div>
                 </td>
                 <td style="border-radius:0 7px 7px 0; padding:20px 20px 18px 18px; vertical-align:middle; border-left:1px solid #E3E6EB;">
                   <div style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1D3B4A;">Newsletter hebdomadaire</div>
@@ -90,7 +90,7 @@
 
             <!-- FOOTER -->
             <div style="text-align:center; margin-top:44px; padding-top:22px; border-top:1px solid #E3E6EB; font-size:12px; color:#6B7480;">
-              Résumé de la newsletter de l'Université de Liège, généré par Victor Mangeleer et Claude.
+              {{footer}}
             </div>
 
           </td>

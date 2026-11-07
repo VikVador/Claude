@@ -1,19 +1,40 @@
-# Who receives the Daily Paper Digest.
-# active: true to receive it, false to pause. language: en or fr.
+# Everyone who receives a newsletter, me included: the only place where addresses are written.
+#
+# email:       the address in base64, so that bots do not harvest it.
+#              Encode a new one with: python3 scripts/state.py encode <address>
+# newsletters: science (Daily Paper Digest), university (weekly university newsletter), or both: [science, university]
+# language:    en or fr, the language of the Daily Paper Digest copy (the university newsletter has one fixed language)
+# active:      true to receive it, false to pause
+# owner:       true for me: in `to` of every email, gets the problem reports, and the only recipient in test mode
 
 subscribers:
-  - email: ndw2022@nyu.edu
-    active: true
+  - email: dmljdG9ybWFuZ2VsZWVyQG55dS5lZHU=
+    newsletters: [science]
     language: en
-  - email: fadobbati@uliege.be
     active: true
-    language: en
-  - email: js16011@nyu.edu
+    owner: true
+  - email: dm1hbmdlbGVlckB1bGllZ2UuYmU=
+    newsletters: [university]
+    language: fr
     active: true
+    owner: true
+  - email: bmR3MjAyMkBueXUuZWR1
+    newsletters: [science]
     language: en
-  - email: yy6080@nyu.edu
     active: true
+  - email: ZmFkb2JiYXRpQHVsaWVnZS5iZQ==
+    newsletters: [science]
     language: en
-  - email: gandry@uliege.be
     active: true
+  - email: anMxNjAxMUBueXUuZWR1
+    newsletters: [science]
     language: en
+    active: true
+  - email: eXk2MDgwQG55dS5lZHU=
+    newsletters: [science]
+    language: en
+    active: true
+  - email: Z2FuZHJ5QHVsaWVnZS5iZQ==
+    newsletters: [science]
+    language: en
+    active: true
