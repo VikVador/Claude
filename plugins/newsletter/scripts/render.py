@@ -15,8 +15,8 @@ papers content.json (plain text everywhere: render.py escapes & < > itself):
     "authors": ["First Author", "Second Author", "Third Author"], "et_al": true,
     "doi": "10.48550/arXiv.2611.01234", "doi_url": "https://doi.org/10.48550/arXiv.2611.01234",
     "published": "2026-11-05", "label": "ASSIMILATION",
-    "summary": "English paragraph with 2 to 5 **key phrases** in bold.",
-    "summary_fr": "Le même résumé en français, avec ses **phrases clés**."
+    "abstract": "The abstract, word for word from the paper page (render.py shows its first lines).",
+    "abstract_fr": "A faithful French translation of the same abstract, for the French copy."
   }],
   "backup": [ ... same fields, the candidates kept for the next issue ... ]
 }
@@ -74,24 +74,32 @@ def finish(name, ctx, dst):
 
 
 # ---------------------------------------------------------------- papers ----------------------------------------------
+def config_block(name, block):
+    """The flat `block:` of config/<name>.yaml as a dict of strings (standard library only)."""
+    text = open(os.path.join(HERE, '..', 'config', f'{name}.yaml'), encoding='utf-8').read()
+    m = re.search(rf'^{block}:\s*\n((?:[ \t].*\n|\s*\n)*)', text, re.M)
+    out = {}
+    for line in (m.group(1) if m else '').splitlines():
+        kv = re.match(r'^\s+(\w+):\s*(.*?)\s*(?:#.*)?$', line)
+        if kv:
+            out[kv.group(1)] = kv.group(2).strip().strip('"\'')
+    return out
+
+
 def settings():
     """Labels and maximum number of papers, read from config/papers.yaml (standard library only)."""
     text = open(os.path.join(HERE, '..', 'config', 'papers.yaml'), encoding='utf-8').read()
     labels = re.findall(r'^\s*- label:\s*"?(.+?)"?\s*(?:#.*)?$', text, re.M)
-    block = re.search(r'^papers:\s*\n((?:[ \t].*\n|\s*\n)*)', text, re.M)
-    cells = int(re.search(r'^\s+max:\s*(\d+)', block.group(1), re.M).group(1)) if block else 15
+    cells = int(config_block('papers', 'papers').get('max', 15))
     half = (len(labels) + 1) // 2
     return labels[:half], labels[half:], cells
 
 
 LEFT, RIGHT, CELLS = settings()  # labels in the order of the config, half per column; one cell per possible paper
 ON, OFF = "#c2603d", "#d9dff1"
-STRONG = '<strong style="color:#1a1f2e;">'
 WORDS = {
-    "en": dict(t_issue="Issue", t_new="new papers", t_published="Published", t_created="Created by",
-               t_powered="and powered by Claude"),
-    "fr": dict(t_issue="Numéro", t_new="nouveaux papiers", t_published="Publié le", t_created="Créé par",
-               t_powered="avec Claude"),
+    "en": dict(t_issue="Issue", t_new="new papers", t_published="Published"),
+    "fr": dict(t_issue="Numéro", t_new="nouveaux papiers", t_published="Publié le"),
 }
 MONTHS = {
     "en": "January February March April May June July August September October November December".split(),
@@ -110,29 +118,40 @@ def day(iso, lang, short=False):
     return f"{d.day} {(SHORT if short else MONTHS)[lang][d.month - 1]} {d.year}"
 
 
+def excerpt(text, n):
+    """The first n characters of an abstract, cut at a word, with an ellipsis (about 5 lines on a computer)."""
+    text = re.sub(r'\s+', ' ', text).strip()
+    if len(text) <= n:
+        return text
+    cut = text[:n].rsplit(' ', 1)[0].rstrip(' ,;:.')
+    return cut + '…'
+
+
 def check_papers(c, lang):
     papers, errors = c["papers"], []
     if not 1 <= len(papers) <= CELLS:
         errors.append(f"{len(papers)} papers: must be 1 to {CELLS}")
     if not re.fullmatch(r'\d{3}', str(c.get("issue", ""))):
         errors.append(f"issue {c.get('issue')!r}: three digits, e.g. 042")
-    key = "summary" if lang == "en" else "summary_fr"
+    key = "abstract" if lang == "en" else "abstract_fr"
     for i, p in enumerate(papers, 1):
         if p.get("label") not in LEFT + RIGHT:
             errors.append(f"paper {i}: unknown label {p.get('label')!r}")
-        s = p.get(key, "")
-        if not s:
-            errors.append(f"paper {i}: no {key}")
-        if '—' in s or '–' in s:
-            errors.append(f"paper {i}: em or en dash in {key}")
-        n = len(s.replace('**', ''))
-        if s and not 280 <= n <= 750:
-            errors.append(f"paper {i}: {key} of {n} characters, aim 300 to 650")
-        if s and not 2 <= s.count('**') // 2 <= 5:
-            errors.append(f"paper {i}: {s.count('**') // 2} bold key phrases in {key}, need 2 to 5")
+        if len(p.get(key, "")) < 100:
+            errors.append(f"paper {i}: no {key} (or shorter than 100 characters)")
         if not p.get("authors"):
             errors.append(f"paper {i}: no author")
     return errors
+
+
+def logo(path, width):
+    """An SVG file of logos/, inline, at `width` pixels, comments and blank space removed."""
+    svg = open(os.path.join(HERE, '..', path), encoding='utf-8').read()
+    svg = re.sub(r'<!--.*?-->', '', svg, flags=re.S)
+    svg = re.sub(r'>\s+<', '><', re.sub(r'[ \t]{2,}', ' ', svg)).strip()
+    vb = [float(x) for x in re.search(r'viewBox="([^"]+)"', svg).group(1).split()]
+    w = int(width)
+    return svg.replace('<svg ', f'<svg width="{w}" height="{round(w * vb[3] / vb[2])}" style="display:block;" ', 1)
 
 
 def papers(src, dst, lang):
@@ -140,25 +159,32 @@ def papers(src, dst, lang):
     errors = check_papers(c, lang)
     if errors:
         sys.exit("\n".join(errors))
+    look = config_block('papers', 'look')
+    chars = int(look.get('abstract_chars', 480))
     counts = {k: 0 for k in LEFT + RIGHT}
     items = []
     for i, p in enumerate(c["papers"], 1):
         counts[p["label"]] += 1
         names = p["authors"][:3]
-        summary = H.escape(p["summary" if lang == "en" else "summary_fr"], quote=False)
         items.append({**p, "number": i, "et_al": bool(p.get("et_al")) or len(p["authors"]) > 3,
                       "authors": [{"name": n, "sep": ", " if j < len(names) - 1 else ""} for j, n in enumerate(names)],
                       "published": day(p.get("published", ""), lang, short=True),
-                      "summary": re.sub(r'\*\*(.+?)\*\*', lambda m: STRONG + m.group(1) + '</strong>', summary)})
+                      "abstract": excerpt(p["abstract" if lang == "en" else "abstract_fr"], chars),
+                      "bl": decorations.bands("left", i + 1), "br": decorations.bands("right", i + 1)})
 
     def theme(k):
         return {"label": k, "count": counts[k],
                 "cells": [{"colour": ON if j < counts[k] else OFF, "pad": "0" if j == CELLS - 1 else "0 2px 0 0"}
                           for j in range(CELLS)]}
 
-    ctx = {**WORDS[lang], "lang": lang, "model": c.get("model", ""), "issue": c["issue"],
-           "date": day(c["date"], lang), "count": len(items), "papers": items,
-           "themes_left": [theme(k) for k in LEFT], "themes_right": [theme(k) for k in RIGHT]}
+    gap = 28
+    ctx = {**WORDS[lang], "lang": lang, "issue": c["issue"], "date": day(c["date"], lang), "count": len(items),
+           "papers": items, "themes_left": [theme(k) for k in LEFT], "themes_right": [theme(k) for k in RIGHT],
+           "logo": logo(look.get('logo', 'logos/papers.svg'), look.get('logo_width', 150)),
+           "logo_width": look.get('logo_width', 150), "gap": gap,
+           "frame_width": 640 + 2 * (decorations.BANDS_WIDTH + gap),
+           "head_bl": decorations.bands("left", -1), "head_br": decorations.bands("right", -1),
+           "stats_bl": decorations.bands("left", 0), "stats_br": decorations.bands("right", 0)}
     size = finish("papers", ctx, dst)
     print(f"OK {lang}: {len(items)} papers, {size:.0f} KB, dominant label {max(counts, key=counts.get)}")
 
@@ -194,17 +220,6 @@ def identity():
         if m:
             out[m.group(1)] = m.group(2).strip().strip('"\'')
     return out
-
-
-def logo(who):
-    """The SVG file named by `university.logo`, inline, at `logo_width` pixels, comments and blank space removed."""
-    svg = open(os.path.join(HERE, '..', who['logo']), encoding='utf-8').read()
-    svg = re.sub(r'<!--.*?-->', '', svg, flags=re.S)
-    svg = re.sub(r'>\s+<', '><', re.sub(r'[ \t]{2,}', ' ', svg)).strip()
-    vb = [float(x) for x in re.search(r'viewBox="([^"]+)"', svg).group(1).split()]
-    w = int(who.get('logo_width', 150))
-    h = round(w * vb[3] / vb[2])
-    return svg.replace('<svg ', f'<svg width="{w}" height="{h}" style="display:block;" ', 1)
 
 
 def university(src, dst, deco=None):
@@ -257,7 +272,7 @@ def university(src, dst, deco=None):
         sections.append(sec)
     (hl, hl_css), (hr, hr_css) = both("left", HL, 0, 82, 76, 0, 0), both("right", HL, 0, 82, 76, 0, 0)
     size = finish("university", {"week": nodetect(unescape(c["week"])), "sections": sections,
-                                 "logo": logo(who), "logo_width": who.get("logo_width", "150"),
+                                 "logo": logo(who["logo"], who.get("logo_width", 150)), "logo_width": who.get("logo_width", "150"),
                                  "margin": margin, "gap": gap, "frame_width": 640 + 2 * (margin + gap),
                                  "narrow": narrow, "narrow_gap": narrow_gap,
                                  "header_left": hl, "header_left_css": hl_css,

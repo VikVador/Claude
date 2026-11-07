@@ -97,3 +97,32 @@ def none(side, colour, i, height, top, offset=0, width=WIDTH):
 
 
 STYLES = {"shards": shards, "ribbon": ribbon, "column": column, "waves": waves, "none": none}
+
+
+# ---------------------------------------------------------------- bands (Daily Paper Digest) --------------------------
+# Thin vertical bands in the margins, like the lines of a spectrum or a data stream. They are table cells with a
+# background colour, so they always run the full height of their row, on any screen. From the outside in:
+# (width, kind, zone); "band" cells get a colour, "gap" cells stay white; "out" cells (class o) disappear on a
+# phone, "in" cells (class i) stay.
+BAND_LAYOUT = [(6, "gap", "out"), (2, "band", "out"), (7, "gap", "out"), (1, "band", "out"), (6, "gap", "out"),
+               (3, "band", "in"), (5, "gap", "in"), (1, "band", "in"), (4, "gap", "in"), (2, "band", "in")]
+BAND_PALETTE = ["#c2603d", "#d58a6f", "#e7b9a6", "#4a5169", "#8f95aa", "#c5cde6", "#9a4424"]
+BAND_OFF = .3  # chance that a band is blank in a row: the gaps give the rhythm
+
+
+def bands(side, i):
+    """The cells of one margin for row i: [{w, c, cls}], outside first on the left, mirrored on the right. Next white
+    cells of the same zone are merged into one, to keep the email small (Gmail clips it above 102 KB)."""
+    rng = random.Random(f'bands-{side}-{i}')
+    cells = []
+    for w, kind, zone in BAND_LAYOUT:
+        c = "#ffffff" if kind == "gap" or rng.random() < BAND_OFF else rng.choice(BAND_PALETTE)
+        cls = "o" if zone == "out" else "i"
+        if cells and c == "#ffffff" and cells[-1]["c"] == c and cells[-1]["cls"] == cls:
+            cells[-1]["w"] += w
+        else:
+            cells.append({"w": w, "c": c, "cls": cls})
+    return cells if side == 'left' else cells[::-1]
+
+
+BANDS_WIDTH = sum(w for w, _, _ in BAND_LAYOUT)

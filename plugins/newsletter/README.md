@@ -13,10 +13,10 @@ Two newsletters, prepared and sent by Claude from a scheduled task, through the
 | Folder       | What                                                                                                | Who edits it          |
 | ------------ | --------------------------------------------------------------------------------------------------- | --------------------- |
 | `templates/` | The HTML structure of each email, always shown light (no automatic dark mode).                      | me, rarely            |
-| `logos/`     | The logos drawn in the emails, as SVG (inlined by `render.py`, no image to attach).                | me, rarely            |
+| `logos/`     | The logos drawn in the emails (`papers.svg`, `uliege.svg`), as SVG inlined by `render.py`: no image to attach.                | me, rarely            |
 | `config/`    | Every setting, one YAML per newsletter: sender, test mode, research interests, sources, bounds; for the university one, its name and mailbox. | me, to tune or reuse |
 | `data/`      | `subscribers.yaml`: every recipient, me included (address in base64, newsletters, language, active, owner); the papers already sent (`papers/sent.json`) and the ones kept for the next issue (`papers/backup.json`). | Claude, after each issue; me for the subscribers |
-| `scripts/`   | `render.py` fills a template from a JSON, checks it and forces the light colours; `decorations.py` draws the margins of the university newsletter (`decoration` in its config); `state.py` reads and writes the state. | rarely |
+| `scripts/`   | `render.py` fills a template from a JSON, checks it and forces the light colours; `decorations.py` draws the margins: shards for the university newsletter (`decoration` in its config), vertical bands for the digest; `state.py` reads and writes the state. | rarely |
 | `skills/`    | How to do it: how to search, select, write, send and record. No setting inside.                     | rarely                |
 
 ## Run it

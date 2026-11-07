@@ -16,8 +16,8 @@ description: "Use when a scheduled task or I ask to prepare and send the daily p
 # NEWSLETTER PAPERS
 
 Every day, the Daily Paper Digest brings me and its subscribers recent papers that matter for my research, each with
-a short summary. You do everything in one run: collect, select, write, send, record. You usually run alone, at night,
-from a scheduled task: never ask a question, decide with these rules and go to the end. This file says **how**; every
+the first lines of its abstract. You do everything in one run: collect, select, write, send, record. You usually run
+alone, at night, from a scheduled task: never ask a question, decide with these rules and go to the end. This file says **how**; every
 setting (interests, sources, bounds) is in `config/papers.yaml`, and every recipient in `data/subscribers.yaml`.
 
 Everything lives in `VikVador/Claude`, folder `plugins/newsletter/` (called `NL` below), always used from a fresh
@@ -123,15 +123,16 @@ If the clone fails, go on without exclusion and add ` | no history check` to the
 
 ## 4. WRITE AND RENDER
 
-1. Write `/tmp/content.json`, format at the top of `scripts/render.py`: `model` (your name, `Opus 5.5`), `issue`,
-   `date` (ISO), `papers`, `backup`. Per paper: `url`, `title`, `authors`, `et_al`, `doi` (bare; arXiv:
-   `10.48550/arXiv.<id>`; the OpenReview id if no DOI), `doi_url`, `published` (ISO), `label`, `summary`.
-2. **summary**: your own paragraph in English, `summary.characters` long, problem, then proposed solution, then
-   conclusion, with `summary.bold_key_phrases` short key phrases in `**bold**`. Plain text (`render.py` escapes
-   `& < >`). No em dash (—) nor en dash (–): commas, colons or parentheses.
-3. **summary_fr**: the same summary in French, same rules, if `plan.json` has a `fr` email.
+1. Write `/tmp/content.json`, format at the top of `scripts/render.py`: `issue`, `date` (ISO), `papers`, `backup`.
+   Per paper: `url`, `title`, `authors`, `et_al`, `doi` (bare; arXiv: `10.48550/arXiv.<id>`; the OpenReview id if
+   no DOI), `doi_url`, `published` (ISO), `label`, `abstract`.
+2. **abstract**: the paper's abstract **word for word**, from its page (arXiv, publisher, OpenReview), never
+   rewritten nor shortened by you: `render.py` shows its first lines (`look.abstract_chars`). Plain text
+   (`render.py` escapes `& < >`). If only part of it is readable, give that part.
+3. **abstract_fr**: a faithful French translation of the same abstract, sentence by sentence, nothing added nor
+   left out, if `plan.json` has a `fr` email.
 4. Render each needed language: `python3 scripts/render.py papers /tmp/content.json /tmp/digest-<lang>.html --lang <lang>`.
-   It checks the labels, summaries, dashes, placeholders and size, and forces the light colours. On an error, fix
+   It checks the labels, abstracts, placeholders and size, and forces the light colours. On an error, fix
    `content.json` and run again: never edit the HTML.
 
 ---

@@ -1,174 +1,153 @@
 <!DOCTYPE html>
 <!-- Daily Paper Digest: filled by scripts/render.py only, never by hand. Light design: render.py forces the light
-     colours in every mail client. {{t_...}} are the words of the language (en or fr), set by render.py. -->
+     colours in every mail client. {{t_...}} are the words of the language (en or fr), set by render.py.
+     Layout: one row per block (header, statistics, then one per paper), each its own table with vertical bands in the
+     left margin, the content, and bands in the right margin (its own table, so that rows may have different cells). Bands are table cells with a background colour: they always run the
+     full height of their row. On a phone (<style> below) only the inner bands stay and the text gets smaller. -->
 <html lang="{{lang}}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Paper Digest</title>
+<style>
+  /* Phones (under 600 px): fewer bands, smaller text. */
+  @media (max-width: 600px) {
+    .page { padding: 16px 2px 32px !important; }
+    .o { display: none !important; width: 0 !important; }
+    .content { padding-left: 8px !important; padding-right: 8px !important; }
+    .logo { width: 90px !important; padding: 10px 6px 8px 10px !important; }
+    .logo svg { width: 90px !important; height: 30px !important; }
+    .t-head { font-size: 11px !important; }
+    .t-date { font-size: 8px !important; }
+    .t-label { font-size: 7px !important; }
+    .t-title { font-size: 11px !important; line-height: 14px !important; }
+    .t-num { font-size: 8px !important; padding-left: 6px !important; }
+    .t-authors { font-size: 8px !important; }
+    .t-meta { font-size: 7px !important; }
+    .t-abstract { font-size: 9px !important; line-height: 13px !important; }
+    .t-card { padding: 12px 4px 12px 12px !important; }
+    .t-chevron { width: 16px !important; font-size: 18px !important; }
+  }
+</style>
 </head>
-<body style="margin:0; padding:0;">
+<body style="margin:0; padding:0; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 
+<!-- Inbox preview text (hidden) -->
 <div style="display:none; max-height:0; overflow:hidden;">
   {{t_issue}} #{{issue}} &middot; {{count}} {{t_new}} &middot; {{date}}
 </div>
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr>
-    <td align="center" style="padding:16px 6px; padding:clamp(16px, 3.43vw, 24px) clamp(6px, 1.15vw, 8px); font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <td class="page" align="center" style="padding:24px 12px 40px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:{{frame_width}}px; margin:0 auto; border-collapse:collapse;">
 
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:680px;">
-
-        <!-- HEADER -->
-        <tr>
-          <td align="right" style="background-color:#eaeffc; padding:16px 22px 18px 22px; padding:clamp(16px, 2.86vw, 20px) clamp(22px, 4vw, 28px) clamp(18px, 3.43vw, 24px); border-radius:12px; font-size:0;">
-            <div style="display:inline-block; vertical-align:bottom; width:100%; max-width:360px; text-align:left;">
-              <p style="margin:0; font-size:10px; font-size:clamp(10px, 1.57vw, 11px); line-height:1.4; letter-spacing:1.5px; text-transform:uppercase; color:#9a4424; font-weight:bold;">
-                {{t_issue}} #{{issue}} &nbsp;&middot;&nbsp; {{date}}
-              </p>
-              <h1 style="margin:6px 0 0 0; font-size:26px; font-size:clamp(26px, 4.57vw, 32px); line-height:1.15; font-weight:600; color:#1a1f2e;">
-                Daily Paper Digest
-              </h1>
-            </div><div style="display:inline-block; vertical-align:bottom; width:100%; max-width:264px; padding-top:10px;">
-              <table role="presentation" align="right" cellpadding="0" cellspacing="0" border="0" style="font-size:0; line-height:0;">
+        <!-- ================================ HEADER: logo | Newsletter, date ================================ -->
+        <tr><td style="padding:0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; border-collapse:collapse; table-layout:fixed;"><tr>
+          {{#head_bl}}<td class="{{cls}}" width="{{w}}" style="width:{{w}}px;background-color:{{c}}"></td>{{/head_bl}}
+          <td class="content" valign="top" style="padding:0 {{gap}}px;">
+            <div style="border:1px solid #c5cde6; border-left:4px solid #c2603d; border-radius:8px; overflow:hidden;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; border-collapse:collapse;">
                 <tr>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:2px; background-color:#d5ddf5; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:2px; background-color:#d5ddf4; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:2px; background-color:#d5dcf3; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:4px; background-color:#d4d9f0; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:7px; background-color:#d4d4e8; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:11px; background-color:#d2cbda; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:17px; background-color:#d0bbc3; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:23px; background-color:#cca5a2; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:29px; background-color:#c88a7b; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:34px; background-color:#c57257; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:38px; background-color:#c26240; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:38px; background-color:#c2603d; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:36px; background-color:#c46c4f; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:31px; background-color:#c7826f; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:26px; background-color:#cb9a93; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:21px; background-color:#ceaeb0; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:17px; background-color:#d0b9c0; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:17px; background-color:#d0bbc2; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:19px; background-color:#cfb3b7; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:23px; background-color:#cca3a0; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:27px; background-color:#ca948a; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:28px; background-color:#c98f82; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:26px; background-color:#cb9890; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:21px; background-color:#ceacad; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:15px; background-color:#d1c1cc; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:9px; background-color:#d3d0e2; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:5px; background-color:#d4d8ee; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:2px; background-color:#d5dcf3; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:2px; background-color:#d5ddf5; border-radius:2px 2px 0 0;"></div></td>
-                  <td valign="bottom" style="padding:0 1px;"><div style="width:5px; height:2px; background-color:#d5ddf5; border-radius:2px 2px 0 0;"></div></td>
+                  <td class="logo" style="padding:16px 14px 14px 16px; vertical-align:middle; width:{{logo_width}}px;">
+                    {{{logo}}}
+                  </td>
+                  <td style="padding:20px 20px 18px 18px; vertical-align:middle; border-left:1px solid #e3e6eb;">
+                    <div class="t-head" style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1a1f2e;">Newsletter</div>
+                    <div class="t-date" style="font-size:13px; color:#6b7390; margin-top:6px;">{{date}}</div>
+                  </td>
                 </tr>
               </table>
             </div>
           </td>
-        </tr>
+          {{#head_br}}<td class="{{cls}}" width="{{w}}" style="width:{{w}}px;background-color:{{c}}"></td>{{/head_br}}
+        </tr></table></td></tr>
 
-        <!-- STATS: papers per theme, 2 columns of 4, 15 cells per bar -->
-        <tr>
-          <td style="padding-top:12px; padding-top:clamp(12px, 2.29vw, 16px);">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#eaeffc; border-radius:12px;">
-              <tr>
-                <td style="padding:14px 18px 8px 18px; padding:clamp(14px, 2.57vw, 18px) clamp(18px, 3.43vw, 24px) clamp(8px, 1.43vw, 10px); font-size:0;">
+        <!-- ================================ STATISTICS: papers per theme ================================
+             Two columns of themes, in the order of config/papers.yaml, zero included; one cell per possible paper. -->
+        <tr><td style="padding:0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; border-collapse:collapse; table-layout:fixed;"><tr>
+          {{#stats_bl}}<td class="{{cls}}" width="{{w}}" style="width:{{w}}px;background-color:{{c}}"></td>{{/stats_bl}}
+          <td class="content" valign="top" style="padding:12px {{gap}}px 0;">
+            <div style="background-color:#eaeffc; border-radius:12px; overflow:hidden;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+                <tr>
+                  <td style="padding:14px 18px 8px 18px; font-size:0;">
 
-                  <div style="display:inline-block; vertical-align:top; width:100%; max-width:308px;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                      {{#themes_left}}
-                      <tr>
-                        <td style="padding:0 20px 7px 0;">
-                          <p style="margin:0 0 4px 0; font-size:9px; line-height:1.3; letter-spacing:0.8px; text-transform:uppercase; font-weight:bold; color:{{#count}}#4a5169{{/count}}{{^count}}#8f95aa{{/count}};">
-                            {{label}}
-                          </p>
-                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                            <tr>{{#cells}}<td width="6.66%" style="padding:{{pad}}; font-size:0; line-height:0;"><div style="height:7px; background-color:{{colour}}; border-radius:2px;"></div></td>{{/cells}}</tr>
-                          </table>
-                        </td>
-                      </tr>
-                      {{/themes_left}}
-                    </table>
-                  </div><div style="display:inline-block; vertical-align:top; width:100%; max-width:288px;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                      {{#themes_right}}
-                      <tr>
-                        <td style="padding:0 0 7px 0;">
-                          <p style="margin:0 0 4px 0; font-size:9px; line-height:1.3; letter-spacing:0.8px; text-transform:uppercase; font-weight:bold; color:{{#count}}#4a5169{{/count}}{{^count}}#8f95aa{{/count}};">
-                            {{label}}
-                          </p>
-                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                            <tr>{{#cells}}<td width="6.66%" style="padding:{{pad}}; font-size:0; line-height:0;"><div style="height:7px; background-color:{{colour}}; border-radius:2px;"></div></td>{{/cells}}</tr>
-                          </table>
-                        </td>
-                      </tr>
-                      {{/themes_right}}
-                    </table>
-                  </div>
+                    <div style="display:inline-block; vertical-align:top; width:100%; max-width:308px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        {{#themes_left}}
+                        <tr>
+                          <td style="padding:0 20px 7px 0;">
+                            <p class="t-label" style="margin:0 0 4px 0; font-size:9px; line-height:1.3; letter-spacing:0.8px; text-transform:uppercase; font-weight:bold; color:{{#count}}#4a5169{{/count}}{{^count}}#8f95aa{{/count}};">{{label}}</p>
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                              <tr>{{#cells}}<td width="6.66%" style="padding:{{pad}}; font-size:0; line-height:0;"><div style="height:7px; background-color:{{colour}}; border-radius:2px;"></div></td>{{/cells}}</tr>
+                            </table>
+                          </td>
+                        </tr>
+                        {{/themes_left}}
+                      </table>
+                    </div><div style="display:inline-block; vertical-align:top; width:100%; max-width:288px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        {{#themes_right}}
+                        <tr>
+                          <td style="padding:0 0 7px 0;">
+                            <p class="t-label" style="margin:0 0 4px 0; font-size:9px; line-height:1.3; letter-spacing:0.8px; text-transform:uppercase; font-weight:bold; color:{{#count}}#4a5169{{/count}}{{^count}}#8f95aa{{/count}};">{{label}}</p>
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                              <tr>{{#cells}}<td width="6.66%" style="padding:{{pad}}; font-size:0; line-height:0;"><div style="height:7px; background-color:{{colour}}; border-radius:2px;"></div></td>{{/cells}}</tr>
+                            </table>
+                          </td>
+                        </tr>
+                        {{/themes_right}}
+                      </table>
+                    </div>
 
-                </td>
-              </tr>
-            </table>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
-        </tr>
+          {{#stats_br}}<td class="{{cls}}" width="{{w}}" style="width:{{w}}px;background-color:{{c}}"></td>{{/stats_br}}
+        </tr></table></td></tr>
 
-        <!-- PAPERS: one card per paper -->
+        <!-- ================================ PAPERS: one card per paper ================================
+             title (link) and number, authors, DOI and date, the first lines of the abstract | chevron (link) -->
         {{#papers}}
-        <tr>
-          <td style="padding-top:12px; padding-top:clamp(12px, 2.29vw, 16px);">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff; border:1px solid #d9dff1; border-right:2px solid #c5cde6; border-bottom:3px solid #c5cde6; border-radius:12px;">
-              <tr>
-                <td style="padding:20px 22px; padding:clamp(20px, 3.71vw, 26px) clamp(22px, 4vw, 28px);">
+        <tr><td style="padding:0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; border-collapse:collapse; table-layout:fixed;"><tr>
+          {{#bl}}<td class="{{cls}}" width="{{w}}" style="width:{{w}}px;background-color:{{c}}"></td>{{/bl}}
+          <td class="content" valign="top" style="padding:12px {{gap}}px 0;">
+            <div style="border:1px solid #d9dff1; border-right:2px solid #c5cde6; border-bottom:3px solid #c5cde6; border-radius:12px; overflow:hidden;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; border-collapse:collapse;">
+                <tr>
+                  <td class="t-card" style="padding:20px 8px 20px 22px; vertical-align:top;">
 
-                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                    <tr>
-                      <td valign="top">
-                        <h2 style="margin:0; font-size:17px; font-size:clamp(17px, 3vw, 21px); line-height:1.3; font-weight:600;">
-                          <a href="{{url}}" target="_blank" style="color:#1a1f2e; text-decoration:none;">{{title}}</a>
-                        </h2>
-                      </td>
-                      <td valign="top" align="right" style="padding:4px 0 0 12px; white-space:nowrap; font-size:11px; font-size:clamp(11px, 1.71vw, 12px); font-weight:bold; color:#8f95aa;">
-                        #{{number}}
-                      </td>
-                    </tr>
-                  </table>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td valign="top">
+                          <a class="t-title" href="{{url}}" target="_blank" style="font-size:17px; line-height:1.3; font-weight:600; color:#1a1f2e; text-decoration:none;">{{title}}</a>
+                        </td>
+                        <td class="t-num" valign="top" align="right" style="padding:3px 0 0 12px; white-space:nowrap; font-size:11px; font-weight:bold; color:#8f95aa;">#{{number}}</td>
+                      </tr>
+                    </table>
 
-                  <p style="margin:8px 0 0 0; font-size:11px; font-size:clamp(11px, 1.71vw, 12px); line-height:1.5; color:#9a4424;">
-                    {{#authors}}{{name}}{{sep}}{{/authors}}{{#et_al}} et al.{{/et_al}}
-                  </p>
+                    <p class="t-authors" style="margin:8px 0 0 0; font-size:11px; line-height:1.5; color:#9a4424;">{{#authors}}{{name}}{{sep}}{{/authors}}{{#et_al}} et al.{{/et_al}}</p>
 
-                  <p style="margin:4px 0 0 0; font-size:10px; font-size:clamp(10px, 1.57vw, 11px); line-height:1.6; color:#6b7390;">
-                    DOI <a href="{{doi_url}}" target="_blank" style="color:#6b7390; text-decoration:underline;">{{doi}}</a>
-                    &nbsp;&middot;&nbsp; <span style="white-space:nowrap;">{{t_published}} {{published}}</span>
-                  </p>
+                    <p class="t-meta" style="margin:4px 0 0 0; font-size:10px; line-height:1.6; color:#6b7390;">DOI <a href="{{doi_url}}" target="_blank" style="color:#6b7390; text-decoration:underline;">{{doi}}</a> &nbsp;&middot;&nbsp; <span style="white-space:nowrap;">{{t_published}} {{published}}</span></p>
 
-                  <p style="margin:12px 0 0 0; font-size:13px; font-size:clamp(13px, 2vw, 14px); line-height:1.6; color:#2f3546; text-align:justify;">
-                    {{{summary}}}
-                  </p>
+                    <p class="t-abstract" style="margin:12px 0 0 0; font-size:13px; line-height:1.6; color:#2f3546;">{{abstract}}</p>
 
-                </td>
-              </tr>
-            </table>
+                  </td>
+                  <td class="t-chevron" style="width:24px; vertical-align:middle; text-align:center; padding-right:8px;">
+                    <a href="{{url}}" target="_blank" style="font-size:26px; line-height:26px; color:#b9bfca; text-decoration:none;">&rsaquo;</a>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </td>
-        </tr>
+          {{#br}}<td class="{{cls}}" width="{{w}}" style="width:{{w}}px;background-color:{{c}}"></td>{{/br}}
+        </tr></table></td></tr>
         {{/papers}}
 
-        <!-- FOOTER -->
-        <tr>
-          <td style="padding-top:12px; padding-top:clamp(12px, 2.29vw, 16px);">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td align="center" style="background-color:#eaeffc; padding:12px 22px; padding:clamp(12px, 2.29vw, 16px) clamp(22px, 4vw, 28px); border-radius:12px; font-size:9px; font-size:clamp(9px, 1.57vw, 11px); line-height:1.6; color:#6b7390;">
-                  {{t_created}} <a href="https://vikvador.github.io" target="_blank" style="color:#1a1f2e; text-decoration:none; border-bottom:1px dotted #6b7390;">V. Mangeleer</a> {{t_powered}} {{model}}
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-
       </table>
-
     </td>
   </tr>
 </table>
