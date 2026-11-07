@@ -8,13 +8,8 @@
 # owner:       true for me: in `to` of every email, gets the problem reports, and the only recipient in test mode
 
 subscribers:
-  - email: dmljdG9ybWFuZ2VsZWVyQG55dS5lZHU=
-    newsletters: [science]
-    language: en
-    active: true
-    owner: true
   - email: dm1hbmdlbGVlckB1bGllZ2UuYmU=
-    newsletters: [university]
+    newsletters: [science, university]
     language: fr
     active: true
     owner: true
