@@ -14,8 +14,8 @@ sending:
 university:
   name: Université de Liège           # in the subject: Newsletter | <name> | Semaine du ...
   short: ULiège                      # the place written in the date column, the events section title
-  logo_big: Liège                    # the two words of the header logo
-  logo_small: université
+  logo: logos/uliege.svg             # header logo, inline SVG (shown by Apple Mail and Outlook, checked 2026-11-07)
+  logo_width: 150                    # in pixels; the height follows the SVG viewBox
   footer: "Résumé de la newsletter de l'Université de Liège, généré par Victor Mangeleer et Claude."
   events_title: Événements ULiège
   events_senders: [qualitedevie]             # senders (start of the address) whose well-being actions go to events
