@@ -2,23 +2,37 @@
 <!-- Weekly university newsletter: filled by scripts/render.py only, never by hand. No image: everything is drawn
      with tables, bgcolor and inline SVG. render.py forces the light colours in every mail client.
      Layout: one row per block (header, then one per section), each with a left margin, the content and a right
-     margin; the margins carry the decorations of scripts/decorations.py and disappear on phones. -->
+     margin; the margins carry the decorations of scripts/decorations.py, drawn twice: wide on a computer, narrow
+     on a phone, where the text also gets slightly smaller (<style> below). -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Newsletter hebdomadaire</title>
 <style>
+  /* Phones (under 600 px): narrow margins with their own small drawing, slightly smaller text. */
   @media (max-width: 600px) {
-    .margin { display: none !important; width: 0 !important; }
-    .content { padding-left: 0 !important; padding-right: 0 !important; }
+    .page { padding: 16px 2px 32px !important; }
+    .margin { width: {{narrow}}px !important; }
+    .wide { display: none !important; }
+    .narrow { display: block !important; max-height: none !important; overflow: visible !important; }
+    .content { padding-left: {{narrow_gap}}px !important; padding-right: {{narrow_gap}}px !important; }
+    .logo { width: 104px !important; padding: 12px 8px 10px 12px !important; }
+    .logo svg { width: 104px !important; height: 38px !important; }
+    .t-head { font-size: 15px !important; }
+    .t-section { font-size: 14px !important; }
+    .t-title { font-size: 13px !important; line-height: 17px !important; }
+    .t-text { font-size: 11px !important; line-height: 15px !important; }
+    .t-left { width: 64px !important; padding-left: 12px !important; font-size: 11px !important; line-height: 15px !important; }
+    .t-btn { font-size: 11px !important; padding: 4px 8px !important; }
+    .t-btn-cell { width: 82px !important; padding: 0 6px !important; }
   }
 </style>
 </head>
 <body style="margin:0; background-color:#FFFFFF; font-family:'Inter',-apple-system,'Segoe UI',Arial,sans-serif; color:#26343A;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
   <tr>
-    <td align="center" style="padding:24px 12px 40px;">
+    <td class="page" align="center" style="padding:24px 12px 40px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:{{frame_width}}px; margin:0 auto; border-collapse:collapse;">
 
         <!-- ================================ HEADER ================================ -->
@@ -28,12 +42,12 @@
             <div style="border:1px solid #26343A; border-left:4px solid #00707F; border-radius:8px; overflow:hidden;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
                 <tr>
-                  <td style="padding:16px 14px 14px 16px; vertical-align:middle; width:{{logo_width}}px;">
+                  <td class="logo" style="padding:16px 14px 14px 16px; vertical-align:middle; width:{{logo_width}}px;">
                     {{{logo}}}
                   </td>
                   <td style="padding:20px 20px 18px 18px; vertical-align:middle; border-left:1px solid #E3E6EB;">
-                    <div style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1D3B4A;">Newsletter hebdomadaire</div>
-                    <div style="font-size:13px; color:#6B7480; margin-top:6px;">{{{week}}}</div>
+                    <div class="t-head" style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1D3B4A;">Newsletter hebdomadaire</div>
+                    <div class="t-text" style="font-size:13px; color:#6B7480; margin-top:6px;">{{{week}}}</div>
                   </td>
                 </tr>
               </table>
@@ -50,26 +64,26 @@
           <td class="content" valign="top" style="padding:40px {{gap}}px 0;">
 
             <!-- Section title and its short underline -->
-            <div style="font-size:15px; font-weight:600; letter-spacing:.2px; color:#1D3B4A;">{{title}}</div>
+            <div class="t-section" style="font-size:15px; font-weight:600; letter-spacing:.2px; color:#1D3B4A;">{{title}}</div>
             <table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 14px;"><tr><td width="24" height="2" style="background-color:{{colour}}; width:24px; height:2px; font-size:0; line-height:0;">&nbsp;</td></tr></table>
 
             <!-- Card: the rounded border is on a div that clips its rows, so no row hides it -->
             <div style="border:1px solid #26343A; border-radius:8px; overflow:hidden;">
 
-              {{#empty}}<div style="padding:18px 20px; font-size:12px; color:#6B7480;">{{empty_text}}</div>{{/empty}}
+              {{#empty}}<div class="t-text" style="padding:18px 20px; font-size:12px; color:#6B7480;">{{empty_text}}</div>{{/empty}}
 
               <!-- "À ne pas manquer": date | title + sentence | button -->
               {{#deadlines}}
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse; table-layout:fixed; {{sep}}">
                 <tr style="height:66px;">
-                  <td style="padding:14px 0 14px 18px; width:84px; vertical-align:middle; font-size:12px; line-height:17px;"><span style="color:#00707F; font-weight:600;">{{{date}}}</span></td>
+                  <td class="t-left" style="padding:14px 0 14px 18px; width:84px; vertical-align:middle; font-size:12px; line-height:17px;"><span style="color:#00707F; font-weight:600;">{{{date}}}</span></td>
                   <td style="padding:14px 12px; vertical-align:middle;">
-                    <div style="font-size:14px; font-weight:600; color:#1D3B4A; line-height:19px;">{{title}}</div>
-                    <div style="font-size:12px; color:#26343A; line-height:17px; margin-top:2px;">{{desc}}</div>
+                    <div class="t-title" style="font-size:14px; font-weight:600; color:#1D3B4A; line-height:19px;">{{title}}</div>
+                    <div class="t-text" style="font-size:12px; color:#26343A; line-height:17px; margin-top:2px;">{{desc}}</div>
                   </td>
                   <td width="1" style="background-color:#E3E6EB; width:1px; padding:0; font-size:0; line-height:0;">&nbsp;</td>
-                  <td style="width:96px; text-align:center; vertical-align:middle; padding:0 10px;">
-                    <a href="{{link}}" style="display:inline-block; border:1px solid #00707F; color:#00707F; font-size:12px; padding:5px 10px; border-radius:14px; text-decoration:none; white-space:nowrap;">{{button}}</a>
+                  <td class="t-btn-cell" style="width:96px; text-align:center; vertical-align:middle; padding:0 10px;">
+                    <a class="t-btn" href="{{link}}" style="display:inline-block; border:1px solid #00707F; color:#00707F; font-size:12px; padding:5px 10px; border-radius:14px; text-decoration:none; white-space:nowrap;">{{button}}</a>
                   </td>
                 </tr>
               </table>
@@ -80,11 +94,11 @@
               <a href="{{link}}" style="display:block; text-decoration:none; color:inherit;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse; table-layout:fixed; {{sep}}">
                   <tr style="height:{{height}}px;">
-                    <td style="padding:14px 0 14px 18px; width:84px; vertical-align:middle; font-size:12px; line-height:17px;">{{#lines}}{{{br}}}<span style="color:{{colour}};{{weight}}">{{{text}}}</span>{{/lines}}</td>
+                    <td class="t-left" style="padding:14px 0 14px 18px; width:84px; vertical-align:middle; font-size:12px; line-height:17px;">{{#lines}}{{{br}}}<span style="color:{{colour}};{{weight}}">{{{text}}}</span>{{/lines}}</td>
                     <td style="padding:14px 12px; vertical-align:middle;">
-                      <div style="font-size:14px; font-weight:600; color:#1D3B4A; line-height:19px;">{{title}}</div>
-                      {{#speaker}}<div style="font-size:12px; color:#009CA6; line-height:17px; margin-top:2px;">{{speaker}}</div>{{/speaker}}
-                      <div style="font-size:12px; color:#26343A; line-height:18px; margin-top:{{desc_mt}}px;">{{desc}}</div>
+                      <div class="t-title" style="font-size:14px; font-weight:600; color:#1D3B4A; line-height:19px;">{{title}}</div>
+                      {{#speaker}}<div class="t-text" style="font-size:12px; color:#009CA6; line-height:17px; margin-top:2px;">{{speaker}}</div>{{/speaker}}
+                      <div class="t-text" style="font-size:12px; color:#26343A; line-height:18px; margin-top:{{desc_mt}}px;">{{desc}}</div>
                     </td>
                     <td style="width:22px; vertical-align:middle; text-align:center; font-size:24px; line-height:24px; color:#B9BFCA; padding-right:8px;">&rsaquo;</td>
                   </tr>

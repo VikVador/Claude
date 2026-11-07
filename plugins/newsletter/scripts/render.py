@@ -212,7 +212,17 @@ def university(src, dst, deco=None):
     who = identity()
     style = deco or who.get("decoration", "none")
     draw = decorations.STYLES[style]
-    margin, gap = (0, 0) if style == "none" else (decorations.WIDTH, 28)
+    margin, gap = (0, 0) if style == "none" else (decorations.WIDTH, 40)
+    narrow, narrow_gap = (0, 0) if style == "none" else (decorations.NARROW, 8)
+
+    def both(side, colour, n, h, top, offset):
+        """The margin drawn wide (computer) and narrow (phone); the template's <style> shows one of them."""
+        wide, css = draw(side, colour, n, h, top, offset)
+        small, _ = draw(side, colour, n, h, top, offset, decorations.NARROW)
+        if wide == '&nbsp;':
+            return wide, css
+        return (f'<div class="wide">{wide}</div>'
+                f'<div class="narrow" style="display:none; max-height:0; overflow:hidden;">{small}</div>', css)
     titles = {**TITLES, "events": who.get("events_title", TITLES["events"])}
     unescape = lambda s: H.unescape(s) if isinstance(s, str) else s  # noqa: E731  (old files wrote &amp;)
     sections, offset = [], 82  # offset: top of the current block in the email, for decorations.py
@@ -239,13 +249,14 @@ def university(src, dst, deco=None):
         rows_h = 52 if not raw else 66 * len(sec["deadlines"]) + sum(r["height"] for r in sec["rows"])
         h, n = 40 + 46 + rows_h - 6, len(sections) + 1
         (sec["left"], sec["left_css"]), (sec["right"], sec["right_css"]) = (
-            draw("left", COLOURS[k], n, h, 40, offset), draw("right", COLOURS[k], n, h, 40, offset))
+            both("left", COLOURS[k], n, h, 40, offset), both("right", COLOURS[k], n, h, 40, offset))
         offset += h + 6
         sections.append(sec)
-    (hl, hl_css), (hr, hr_css) = draw("left", HL, 0, 82, 0), draw("right", HL, 0, 82, 0)
+    (hl, hl_css), (hr, hr_css) = both("left", HL, 0, 82, 0, 0), both("right", HL, 0, 82, 0, 0)
     size = finish("university", {"week": nodetect(unescape(c["week"])), "sections": sections,
                                  "logo": logo(who), "logo_width": who.get("logo_width", "150"),
                                  "margin": margin, "gap": gap, "frame_width": 640 + 2 * (margin + gap),
+                                 "narrow": narrow, "narrow_gap": narrow_gap,
                                  "header_left": hl, "header_left_css": hl_css,
                                  "header_right": hr, "header_right_css": hr_css}, dst)
     print(f"OK university: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, "
