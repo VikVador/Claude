@@ -215,10 +215,11 @@ def university(src, dst, deco=None):
     margin, gap = (0, 0) if style == "none" else (decorations.WIDTH, 40)
     narrow, narrow_gap = (0, 0) if style == "none" else (decorations.NARROW, 8)
 
-    def both(side, colour, n, h, top, offset):
-        """The margin drawn wide (computer) and narrow (phone); the template's <style> shows one of them."""
+    def both(side, colour, n, h, h_phone, top, offset):
+        """The margin drawn wide (computer) and narrow (phone); the template's <style> shows one of them. Each is as
+        tall as its block on that screen (h, h_phone), a little under the real height."""
         wide, css = draw(side, colour, n, h, top, offset)
-        small, _ = draw(side, colour, n, h, top, offset, decorations.NARROW)
+        small, _ = draw(side, colour, n, h_phone, top, offset, decorations.NARROW)
         if wide == '&nbsp;':
             return wide, css
         return (f'<div class="wide">{wide}</div>'
@@ -248,11 +249,13 @@ def university(src, dst, deco=None):
         # decoration fills the margin without ever making the section taller.
         rows_h = 52 if not raw else 66 * len(sec["deadlines"]) + sum(r["height"] for r in sec["rows"])
         h, n = 40 + 46 + rows_h - 6, len(sections) + 1
+        # On a phone, rows shrink to their text: about 44 px each, under a 77 px title block (measured 2026-11-07).
+        h_phone = 77 + (44 * (len(sec["deadlines"]) + len(sec["rows"])) if raw else 38) - 4
         (sec["left"], sec["left_css"]), (sec["right"], sec["right_css"]) = (
-            both("left", COLOURS[k], n, h, 40, offset), both("right", COLOURS[k], n, h, 40, offset))
+            both("left", COLOURS[k], n, h, h_phone, 40, offset), both("right", COLOURS[k], n, h, h_phone, 40, offset))
         offset += h + 6
         sections.append(sec)
-    (hl, hl_css), (hr, hr_css) = both("left", HL, 0, 82, 0, 0), both("right", HL, 0, 82, 0, 0)
+    (hl, hl_css), (hr, hr_css) = both("left", HL, 0, 82, 76, 0, 0), both("right", HL, 0, 82, 76, 0, 0)
     size = finish("university", {"week": nodetect(unescape(c["week"])), "sections": sections,
                                  "logo": logo(who), "logo_width": who.get("logo_width", "150"),
                                  "margin": margin, "gap": gap, "frame_width": 640 + 2 * (margin + gap),
