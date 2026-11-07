@@ -255,7 +255,7 @@ def university(src, dst, deco=None):
     style = deco or who.get("decoration", "none")
     draw = decorations.STYLES[style]
     margin, gap = (0, 0) if style == "none" else (decorations.WIDTH, 40)
-    narrow, narrow_gap = (0, 0) if style == "none" else (decorations.NARROW, 8)
+    narrow, narrow_gap = (0, 0) if style == "none" else (decorations.NARROW, 14)
 
     def both(side, colour, n, h, h_phone, top, offset):
         """The margin drawn wide (computer) and narrow (phone); the template's <style> shows one of them. Each is as

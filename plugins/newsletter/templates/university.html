@@ -8,7 +8,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Newsletter</title>
+<title>Newsletter hebdomadaire</title>
 <style>
   /* Phones (under 600 px): narrow margins with their own small drawing, smaller text, rows as tall as their text. */
   @media (max-width: 600px) {
@@ -16,7 +16,7 @@
     .margin { width: {{narrow}}px !important; }
     .wide { display: none !important; }
     .narrow { display: block !important; max-height: none !important; overflow: visible !important; }
-    .content { padding-left: {{narrow_gap}}px !important; padding-right: {{narrow_gap}}px !important; }
+    .content { padding-left: {{narrow_gap}}px !important; padding-right: {{narrow_gap}}px !important; }  /* space between the drawings and the content */
     .logo { width: 84px !important; padding: 10px 6px 8px 10px !important; }
     .logo svg { width: 84px !important; height: 31px !important; }
     .t-head { font-size: 11px !important; }
@@ -48,7 +48,7 @@
                     {{{logo}}}
                   </td>
                   <td style="padding:20px 20px 18px 18px; vertical-align:middle; border-left:1px solid #E3E6EB;">
-                    <div class="t-head" style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1D3B4A;">Newsletter</div>
+                    <div class="t-head" style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1D3B4A;">Newsletter hebdomadaire</div>
                     <div class="t-text" style="font-size:13px; color:#6B7480; margin-top:6px;">{{{week}}}</div>
                   </td>
                 </tr>
