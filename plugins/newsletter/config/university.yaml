@@ -16,7 +16,7 @@ university:
   short: ULiège                      # the place written in the date column, the events section title
   logo: logos/uliege.svg             # header logo, inline SVG (shown by Apple Mail and Outlook, checked 2026-11-07)
   logo_width: 150                    # in pixels; the height follows the SVG viewBox
-  footer: "Résumé de la newsletter de l'Université de Liège, généré par Victor Mangeleer et Claude."
+  decoration: shards                 # margins: shards, ribbon, column, waves or none (scripts/decorations.py)
   events_title: Événements ULiège
   events_senders: [qualitedevie]             # senders (start of the address) whose well-being actions go to events
 
