@@ -1,0 +1,155 @@
+# Daily Paper Digest: everything you may want to change, outside the skill.
+# The skill newsletter-papers reads this file at every run (fresh from GitHub).
+
+# ---------------------------------------------------------------- sending ---------------------------------------------
+sending:
+  from: "Daily Paper Digest <onboarding@resend.dev>"   # a verified Resend domain, e.g. papers@newsletter.<domain>
+  to: victormangeleer@nyu.edu                          # main recipient, gets every issue
+  to_language: en                                      # language of the main recipient's copy: en or fr
+  subscribers: false                                   # false: test mode, only `to`; true: also data/subscribers.yaml
+  max_bcc: 49                                          # Resend: 50 recipients per email, `to` included
+  report_to: victormangeleer@nyu.edu                   # where problems are reported
+
+# ---------------------------------------------------------------- bounds ----------------------------------------------
+papers:
+  min: 8                     # under it: one extra search wave, then accept and say it in the subject
+  max: 15                    # over it: keep the best, the next ones go to the back-up
+  extra_waves: 1
+  backup: 2                  # candidates kept in data/papers/backup.json for the next issue
+
+windows_days:
+  arxiv: 30
+  journals: 90               # papers reach the databases later
+  labs: 90
+
+subagents:                   # bounds of each search subagent
+  crossref_queries: 3
+  crossref_rows: 30
+  pages_per_source: 1
+  abstracts_read: 30
+  candidates_returned: 12
+  attempts_per_source: 2
+  labs_on: [Monday]          # the lab subagents run only these days
+
+summary:
+  characters: [300, 650]
+  bold_key_phrases: [2, 5]
+
+# ---------------------------------------------------------------- research --------------------------------------------
+group: >
+  Our research sits where deep learning meets ocean and climate science, centred on simulating the ocean (physics and
+  biogeochemistry: global ocean, Black Sea, Mediterranean Sea, ...) with AI.
+
+projects:                    # in order of priority: papers closest to the first come first in the digest
+  - name: Main project
+    text: >
+      A generative neural emulator of the operational forecasting system of the physics and biogeochemistry of the
+      Black Sea, run by the Copernicus Marine Environment Monitoring Service (CMEMS), in 3 steps. Compression: an
+      autoencoder compresses the multivariate 3D geophysical fields into a low-dimensional latent space, which
+      simplifies the dynamical system, eases learning the dynamics and cuts inference time. Dynamics: a generative
+      model learns the dynamics in the latent space and forecasts the next 10 days from the current and previous
+      daily states. Assimilation: the observations of the last 14 days are assimilated in the latent space, a
+      filtering step that initialises the forecast.
+  - name: Project with Laure Zanna (NYU, 2026-09-01 to 2027-03-01)
+    text: >
+      The inverse problem of estimating the ocean state from satellite observations: from sea surface temperature,
+      chlorophyll, salinity and height, reconstruct the full ocean state.
+  - name: Secondary project
+    text: >
+      A reanalysis of the Black Sea: train a generative model on an existing reanalysis, then assimilate observations
+      in the latent space. It must give a better estimate of the uncertainty of the ocean state trajectory, and check
+      whether we reproduce the evolution of the oxycline and of the hypoxic zone.
+
+# Each paper gets exactly one label. Every label is one bar of the statistics card, in this order (first half on the
+# left, second half on the right). Add, remove or rename a theme here only: render.py follows. Renaming a label does
+# not rewrite the old issues of data/papers/sent.json.
+themes:
+  - label: EMULATORS
+    text: >
+      Neural emulators (generative or deterministic) of large-scale physical and/or biogeochemical dynamical systems,
+      atmosphere or ocean, global or regional, in ambient or latent space, every horizon from short-range forecasts to
+      climate projections. Also emulators trained directly on observations rather than reanalyses or model outputs
+      (they may still use an analysis to start).
+    examples: ["GenCast (arXiv 2312.15796)", "WeatherNext 3 (arXiv 2609.03582)"]
+  - label: LATENT MODELS
+    text: >
+      Compression of dynamical systems to learn their dynamics: convolutional autoencoders, transformers, hybrids or
+      graph networks that compress or mix very high-dimensional physical data to ease learning the dynamics. A high
+      compression rate is not required.
+    examples: ["Lost in Latent Space (arXiv 2507.02608)"]
+  - label: ASSIMILATION
+    text: >
+      New ways to assimilate data with generative models, mainly diffusion (score-based), also normalizing flows or
+      stochastic interpolants. Of special interest: how the observation model is defined (from linear Gaussian to more
+      complex), assimilation in a latent space, and how the latent state is projected back to the ambient space.
+    examples: ["Score-based Data Assimilation (arXiv 2306.10574)"]
+  - label: POSTERIOR SAMPLING
+    text: >
+      New posterior sampling methods with diffusion (score-based), normalizing flows or stochastic interpolants, in any
+      field (imaging, physics, ...).
+    examples: ["A Survey on Diffusion Models for Inverse Problems (arXiv 2410.00083)"]
+  - label: GENERATIVE MODELING
+    text: >
+      Fundamental advances in generative AI (diffusion, normalizing flows, stochastic interpolants): theory,
+      architectures, training objectives, faster generation; above all the recent papers that make a buzz.
+      Applications to inverse problems go to POSTERIOR SAMPLING.
+    examples: ["Stochastic Interpolants (arXiv 2303.08797)"]
+  - label: OCEAN FROM SPACE
+    text: >
+      Reconstructing the ocean state from surface satellite observations with AI, global or regional: the full 3D
+      state is the goal, but surface-only reconstructions (observed or unobserved variables) count too.
+    examples: ["The Physical Limit of Neural Hypoxia Detection in the Black Sea from Satellite Observations (arXiv 2604.25608)"]
+  - label: OXYGEN & HYPOXIA
+    text: >
+      Reconstructing and forecasting dissolved oxygen with AI, including detecting hypoxic zones, global or regional,
+      from model outputs or observations.
+    examples: ["Forecasting coastal hypoxia using a blend of mechanistic and artificial intelligence models (2025)"]
+  - label: DATASETS
+    text: >
+      New reanalysis or observation datasets of the atmosphere or the ocean, physics or biogeochemistry, global or
+      regional; advances of Argo floats and satellite missions and the datasets they give.
+    examples: ["The ERA5 global reanalysis"]
+
+keywords:                    # queries combine one domain and one method keyword, in English
+  domain: [ocean, climate, Earth system, biogeochemistry, sea surface, reanalysis]
+  method: [neural emulator, latent diffusion, data assimilation, autoencoder, uncertainty quantification,
+           flow matching, posterior sampling]
+
+# ---------------------------------------------------------------- sources ---------------------------------------------
+# One subagent per group, all in parallel. Paywalled papers are fine: an abstract alone is enough.
+sources:
+  - group: arXiv
+    arxiv:
+      monthly: [physics.ao-ph, physics.geo-ph]   # low volume: the current and previous month pages
+      recent: [cs.LG, stat.ML]                   # very high volume: the recent page
+  - group: Journals A
+    journals:
+      - {name: Geophysical Research Letters, issn: 1944-8007}
+      - {name: JAMES, issn: 1942-2466}
+      - {name: "JGR: Machine Learning and Computation", issn: 2993-5210}
+      - {name: Ocean Science, issn: 1812-0792}
+      - {name: Earth Observation, issn: 3054-1786}
+  - group: Journals B
+    journals:
+      - {name: Journal of Marine Systems, issn: 0924-7963}
+      - {name: Frontiers in Marine Science, issn: 2296-7745}
+      - {name: Environmental Research Letters, issn: 1748-9326}
+      - {name: Nature Machine Intelligence, issn: 2522-5839}
+      - {name: Nature Communications, issn: 2041-1723}
+  - group: Labs A
+    labs:
+      - {name: Google Research, url: "https://research.google/pubs/"}
+      - {name: Google DeepMind, url: "https://deepmind.google/research/publications/"}
+      - {name: Microsoft Research AI for Science, url: "https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science/"}
+      - {name: NVIDIA Earth-2, url: "https://www.nvidia.com/en-us/high-performance-computing/earth-2/"}
+      - {name: Meta FAIR, url: "https://ai.meta.com/research/"}
+      - {name: OpenAI, url: "https://openai.com/research/"}
+      - {name: Anthropic, url: "https://www.anthropic.com/research"}
+  - group: Labs B
+    labs:
+      - {name: ECMWF, url: "https://www.ecmwf.int/en/publications"}
+      - {name: Mercator Ocean, url: "https://www.mercator-ocean.eu/"}
+      - {name: Ai2, url: "https://allenai.org/papers"}
+      - {name: M2LInES, url: "https://m2lines.github.io/publications/"}
+
+crossref_mailto: vmangeleerpapers@gmail.com

@@ -1,6 +1,6 @@
 # Skill template
 
-Every `plugins/research/skills/<name>/SKILL.md` follows this file. Copy the skeleton below, keep the sections in this
+Every `plugins/<plugin>/skills/<name>/SKILL.md` follows this file. Copy the skeleton below, keep the sections in this
 order and delete the optional ones the skill does not need. This file is not a skill: never name it `SKILL.md`.
 
 ## Conventions

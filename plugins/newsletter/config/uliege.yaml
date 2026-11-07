@@ -1,0 +1,65 @@
+# Weekly ULiège newsletter: everything you may want to change, outside the skill.
+# The skill newsletter-uliege reads this file at every run (fresh from GitHub).
+
+# ---------------------------------------------------------------- sending ---------------------------------------------
+sending:
+  from: "Newsletter ULiège <onboarding@resend.dev>"    # a verified Resend domain, e.g. uliege@newsletter.<domain>
+  to: vmangeleer@uliege.be
+
+# ---------------------------------------------------------------- inputs ----------------------------------------------
+mailbox:                     # read-only, through the Microsoft 365 connector
+  address: vmangeleer@uliege.be
+  folder: Newsletter
+  folder_id: "AQMkADIxYjVhMzhjLTFiN2EtNDM4ZS05ZTdjLTI1NmU2NDAxM2QzNAAuAAADAjLvROUzB0CRhbGyTp_yUQEAi-4wmLwDE0CzXlJPwR_SmgAC1tCFkQAAAA=="
+
+timezone: Europe/Brussels    # the period is the previous Monday 00:00 to Sunday 23:59 in this time zone
+page_reads: 15               # WebFetch budget per run; no free web search
+deadline_soon_days: 10       # a deadline within this many days goes to "À ne pas manquer"
+
+sources:                     # read every week, in this order, until the budget is spent
+  - {name: ECMWF (iCal), url: "https://events.ecmwf.int/export/categ/0.ics?from=today&to=%2B365d", section: workshops}
+  - {name: EuroGOOS, url: "https://eurogoos.eu/events/", section: workshops}
+  - {name: OceanPredict, url: "https://oceanpredict.org/events/", section: workshops}
+  - {name: EGU, url: "https://www.egu.eu/meetings/", section: workshops, monthly_swap: true}
+  - {name: Copernicus Marine (sitemap), url: "https://events.marine.copernicus.eu/sitemap.xml", section: workshops, monthly_swap: true}
+  - {name: Climate Change AI, url: "https://www.climatechange.ai/events", section: workshops, monthly_swap: true}
+  - {name: OpenReview workshops of the next ML conference, url: "https://openreview.net/group?id=ICLR.cc/2027/Workshop", section: workshops,
+     note: "adapt the conference (ICLR, then ICML, then NeurIPS) and the year"}
+  - {name: ML deadlines, url: "https://raw.githubusercontent.com/huggingface/ai-deadlines/main/src/data/conferences/iclr.yml", section: workshops,
+     note: "or icml.yml, neurips.yml"}
+  - {name: NYU AOS Colloquium, url: "https://math.nyu.edu/dynamic/calendars/seminars/atmosphere-ocean-science-colloquium/", section: seminars}
+  - {name: NYU CAOS Friday Seminar, url: "https://caos.cims.nyu.edu/dynamic/events/seminars/atmosphere-ocean-science-student-seminar/", section: seminars}
+  - {name: NYU CILVR, url: "https://cims.nyu.edu/ai/seminars/cilvr-seminar-series/", section: seminars}
+  - {name: Montefiore (iCal), url: "https://calendar.google.com/calendar/ical/seminars.montef%40gmail.com/public/basic.ics", section: seminars}
+  - {name: Faculté des Sciences ULiège, url: "https://www.sciences.uliege.be/cms/c_3966578/fr/facsc-tous-les-agendas", section: seminars}
+  - {name: FSA ULiège, url: "https://www.fsa.uliege.be/cms/c_3112675/fr/fsa-tous-les-agendas", section: seminars}
+  - {name: MAST ULiège, url: "https://www.mast.uliege.be/cms/c_4938851/en/news-agendas", section: seminars}
+
+first_monday_of_month:       # replace the sources marked monthly_swap by these
+  - {name: ICLR and ICML dates, url: "https://iclr.cc/Conferences/2027/Dates https://icml.cc/Conferences/2027/Dates", note: "adapt the year"}
+  - {name: ASLO meetings, url: "https://www.aslo.org/meetings/"}
+  - {name: Climate Informatics, url: "https://www.climateinformatics.org/conferences/"}
+  - {name: Ocean Colloquium ULiège, url: "https://ocean-colloquium.uliege.be"}
+
+# ---------------------------------------------------------------- filter ----------------------------------------------
+interests:                   # seminars and workshops are kept only if they touch one of these
+  thesis: [latent diffusion models, Bayesian inverse problems, data assimilation,
+           3D ocean state reconstruction from satellite observations (SST, SSS, SSH, chlorophyll),
+           AI ocean emulators and forecasting, coastal hypoxia, Black Sea]
+  generative_ml: [diffusion, flow matching, foundation models for the Earth, simulation-based inference]
+  earth_science: [ocean and climate science at large, above all with a link to ML or Earth observation]
+  when_in_doubt: keep the item if it touches both ML and Earth science
+
+# ---------------------------------------------------------------- sections --------------------------------------------
+sections:                    # key in contenu.json: maximum number of items
+  deadlines: 5
+  seminars: 6
+  workshops: 6
+  events: 6
+  brief: 6
+  infos: 5
+
+lengths:                     # characters
+  title: 45
+  one_line: 75
+  two_lines: 150
