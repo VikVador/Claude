@@ -195,6 +195,17 @@ def identity():
     return out
 
 
+def logo(who):
+    """The SVG file named by `university.logo`, inline, at `logo_width` pixels, comments and blank space removed."""
+    svg = open(os.path.join(HERE, '..', who['logo']), encoding='utf-8').read()
+    svg = re.sub(r'<!--.*?-->', '', svg, flags=re.S)
+    svg = re.sub(r'>\s+<', '><', re.sub(r'[ \t]{2,}', ' ', svg)).strip()
+    vb = [float(x) for x in re.search(r'viewBox="([^"]+)"', svg).group(1).split()]
+    w = int(who.get('logo_width', 150))
+    h = round(w * vb[3] / vb[2])
+    return svg.replace('<svg ', f'<svg width="{w}" height="{h}" style="display:block;" ', 1)
+
+
 def university(src, dst):
     c = json.load(open(src, encoding='utf-8'))
     who = identity()
@@ -221,7 +232,7 @@ def university(src, dst):
                                 "lines": lines, "speaker": it.get("speaker", ""), "desc_mt": 4 if nl > 1 else 2})
         sections.append(sec)
     size = finish("university", {"week": nodetect(unescape(c["week"])), "sections": sections,
-                                 "logo_big": who.get("logo_big", ""), "logo_small": who.get("logo_small", ""),
+                                 "logo": logo(who), "logo_width": who.get("logo_width", "150"),
                                  "footer": who.get("footer", "")}, dst)
     print(f"OK university: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, 0 image")
 
