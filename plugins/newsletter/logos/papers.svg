@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124 48" role="img" aria-label="Daily Paper Digest">
+
+  <!-- The digest's histogram: a mixture of two Gaussians, 30 bars of 3 units every 4 units, on a baseline at y = 44 -->
+  <g id="mark">
+    <rect x="2.0" y="41.8" width="3" height="2.2" rx="0.8" fill="#d5ddf5"/>
+    <rect x="6.0" y="41.8" width="3" height="2.2" rx="0.8" fill="#d5ddf4"/>
+    <rect x="10.0" y="41.8" width="3" height="2.2" rx="0.8" fill="#d5dcf3"/>
+    <rect x="14.0" y="39.7" width="3" height="4.3" rx="0.8" fill="#d4d9f0"/>
+    <rect x="18.0" y="36.4" width="3" height="7.6" rx="0.8" fill="#d4d4e8"/>
+    <rect x="22.0" y="32.1" width="3" height="11.9" rx="0.8" fill="#d2cbda"/>
+    <rect x="26.0" y="25.6" width="3" height="18.4" rx="0.8" fill="#d0bbc3"/>
+    <rect x="30.0" y="19.2" width="3" height="24.8" rx="0.8" fill="#cca5a2"/>
+    <rect x="34.0" y="12.7" width="3" height="31.3" rx="0.8" fill="#c88a7b"/>
+    <rect x="38.0" y="7.3" width="3" height="36.7" rx="0.8" fill="#c57257"/>
+    <rect x="42.0" y="3.0" width="3" height="41.0" rx="0.8" fill="#c26240"/>
+    <rect x="46.0" y="3.0" width="3" height="41.0" rx="0.8" fill="#c2603d"/>
+    <rect x="50.0" y="5.1" width="3" height="38.9" rx="0.8" fill="#c46c4f"/>
+    <rect x="54.0" y="10.5" width="3" height="33.5" rx="0.8" fill="#c7826f"/>
+    <rect x="58.0" y="15.9" width="3" height="28.1" rx="0.8" fill="#cb9a93"/>
+    <rect x="62.0" y="21.3" width="3" height="22.7" rx="0.8" fill="#ceaeb0"/>
+    <rect x="66.0" y="25.6" width="3" height="18.4" rx="0.8" fill="#d0b9c0"/>
+    <rect x="70.0" y="25.6" width="3" height="18.4" rx="0.8" fill="#d0bbc2"/>
+    <rect x="74.0" y="23.5" width="3" height="20.5" rx="0.8" fill="#cfb3b7"/>
+    <rect x="78.0" y="19.2" width="3" height="24.8" rx="0.8" fill="#cca3a0"/>
+    <rect x="82.0" y="14.8" width="3" height="29.2" rx="0.8" fill="#ca948a"/>
+    <rect x="86.0" y="13.8" width="3" height="30.2" rx="0.8" fill="#c98f82"/>
+    <rect x="90.0" y="15.9" width="3" height="28.1" rx="0.8" fill="#cb9890"/>
+    <rect x="94.0" y="21.3" width="3" height="22.7" rx="0.8" fill="#ceacad"/>
+    <rect x="98.0" y="27.8" width="3" height="16.2" rx="0.8" fill="#d1c1cc"/>
+    <rect x="102.0" y="34.3" width="3" height="9.7" rx="0.8" fill="#d3d0e2"/>
+    <rect x="106.0" y="38.6" width="3" height="5.4" rx="0.8" fill="#d4d8ee"/>
+    <rect x="110.0" y="41.8" width="3" height="2.2" rx="0.8" fill="#d5dcf3"/>
+    <rect x="114.0" y="41.8" width="3" height="2.2" rx="0.8" fill="#d5ddf5"/>
+    <rect x="118.0" y="41.8" width="3" height="2.2" rx="0.8" fill="#d5ddf5"/>
+    <rect x="0" y="45" width="124" height="1" fill="#c5cde6"/>
+  </g>
+
+</svg>

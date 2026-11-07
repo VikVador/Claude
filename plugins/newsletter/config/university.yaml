@@ -6,7 +6,9 @@
 sending:
   from: "Newsletter ULiège <onboarding@resend.dev>"    # a verified Resend domain, e.g. uliege@newsletter.<domain>
   newsletter: university                               # the key of data/subscribers.yaml `newsletters`
-  language: fr                                         # written in this language only
+  subject_en: "Newsletter | University of Liège"       # + " | DD/MM/YYYY", the day it is sent (in `timezone`)
+  subject_fr: "Newsletter | Université de Liège"
+  timezone: Europe/Brussels
   test: true                                           # true: only the owner receives it; false: every subscriber
   max_bcc: 49
 
@@ -14,10 +16,11 @@ sending:
 university:
   name: Université de Liège           # in the subject: Newsletter | <name> | Semaine du ...
   short: ULiège                      # the place written in the date column, the events section title
-  logo_big: Liège                    # the two words of the header logo
-  logo_small: université
-  footer: "Résumé de la newsletter de l'Université de Liège, généré par Victor Mangeleer et Claude."
+  logo: logos/uliege.svg             # header logo, inline SVG (shown by Apple Mail and Outlook, checked 2026-11-07)
+  logo_width: 150                    # in pixels; the height follows the SVG viewBox
+  decoration: shards                 # margins: shards, ribbon, column, waves or none (scripts/decorations.py)
   events_title: Événements ULiège
+  events_title_en: ULiège events
   events_senders: [qualitedevie]             # senders (start of the address) whose well-being actions go to events
 
 # ---------------------------------------------------------------- inputs ----------------------------------------------

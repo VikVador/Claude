@@ -2,7 +2,9 @@
 
 Usage:
   python3 render.py papers content.json digest.html --lang en|fr
-  python3 render.py university contenu.json newsletter.html
+  python3 render.py university contenu.json newsletter.html --lang en|fr
+  python3 render.py papers --notice notice.html --lang en|fr        the problem notice instead of the content (no
+  python3 render.py university --notice notice.html --lang en|fr    content.json): same look, the text of NOTICE
 
 The HTML structure lives in ../templates/<name>.html; this script only fills it. On a problem it prints the list of
 problems and exits with 1: fix the JSON and run again, never edit the HTML by hand.
@@ -15,8 +17,8 @@ papers content.json (plain text everywhere: render.py escapes & < > itself):
     "authors": ["First Author", "Second Author", "Third Author"], "et_al": true,
     "doi": "10.48550/arXiv.2611.01234", "doi_url": "https://doi.org/10.48550/arXiv.2611.01234",
     "published": "2026-11-05", "label": "ASSIMILATION",
-    "summary": "English paragraph with 2 to 5 **key phrases** in bold.",
-    "summary_fr": "Le même résumé en français, avec ses **phrases clés**."
+    "abstract": "The abstract, word for word from the paper page (render.py shows its first lines).",
+    "abstract_fr": "A faithful French translation of the same abstract, for the French copy."
   }],
   "backup": [ ... same fields, the candidates kept for the next issue ... ]
 }
@@ -27,6 +29,7 @@ import argparse
 import datetime as dt
 import html as H
 import json
+import math
 import os
 import re
 import sys
@@ -34,6 +37,8 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from light import force_light  # noqa: E402
+import decorations  # noqa: E402
+from state import owner  # noqa: E402
 
 TEMPLATES = os.path.join(HERE, '..', 'templates')
 MAX_KB = 100  # Gmail clips emails above 102 KB
@@ -73,25 +78,52 @@ def finish(name, ctx, dst):
 
 
 # ---------------------------------------------------------------- papers ----------------------------------------------
+def config_block(name, block):
+    """The flat `block:` of config/<name>.yaml as a dict of strings (standard library only)."""
+    text = open(os.path.join(HERE, '..', 'config', f'{name}.yaml'), encoding='utf-8').read()
+    m = re.search(rf'^{block}:\s*\n((?:[ \t].*\n|\s*\n)*)', text, re.M)
+    out = {}
+    for line in (m.group(1) if m else '').splitlines():
+        kv = re.match(r'^\s+(\w+):\s*(.*?)\s*(?:#.*)?$', line)
+        if kv:
+            out[kv.group(1)] = kv.group(2).strip().strip('"\'')
+    return out
+
+
 def settings():
     """Labels and maximum number of papers, read from config/papers.yaml (standard library only)."""
     text = open(os.path.join(HERE, '..', 'config', 'papers.yaml'), encoding='utf-8').read()
     labels = re.findall(r'^\s*- label:\s*"?(.+?)"?\s*(?:#.*)?$', text, re.M)
-    block = re.search(r'^papers:\s*\n((?:[ \t].*\n|\s*\n)*)', text, re.M)
-    cells = int(re.search(r'^\s+max:\s*(\d+)', block.group(1), re.M).group(1)) if block else 15
+    cells = int(config_block('papers', 'papers').get('max', 15))
     half = (len(labels) + 1) // 2
     return labels[:half], labels[half:], cells
 
 
 LEFT, RIGHT, CELLS = settings()  # labels in the order of the config, half per column; one cell per possible paper
 ON, OFF = "#c2603d", "#d9dff1"
-STRONG = '<strong style="color:#1a1f2e;">'
 WORDS = {
-    "en": dict(t_issue="Issue", t_new="new papers", t_published="Published", t_created="Created by",
-               t_powered="and powered by Claude"),
-    "fr": dict(t_issue="Numéro", t_new="nouveaux papiers", t_published="Publié le", t_created="Créé par",
-               t_powered="avec Claude"),
+    "en": dict(t_issue="Issue", t_new="new papers", t_published="Published", t_title="Daily newsletter",
+               t_review="Review of"),
+    "fr": dict(t_issue="Numéro", t_new="nouveaux papiers", t_published="Publié le", t_title="Newsletter journalière",
+               t_review="Revue du"),
 }
+# The text sent instead of a newsletter that could not be made: always this one, in the reader's language.
+NOTICE = {
+    "en": ["Hello,", "There was a problem with today's newsletter. For any question, you can contact {contact}.",
+           "Thank you and have a nice day!"],
+    "fr": ["Bonjour,", "Aujourd'hui, il y a eu un souci avec la newsletter. Pour toute question, vous pouvez contacter "
+           "{contact}.", "Merci et bonne journée !"],
+}
+
+
+def notice_text(lang, colour="#c2603d"):
+    """NOTICE in HTML: one paragraph per line, the owner's address of data/subscribers.yaml as a mail link."""
+    mail = owner()
+    link = f'<a href="mailto:{mail}" style="color:{colour}; text-decoration:underline;">{H.escape(mail)}</a>'
+    paras = [H.escape(x, quote=False).replace('{contact}', link) for x in NOTICE[lang]]
+    return ''.join(f'<p style="margin:{0 if i == 0 else 10}px 0 0 0;">{x}</p>' for i, x in enumerate(paras))
+
+
 MONTHS = {
     "en": "January February March April May June July August September October November December".split(),
     "fr": "janvier février mars avril mai juin juillet août septembre octobre novembre décembre".split(),
@@ -109,70 +141,134 @@ def day(iso, lang, short=False):
     return f"{d.day} {(SHORT if short else MONTHS)[lang][d.month - 1]} {d.year}"
 
 
+def excerpt(text, n):
+    """The first n sentences of an abstract, then an ellipsis if there are more. A sentence ends with . ! or ? before a
+    space and a capital letter or a digit, so that "et al." or "e.g." inside a sentence never cuts it."""
+    text = re.sub(r'\s+', ' ', text).strip()
+    sentences = re.split(r'(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ0-9])', text)
+    if len(sentences) <= n:
+        return text
+    return ' '.join(sentences[:n]).rstrip('.') + '…'
+
+
 def check_papers(c, lang):
     papers, errors = c["papers"], []
     if not 1 <= len(papers) <= CELLS:
         errors.append(f"{len(papers)} papers: must be 1 to {CELLS}")
     if not re.fullmatch(r'\d{3}', str(c.get("issue", ""))):
         errors.append(f"issue {c.get('issue')!r}: three digits, e.g. 042")
-    key = "summary" if lang == "en" else "summary_fr"
+    key = "abstract" if lang == "en" else "abstract_fr"
     for i, p in enumerate(papers, 1):
         if p.get("label") not in LEFT + RIGHT:
             errors.append(f"paper {i}: unknown label {p.get('label')!r}")
-        s = p.get(key, "")
-        if not s:
-            errors.append(f"paper {i}: no {key}")
-        if '—' in s or '–' in s:
-            errors.append(f"paper {i}: em or en dash in {key}")
-        n = len(s.replace('**', ''))
-        if s and not 280 <= n <= 750:
-            errors.append(f"paper {i}: {key} of {n} characters, aim 300 to 650")
-        if s and not 2 <= s.count('**') // 2 <= 5:
-            errors.append(f"paper {i}: {s.count('**') // 2} bold key phrases in {key}, need 2 to 5")
+        if len(p.get(key, "")) < 100:
+            errors.append(f"paper {i}: no {key} (or shorter than 100 characters)")
         if not p.get("authors"):
             errors.append(f"paper {i}: no author")
     return errors
 
 
-def papers(src, dst, lang):
-    c = json.load(open(src, encoding='utf-8'))
-    errors = check_papers(c, lang)
+def logo(path, width):
+    """An SVG file of logos/, inline, at `width` pixels, comments and blank space removed."""
+    svg = open(os.path.join(HERE, '..', path), encoding='utf-8').read()
+    svg = re.sub(r'<!--.*?-->', '', svg, flags=re.S)
+    svg = re.sub(r'>\s+<', '><', re.sub(r'[ \t]{2,}', ' ', svg)).strip()
+    vb = [float(x) for x in re.search(r'viewBox="([^"]+)"', svg).group(1).split()]
+    w = int(width)
+    return svg.replace('<svg ', f'<svg width="{w}" height="{round(w * vb[3] / vb[2])}" style="display:block;" ', 1)
+
+
+def papers(src, dst, lang, deco=None):
+    notice = src is None
+    c = {"issue": "", "date": dt.date.today().isoformat(), "papers": []} if notice else json.load(open(src, encoding='utf-8'))
+    errors = [] if notice else check_papers(c, lang)
     if errors:
         sys.exit("\n".join(errors))
+    look = config_block('papers', 'look')
+    sentences = int(look.get('abstract_sentences', 4))
+    style = deco or look.get('decoration', 'scatter')
+    draw = decorations.STYLES[style]
+    offset = [0]
+
+    def margins(row, height):
+        """The two margins of a block of `height` px (a little under its real height). A continuous style is drawn on
+        both sides over the full height, along one curve from top to bottom; the others draw one small figure per
+        block, on the left for even rows and on the right for odd ones (keeps the email under Gmail's 102 KB)."""
+        if style in decorations.CONTINUOUS:
+            pair = (draw("left", "", row, height, 0, offset[0])[0], draw("right", "", row, height, 0, offset[0])[0])
+        else:
+            fig = draw("left" if row % 2 == 0 else "right", "", row, min(height, 120), 0)[0]
+            pair = (fig, '&nbsp;') if row % 2 == 0 else ('&nbsp;', fig)
+        offset[0] += height
+        return pair
+
+    def card_height(p):
+        """A card's row on a computer, to the pixel when its line counts are right (measured on 2026-11-07): 68.5 px of
+        fixed parts, 18.85 px per title line, 17.25 px per abstract line. Line counts are estimated low (a title line
+        holds 80 to 90 characters, an abstract line 87 to 99), so a wrong guess leaves a small gap in the margin,
+        never a taller card."""
+        title = math.ceil(len(p["title"]) / 90)
+        abstract = math.ceil(len(excerpt(p["abstract" if lang == "en" else "abstract_fr"], sentences)) / 99)
+        return round(68.5 + 18.85 * title + 17.25 * abstract)
+
+    head_margins = margins(-1, 87)
+    stats_margins = margins(0, NOTICE_PAPERS) if notice else margins(0, 153)
     counts = {k: 0 for k in LEFT + RIGHT}
     items = []
     for i, p in enumerate(c["papers"], 1):
         counts[p["label"]] += 1
-        names = p["authors"][:3]
-        summary = H.escape(p["summary" if lang == "en" else "summary_fr"], quote=False)
-        items.append({**p, "number": i, "et_al": bool(p.get("et_al")) or len(p["authors"]) > 3,
+        names = p["authors"][:2]  # one line: the first two authors, then et al.
+        items.append({**p, "number": i, "et_al": bool(p.get("et_al")) or len(p["authors"]) > 2,
                       "authors": [{"name": n, "sep": ", " if j < len(names) - 1 else ""} for j, n in enumerate(names)],
                       "published": day(p.get("published", ""), lang, short=True),
-                      "summary": re.sub(r'\*\*(.+?)\*\*', lambda m: STRONG + m.group(1) + '</strong>', summary)})
+                      "abstract": excerpt(p["abstract" if lang == "en" else "abstract_fr"], sentences),
+                      **dict(zip(("left", "right"), margins(i + 1, card_height(p))))})
 
     def theme(k):
         return {"label": k, "count": counts[k],
                 "cells": [{"colour": ON if j < counts[k] else OFF, "pad": "0" if j == CELLS - 1 else "0 2px 0 0"}
                           for j in range(CELLS)]}
 
-    ctx = {**WORDS[lang], "lang": lang, "model": c.get("model", ""), "issue": c["issue"],
-           "date": day(c["date"], lang), "count": len(items), "papers": items,
-           "themes_left": [theme(k) for k in LEFT], "themes_right": [theme(k) for k in RIGHT]}
+    gap = 28
+    (head_left, head_right), (stats_left, stats_right) = head_margins, stats_margins
+    ctx = {**WORDS[lang], "lang": lang, "issue": c["issue"], "date": day(c["date"], lang), "count": len(items),
+           "papers": items, "themes_left": [theme(k) for k in LEFT], "themes_right": [theme(k) for k in RIGHT],
+           "logo": logo(look.get('logo', 'logos/papers.svg'), look.get('logo_width', 150)),
+           "logo_width": look.get('logo_width', 62), "logo_cell": look.get('logo_cell', 150), "gap": gap,
+           "margin": decorations.WIDTH, "frame_width": 640 + 2 * (decorations.WIDTH + gap),
+           "head_left": head_left, "head_right": head_right, "stats_left": stats_left, "stats_right": stats_right,
+           "notice": notice, "notice_text": notice_text(lang) if notice else ""}
     size = finish("papers", ctx, dst)
-    print(f"OK {lang}: {len(items)} papers, {size:.0f} KB, dominant label {max(counts, key=counts.get)}")
+    print(f"OK {lang}: notice, {size:.0f} KB" if notice else
+          f"OK {lang}: {len(items)} papers, {size:.0f} KB, dominant label {max(counts, key=counts.get)}")
 
 
 # ---------------------------------------------------------------- university ------------------------------------------
 ORDER = ["deadlines", "seminars", "workshops", "events", "brief", "infos"]
-TITLES = {"deadlines": "À ne pas manquer", "seminars": "Séminaires & talks", "workshops": "Workshops & conférences",
-          "events": "Événements", "brief": "En bref", "infos": "Infos pratiques"}
+TITLES = {
+    "fr": {"deadlines": "À ne pas manquer", "seminars": "Séminaires & talks", "workshops": "Workshops & conférences",
+           "events": "Événements", "brief": "En bref", "infos": "Infos pratiques"},
+    "en": {"deadlines": "Don't miss", "seminars": "Seminars & talks", "workshops": "Workshops & conferences",
+           "events": "Events", "brief": "In brief", "infos": "Practical info"},
+}
+UNI_WORDS = {"fr": dict(t_head="Newsletter hebdomadaire", t_reg="Inscription"),
+             "en": dict(t_head="Weekly newsletter", t_reg="Registration")}
 COLOURS = {"deadlines": "#F48245", "seminars": "#00707F", "workshops": "#FAA919", "events": "#0066B2",
            "brief": "#2CA449", "infos": "#585EA9"}
-EMPTY = {"deadlines": "Aucune date limite dans les 10 prochains jours.",
-         "seminars": "Rien à signaler pour le moment : je n'ai trouvé aucun séminaire dans tes domaines à travers mes recherches.",
-         "workshops": "Rien à signaler pour le moment : je n'ai trouvé aucun workshop ni conférence dans tes domaines à travers mes recherches.",
-         "events": "Aucun événement à venir cette semaine.", "brief": "Rien de particulier cette semaine.",
-         "infos": "Aucune info pratique cette semaine."}
+EMPTY = {
+    "fr": {"deadlines": "Aucune date limite dans les 10 prochains jours.",
+           "seminars": "Rien à signaler pour le moment : je n'ai trouvé aucun séminaire dans tes domaines à travers mes recherches.",
+           "workshops": "Rien à signaler pour le moment : je n'ai trouvé aucun workshop ni conférence dans tes domaines à travers mes recherches.",
+           "events": "Aucun événement à venir cette semaine.", "brief": "Rien de particulier cette semaine.",
+           "infos": "Aucune info pratique cette semaine."},
+    "en": {"deadlines": "No deadline in the next 10 days.",
+           "seminars": "Nothing to report for now: my searches found no seminar in your fields.",
+           "workshops": "Nothing to report for now: my searches found no workshop or conference in your fields.",
+           "events": "No upcoming event this week.", "brief": "Nothing special this week.",
+           "infos": "No practical info this week."},
+}
+NOTICE_PAPERS = 152              # height of the notice card's row on a computer (153 px measured on 2026-11-07)
+NOTICE_UNIVERSITY = (164, 124)   # the same in the university newsletter: computer, phone (165 and 126 measured)
 SPEC = {"seminars": (96, 1, True), "workshops": (92, 2, True), "events": (92, 2, True),
         "brief": (66, 1, True), "infos": (66, 1, False)}  # row height, description lines, first line bold
 HL, MUTED = "#00707F", "#6B7480"
@@ -195,15 +291,31 @@ def identity():
     return out
 
 
-def university(src, dst):
-    c = json.load(open(src, encoding='utf-8'))
+def university(src, dst, lang="fr", deco=None):
+    notice = src is None
+    c = {"week": day(dt.date.today().isoformat(), lang)} if notice else json.load(open(src, encoding='utf-8'))
     who = identity()
-    titles = {**TITLES, "events": who.get("events_title", TITLES["events"])}
+    style = deco or who.get("decoration", "none")
+    draw = decorations.STYLES[style]
+    margin, gap = (0, 0) if style == "none" else (decorations.WIDTH, 40)
+    narrow, narrow_gap = (0, 0) if style == "none" else (decorations.NARROW, 14)
+
+    def both(side, colour, n, h, h_phone, top, offset):
+        """The margin drawn wide (computer) and narrow (phone); the template's <style> shows one of them. Each is as
+        tall as its block on that screen (h, h_phone), a little under the real height."""
+        wide, css = draw(side, colour, n, h, top, offset)
+        small, _ = draw(side, colour, n, h_phone, top, offset, decorations.NARROW)
+        if wide == '&nbsp;':
+            return wide, css
+        return (f'<div class="wide">{wide}</div>'
+                f'<div class="narrow" style="display:none; max-height:0; overflow:hidden;">{small}</div>', css)
+    events = who.get("events_title" if lang == "fr" else f"events_title_{lang}", TITLES[lang]["events"])
+    titles = {**TITLES[lang], "events": events}
     unescape = lambda s: H.unescape(s) if isinstance(s, str) else s  # noqa: E731  (old files wrote &amp;)
-    sections = []
-    for k in ORDER:
+    sections, offset = [], 82  # offset: top of the current block in the email, for decorations.py
+    for k in ([] if notice else ORDER):
         raw = [{f: unescape(v) for f, v in it.items()} for it in (c.get(k) or [])]
-        sec = {"key": k, "title": titles[k], "colour": COLOURS[k], "empty": not raw, "empty_text": EMPTY[k],
+        sec = {"key": k, "title": titles[k], "colour": COLOURS[k], "empty": not raw, "empty_text": EMPTY[lang][k],
                "deadlines": [], "rows": []}
         for i, it in enumerate(raw):
             sep = '' if i == 0 else 'border-top:1px solid #E3E6EB;'
@@ -216,21 +328,48 @@ def university(src, dst):
             lines += [{"text": H.escape(x, quote=False), "br": "<br>", "colour": MUTED, "weight": ""}
                       for x in it["left"][1:]]
             if it.get("reg"):
-                lines.append({"text": "Inscription", "br": "<br>", "colour": HL, "weight": ""})
+                lines.append({"text": UNI_WORDS[lang]["t_reg"], "br": "<br>", "colour": HL, "weight": ""})
             sec["rows"].append({**it, "link": it.get("link") or "#", "sep": sep, "height": height,
                                 "lines": lines, "speaker": it.get("speaker", ""), "desc_mt": 4 if nl > 1 else 2})
+        # Height of the section, a little under the real one (40 top + title and underline 46 + rows), so that its
+        # decoration fills the margin without ever making the section taller.
+        rows_h = 52 if not raw else 66 * len(sec["deadlines"]) + sum(r["height"] for r in sec["rows"])
+        h, n = 40 + 46 + rows_h - 6, len(sections) + 1
+        # On a phone, rows shrink to their text: about 44 px each, under a 77 px title block (measured 2026-11-07).
+        h_phone = 77 + (44 * (len(sec["deadlines"]) + len(sec["rows"])) if raw else 38) - 4
+        (sec["left"], sec["left_css"]), (sec["right"], sec["right_css"]) = (
+            both("left", COLOURS[k], n, h, h_phone, 40, offset), both("right", COLOURS[k], n, h, h_phone, 40, offset))
+        offset += h + 6
         sections.append(sec)
-    size = finish("university", {"week": nodetect(unescape(c["week"])), "sections": sections,
-                                 "logo_big": who.get("logo_big", ""), "logo_small": who.get("logo_small", ""),
-                                 "footer": who.get("footer", "")}, dst)
-    print(f"OK university: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, 0 image")
+    (hl, hl_css), (hr, hr_css) = both("left", HL, 0, 82, 76, 0, 0), both("right", HL, 0, 82, 76, 0, 0)
+    (nl, nl_css), (nr, nr_css) = (both("left", HL, 1, *NOTICE_UNIVERSITY, 24, 82 + 6), both("right", HL, 1, *NOTICE_UNIVERSITY, 24, 82 + 6))
+    size = finish("university", {**UNI_WORDS[lang], "lang": lang, "week": nodetect(unescape(c["week"])), "sections": sections,
+                                 "notice": notice, "notice_text": notice_text(lang, HL) if notice else "",
+                                 "notice_left": nl, "notice_left_css": nl_css, "notice_right": nr, "notice_right_css": nr_css,
+                                 "logo": logo(who["logo"], who.get("logo_width", 150)), "logo_width": who.get("logo_width", "150"),
+                                 "margin": margin, "gap": gap, "frame_width": 640 + 2 * (margin + gap),
+                                 "narrow": narrow, "narrow_gap": narrow_gap,
+                                 "header_left": hl, "header_left_css": hl_css,
+                                 "header_right": hr, "header_right_css": hr_css}, dst)
+    if notice:
+        return print(f"OK university {lang}: notice, {size:.0f} KB")
+    print(f"OK university {lang}: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, "
+          f"decoration {style}, 0 image")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("name", choices=["papers", "university"])
-    ap.add_argument("src")
-    ap.add_argument("dst")
-    ap.add_argument("--lang", choices=["en", "fr"], default="en")
+    ap.add_argument("src", nargs="?", help="content.json (left out with --notice)")
+    ap.add_argument("dst", nargs="?")
+    ap.add_argument("--notice", metavar="DST", help="render the problem notice to DST instead of the content")
+    ap.add_argument("--lang", choices=["en", "fr"], default=None, help="en or fr (default: en for papers, fr for university)")
+    ap.add_argument("--decoration", choices=sorted(decorations.STYLES), help="override the config's decoration")
     a = ap.parse_args()
-    papers(a.src, a.dst, a.lang) if a.name == "papers" else university(a.src, a.dst)
+    src, dst = (None, a.notice) if a.notice else (a.src, a.dst)
+    if not dst:
+        ap.error("give content.json and the output, or --notice <output>")
+    if a.name == "papers":
+        papers(src, dst, a.lang or "en", a.decoration)
+    else:
+        university(src, dst, a.lang or "fr", a.decoration)

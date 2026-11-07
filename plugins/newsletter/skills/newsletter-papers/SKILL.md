@@ -16,8 +16,8 @@ description: "Use when a scheduled task or I ask to prepare and send the daily p
 # NEWSLETTER PAPERS
 
 Every day, the Daily Paper Digest brings me and its subscribers recent papers that matter for my research, each with
-a short summary. You do everything in one run: collect, select, write, send, record. You usually run alone, at night,
-from a scheduled task: never ask a question, decide with these rules and go to the end. This file says **how**; every
+the first lines of its abstract. You do everything in one run: collect, select, write, send, record. You usually run
+alone, at night, from a scheduled task: never ask a question, decide with these rules and go to the end. This file says **how**; every
 setting (interests, sources, bounds) is in `config/papers.yaml`, and every recipient in `data/subscribers.yaml`.
 
 Everything lives in `VikVador/Claude`, folder `plugins/newsletter/` (called `NL` below), always used from a fresh
@@ -73,11 +73,11 @@ python3 scripts/state.py status
    `last_two_dominant_labels` must differ from today's dominant label; `backup` counts the already-checked candidates
    of `data/papers/backup.json`: take them first if they still fit.
 3. `python3 scripts/state.py exclude > /tmp/exclude.txt`: the strict exclusion list.
-4. `python3 scripts/state.py plan config/papers.yaml > /tmp/plan.json`: the `owner` (gets every issue and the
-   reports) and one email per language to send, each with its `to` and `bcc` (only the owner in test mode). Its
-   languages are the ones to write (§ 4).
+4. `python3 scripts/state.py plan config/papers.yaml > /tmp/plan.json`: the `owner` and one email per language to
+   send, each with its `subject`, `to` and `bcc` (only the owner in test mode). Its languages are the ones to write
+   (§ 4).
 
-If the clone fails, go on without exclusion and add ` | no history check` to the subject (§ 5).
+If the clone fails, go on without exclusion and say it in the report.
 
 ---
 
@@ -123,15 +123,16 @@ If the clone fails, go on without exclusion and add ` | no history check` to the
 
 ## 4. WRITE AND RENDER
 
-1. Write `/tmp/content.json`, format at the top of `scripts/render.py`: `model` (your name, `Opus 5.5`), `issue`,
-   `date` (ISO), `papers`, `backup`. Per paper: `url`, `title`, `authors`, `et_al`, `doi` (bare; arXiv:
-   `10.48550/arXiv.<id>`; the OpenReview id if no DOI), `doi_url`, `published` (ISO), `label`, `summary`.
-2. **summary**: your own paragraph in English, `summary.characters` long, problem, then proposed solution, then
-   conclusion, with `summary.bold_key_phrases` short key phrases in `**bold**`. Plain text (`render.py` escapes
-   `& < >`). No em dash (—) nor en dash (–): commas, colons or parentheses.
-3. **summary_fr**: the same summary in French, same rules, if `plan.json` has a `fr` email.
+1. Write `/tmp/content.json`, format at the top of `scripts/render.py`: `issue`, `date` (ISO), `papers`, `backup`.
+   Per paper: `url`, `title`, `authors`, `et_al`, `doi` (bare; arXiv: `10.48550/arXiv.<id>`; the OpenReview id if
+   no DOI), `doi_url`, `published` (ISO), `label`, `abstract`.
+2. **abstract**: the paper's abstract **word for word**, from its page (arXiv, publisher, OpenReview), never
+   rewritten nor shortened by you: `render.py` shows its first sentences (`look.abstract_sentences`). Plain text
+   (`render.py` escapes `& < >`). If only part of it is readable, give that part.
+3. **abstract_fr**: a faithful French translation of the same abstract, sentence by sentence, nothing added nor
+   left out, if `plan.json` has a `fr` email.
 4. Render each needed language: `python3 scripts/render.py papers /tmp/content.json /tmp/digest-<lang>.html --lang <lang>`.
-   It checks the labels, summaries, dashes, placeholders and size, and forces the light colours. On an error, fix
+   It checks the labels, abstracts, placeholders and size, and forces the light colours. On an error, fix
    `content.json` and run again: never edit the HTML.
 
 ---
@@ -140,10 +141,11 @@ If the clone fails, go on without exclusion and add ` | no history check` to the
 
 1. **Recipients**: the emails of `/tmp/plan.json`, as they are: one per language, its `to` and its `bcc`. Each
    person gets only the language they chose. `cut` lists the subscribers over `max_bcc`: say it in the report.
-2. **Subject**: `Newsletter | Papers | #XXX`, plus ` | no history check` if § 1 failed, plus ` | N papers` if under
-   `papers.min`.
+2. **Subject**: the `subject` of the plan email, as it is: `Newsletter | Scientific Papers | 07/11/2026` or
+   `Newsletter | Papiers scientifiques | 07/11/2026`, the day it is sent. Never add anything to it: an issue under
+   `papers.min` or without history check is said in the report.
 3. **Send** each email once with the Resend connector, `send-email`: `from` = `sending.from`; `to`, `bcc`, `subject`
-   as above; `html` = the **whole** `digest-<lang>.html`, never cut; `text` = `Daily Paper Digest #XXX` then one line
+   from the plan; `html` = the **whole** `digest-<lang>.html`, never cut; `text` = `Daily Paper Digest #XXX` then one line
    per paper, `N. Title: link`; `idempotencyKey` = `papers-<issue>-<lang>`.
 4. Check that an email id came back. On an error without id, fix and retry **once** with the same key.
 
@@ -159,15 +161,18 @@ git add data && git commit -m "📰 Papers #<issue>" && git push
 
 `record` appends the issue to `data/papers/sent.json` and replaces `data/papers/backup.json` by the `backup` list.
 If the push is rejected, `git pull --rebase` and push once more. If you cannot push (no GitHub credentials), send
-the owner a text email, subject `Newsletter | Papers | #XXX | not recorded`, with the content of the two
-files, so that I commit them by hand.
+the owner a text email, with the subject of the owner's plan email, that starts with `Not recorded` and gives the
+content of the two files, so that I commit them by hand.
 
 ---
 
 ## 7. WHEN SOMETHING FAILS
 
-- **No relevant paper at all**: no email to the subscribers; send the owner a text email, subject
-  `Newsletter | Papers | DD-MM-YYYY | not generated`, one sentence on why.
+- **No digest possible** (no relevant paper at all, collection or render failing for good): send the **notice**
+  instead, to the same people. For each email of the plan, `python3 scripts/render.py papers --notice
+  /tmp/notice-<lang>.html --lang <lang>`, then send it like § 5 (same `subject`, `to`, `bcc`; `text` = the lines of
+  `NOTICE` in `render.py`; `idempotencyKey` = `papers-<issue>-<lang>`). The notice is the digest's look with one fixed
+  text: a problem today, write to the owner's address, thank you. Record nothing; say why in the report.
 - **Resend connector missing or refusing**: do not work around it (no other mail tool); stop, give the error in the
   report.
 - **`onboarding@resend.dev` refused for a recipient**: the sending domain is not verified yet; say so in the report.
@@ -180,8 +185,8 @@ Never write to anyone else, never ask a question.
 ## 8. CHECKLIST
 
 - [ ] Fresh clone, `config/papers.yaml` read, not already sent today?
-- [ ] Between `papers.min` and `papers.max` (or the subject says how many), none excluded, each checked by its id?
+- [ ] Between `papers.min` and `papers.max` (or the report says how many), none excluded, each checked by its id?
 - [ ] Dominant label different from the last two (or relaxed to reach the minimum)?
 - [ ] Ordered by the projects, numbered #1 to #N, every needed language rendered `OK`?
-- [ ] Each email of the plan sent once with an id back, to its `to` and `bcc` only?
+- [ ] Each email of the plan sent once with its own `subject` and an id back, to its `to` and `bcc` only?
 - [ ] `state.py record` run and pushed, or the "not recorded" email sent?

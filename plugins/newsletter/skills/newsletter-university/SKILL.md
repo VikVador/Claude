@@ -27,8 +27,8 @@ clone: the installed plugin copy is stale.
 | File in `NL`                | Use                                                                                    | When  |
 | --------------------------- | -------------------------------------------------------------------------------------- | ----- |
 | `config/university.yaml`    | **Read**: sending, identity, mailbox, sources, budget, interests, sections, lengths    | start |
-| `scripts/state.py`          | **Run** `python3 scripts/state.py plan config/university.yaml`: who gets the email     | § 6   |
-| `scripts/render.py`         | **Run** `python3 scripts/render.py university /tmp/contenu.json /tmp/newsletter.html`  | § 5   |
+| `scripts/state.py`          | **Run** `python3 scripts/state.py plan config/university.yaml`: who gets which email| § 5   |
+| `scripts/render.py`         | **Run** `python3 scripts/render.py university <contenu.json> <out.html> --lang <fr/en>`| § 5   |
 | `templates/university.html` | the structure of the email, filled by `render.py`: never edited by hand                | never |
 
 Related: the `newsletter-papers` skill for the daily paper digest.
@@ -101,7 +101,7 @@ At most `sections.<key>` items per section; nearest first in each.
 | `brief`     | Culture, city, public lectures, campus life                                                              | date + place, title, 1 sentence                                |
 | `infos`     | Routine notices (HPC, maintenance, limits), calls and grants with a later deadline, admin                | category (`HPC`, `Recherche`, `Admin`, …), title, 1 sentence   |
 
-**Form**: in `sending.language`, neutral tone, short sentences, no emoji. Dates `12 nov.`, `26–27 nov.`,
+**Form**: in the language of each email of the plan (§ 5), neutral tone, short sentences, no emoji. Dates `12 nov.`, `26–27 nov.`,
 `10 nov. · 18h`; the year only if it differs from the current one (`4 janv. 2027`). The place on the university
 campus is written `university.short`. Lengths within `lengths` (title, one-line and two-line descriptions). An empty
 section stays an empty list: the template writes a default message.
@@ -110,11 +110,15 @@ section stays an empty list: the template writes a default message.
 
 ## 5. WRITE AND RENDER
 
-1. Write `/tmp/contenu.json` (UTF-8, plain text: `render.py` escapes `&` itself):
+0. `python3 scripts/state.py plan config/university.yaml > /tmp/plan.json`: one email per language, each with its
+   `subject`, `to` and `bcc`. Write the content in each of its languages (usually only `fr`): the same items, translated
+   faithfully, in `/tmp/contenu-<lang>.json`.
+1. Write `/tmp/contenu-<lang>.json` (UTF-8, plain text: `render.py` escapes `&` itself); in English the dates read
+   `12 Nov`, the week `Week of 2–8 November 2026`:
 
 ```json
 {
-  "week": "Résumé de la semaine du 2 au 8 novembre 2026",
+  "week": "Semaine du 2 au 8 novembre 2026",
   "deadlines": [{"date": "12 nov.", "title": "...", "desc": "Une phrase.", "button": "S'inscrire", "link": "https://..."}],
   "seminars": [{"left": ["16 nov.", "<short>"], "title": "...", "speaker": "Nom · Affiliation", "desc": "Une phrase.", "link": "https://..."}],
   "workshops": [{"left": ["12 janv. 2027", "Vienne"], "title": "...", "speaker": "Organisateur", "desc": "Deux phrases max.", "reg": true, "link": "https://..."}],
@@ -125,26 +129,25 @@ section stays an empty list: the template writes a default message.
 ```
 
    `left`: line 1 is the date, line 2 the place, or « Date limite » when the date shown is a deadline.
-   `reg: true` adds « Inscription » under the date. The logo, the footer and the events title come from
-   `university` in the config.
-2. In `/tmp/newsletter-repo/plugins/newsletter`, run
-   `python3 scripts/render.py university /tmp/contenu.json /tmp/newsletter.html`: it prints `OK`. On an error, fix
-   the JSON and run again.
+   `reg: true` adds « Inscription » (Registration) under the date. The logo (an SVG of `logos/`), the events title and the
+   margin decoration come from `university` in the config.
+2. In `/tmp/newsletter-repo/plugins/newsletter`, run for each language
+   `python3 scripts/render.py university /tmp/contenu-<lang>.json /tmp/newsletter-<lang>.html --lang <lang>`: it
+   prints `OK`. On an error, fix the JSON and run again.
 
 ---
 
 ## 6. SEND
 
-1. `python3 scripts/state.py plan config/university.yaml` gives the `owner` and one email to send: its `to` (the
-   owner) and its `bcc` (the active subscribers, empty in test mode). `cut` lists the subscribers over `max_bcc`:
-   say it in the report.
-2. Send it once with the Resend connector, `send-email`:
+1. The emails of `/tmp/plan.json` (§ 5), as they are: each person gets only the language they chose. `cut` lists
+   the subscribers over `max_bcc`: say it in the report.
+2. Send each once with the Resend connector, `send-email`:
    - `from`: `sending.from`; `to` and `bcc` from the plan, never another address;
-   - `subject`: `Newsletter | <university.name> | Semaine du 2 au 8 novembre`, the real dates of the period, no
-     year; across two months write both (`Semaine du 26 octobre au 1er novembre`);
-   - `html`: the **whole** `/tmp/newsletter.html`; `text`: `Newsletter hebdomadaire – ouvre ce mail en HTML pour
-     voir la mise en page.`; no attachment;
-   - `idempotencyKey`: `university-<YYYY-MM-DD of the Monday>`.
+   - `subject`: the `subject` of the plan email, as it is, never changed: `Newsletter | Université de Liège |
+     09/11/2026` or `Newsletter | University of Liège | 09/11/2026`, the day it is sent (usually the Monday);
+   - `html`: the **whole** `/tmp/newsletter-<lang>.html`; `text`: `Newsletter – ouvre ce mail en HTML pour
+     voir la mise en page.` (`Newsletter – open this email as HTML to see the layout.`); no attachment;
+   - `idempotencyKey`: `university-<YYYY-MM-DD of the Monday>-<lang>`.
 3. Check that an email id came back. On an error without id, fix and retry **once** with the same key.
 
 ---
@@ -154,8 +157,10 @@ section stays an empty list: the template writes a default message.
 - **The folder is empty or unreadable**: build the email from the sources anyway, and add to `infos` the line
   `Admin` · `Dossier Newsletter illisible cette semaine`.
 - **`render.py` fails**: fix the JSON and run again; never write the HTML by hand.
-- **No newsletter possible**: send the owner a short text email, subject
-  `Newsletter | <university.name> | Non générée cette semaine`, with one sentence on what failed.
+- **No newsletter possible**: send the **notice** instead, to the same people. For each email of the plan,
+  `python3 scripts/render.py university --notice /tmp/notice-<lang>.html --lang <lang>`, then send it like § 6 (same
+  `subject`, `to`, `bcc`; `text` = the lines of `NOTICE` in `render.py`). The notice is the newsletter's look with one
+  fixed text: a problem today, write to the owner's address, thank you. Say what failed in the report.
 - **Resend connector missing or refusing**: do not work around it; stop, give the error in the report.
 
 Send no other email, ask no question.
@@ -168,5 +173,5 @@ Send no other email, ask no question.
 - [ ] Period right, only items still to come, mailbox untouched?
 - [ ] `page_reads` respected, no web search?
 - [ ] Each section within its maximum, nearest first, a `deadlines` item nowhere else?
-- [ ] Right language, no emoji, lengths respected, `render.py` printed `OK`?
+- [ ] Every language of the plan written, no emoji, lengths respected, `render.py` printed `OK` for each?
 - [ ] Sent once to the addresses of `state.py plan`, with an email id back?
