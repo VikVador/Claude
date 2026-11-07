@@ -212,7 +212,7 @@ def university(src, dst, deco=None):
     who = identity()
     style = deco or who.get("decoration", "none")
     draw = decorations.STYLES[style]
-    margin, gap = (0, 0) if style == "none" else (decorations.WIDTH, 16)
+    margin, gap = (0, 0) if style == "none" else (decorations.WIDTH, 28)
     titles = {**TITLES, "events": who.get("events_title", TITLES["events"])}
     unescape = lambda s: H.unescape(s) if isinstance(s, str) else s  # noqa: E731  (old files wrote &amp;)
     sections, offset = [], 82  # offset: top of the current block in the email, for decorations.py
