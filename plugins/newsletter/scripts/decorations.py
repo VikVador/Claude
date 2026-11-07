@@ -139,7 +139,6 @@ def scatter(side, colour, i, height, top, offset=0, width=WIDTH):
     return svg(height, body, width), ''
 
 
-CONTINUOUS = {"scatter"}  # styles drawn on both sides over the full height; the others: one figure per block
 
 
 def density(side, colour, i, height, top, offset=0, width=WIDTH):
@@ -175,4 +174,156 @@ def signal(side, colour, i, height, top, offset=0, width=WIDTH):
     return svg(height, body, width), ''
 
 
-STYLES.update({"histogram": histogram, "scatter": scatter, "density": density, "signal": signal})
+# ---------------------------------------------------------------- continuous, high-tech --------------------------------
+# Each runs down the whole margin: positions use the global height offset + y, so a block continues the previous one.
+# Shapes are packed into a few <path> elements per colour (Gmail clips an email above 102 KB).
+INK, SOFT, ACCENT, ACCENT2 = "#4a5169", "#c5cde6", "#c2603d", "#e7b9a6"
+
+
+def _rng(name, side, k):
+    return random.Random(f'{name}-{side}-{k}')
+
+
+def network(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Réseau de neurones: layers of neurons every 44 px, each linked to some neurons of the next layer."""
+    step, cols = 44, [width * .25, width * .5, width * .75]
+    first = math.ceil(offset / step)
+    layers = {}
+    for k in range(first, int((offset + height) // step) + 1):
+        r = _rng('network', side, k)
+        layers[k] = [x for x in cols if r.random() < .8] or [cols[1]]
+    edges, on, off = '', '', ''
+    for k, xs in layers.items():
+        y = k * step - offset
+        r = _rng('network-edges', side, k)
+        if k + 1 in layers:
+            for x in xs:
+                for x2 in r.sample(layers[k + 1], min(len(layers[k + 1]), r.choice([1, 2]))):
+                    edges += f'M{x:.0f},{y:.0f}L{x2:.0f},{y + step:.0f}'
+        for x in xs:
+            dot = f'M{x - 3:.0f},{y:.0f}a3,3 0 1,0 6,0a3,3 0 1,0 -6,0'
+            if r.random() < .3:
+                on += dot
+            else:
+                off += dot
+    body = (f'<path d="{edges}" stroke="{SOFT}" stroke-width="1"/><path d="{off}" fill="#ffffff" stroke="{INK}" '
+            f'stroke-width="1"/><path d="{on}" fill="{ACCENT}"/>')
+    return svg(height, body, width), ''
+
+
+def mesh(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Grille de modèle: a curvilinear ocean-model grid, its lines bent by a slow flow, a few cells highlighted."""
+    warp = lambda x, y: x + 5 * math.sin((offset + y) / 80 + x / 20)  # noqa: E731
+    v = ''
+    for x in (width * .2, width * .5, width * .8):
+        v += 'M' + 'L'.join(f'{warp(x, y):.0f},{y}' for y in range(0, int(height) + 1, 12))
+    h, cells, step = '', '', 22
+    for k in range(math.ceil(offset / step), int((offset + height) // step) + 1):
+        y = k * step - offset
+        h += f'M{warp(width * .2, y):.0f},{y:.0f}L{warp(width * .8, y):.0f},{y:.0f}'
+        r = _rng('mesh', side, k)
+        if r.random() < .22 and y + step <= height:
+            x0 = width * (.2 if r.random() < .5 else .5)
+            cells += (f'M{warp(x0, y):.0f},{y:.0f}L{warp(x0 + width * .3, y):.0f},{y:.0f}'
+                      f'L{warp(x0 + width * .3, y + step):.0f},{y + step:.0f}L{warp(x0, y + step):.0f},{y + step:.0f}Z')
+    body = (f'<path d="{cells}" fill="{ACCENT2}" fill-opacity=".7"/>'
+            f'<path d="{v}{h}" fill="none" stroke="{SOFT}" stroke-width="1"/>')
+    return svg(height, body, width), ''
+
+
+def circuit(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Circuit imprimé: two thin traces running down the whole margin, changing lane at 45° now and then, a small via at
+    each end of a turn. Each trace is drawn once for the whole email (positions from the top of the email) and every
+    block shows its own slice of it, so the lines join from one block to the next."""
+    lanes = [width * .3, width * .55, width * .8] if side == 'left' else [width * .2, width * .45, width * .7]
+    step, jog = 56, 14
+    body = ''
+    for t, (stroke, start) in enumerate(((SOFT, 0), (ACCENT, 2))):
+        r = random.Random(f'circuit-{side}-{t}')
+        lane, y, pts, vias = start, -step, [], ''
+        while y < offset + height + step:
+            nxt = lane
+            if r.random() < .3:
+                nxt = min(max(lane + r.choice([-1, 1]), 0), len(lanes) - 1)
+            if nxt != lane and offset - step < y < offset + height + step:
+                for yy, ll in ((y, lane), (y + jog, nxt)):
+                    vias += f'M{lanes[ll] - 2:.1f},{yy - offset:.0f}a2,2 0 1,0 4,0a2,2 0 1,0 -4,0'
+            if offset - 2 * step < y < offset + height + 2 * step:
+                pts.append((lanes[lane], y - offset))
+                if nxt != lane:
+                    pts.append((lanes[nxt], y + jog - offset))
+            if nxt != lane:
+                y += jog
+            lane, y = nxt, y + step
+        d = 'M' + 'L'.join(f'{x:.0f},{yy:.0f}' for x, yy in pts)
+        body += (f'<path d="{d}" fill="none" stroke="{stroke}" stroke-width="1.2" stroke-linejoin="round"/>'
+                 f'<path d="{vias}" fill="#ffffff" stroke="{stroke}" stroke-width="1.1"/>')
+    return svg(height, body, width), ''
+
+
+def streamlines(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Champ de vecteurs: small arrows of a swirling current, as a numerical model's output."""
+    arrows, step = {INK: '', ACCENT: ''}, 18
+    for k in range(math.ceil(offset / step), int((offset + height) // step) + 1):
+        y = k * step - offset
+        for x in ((width * .3,) if k % 2 else (width * .7,)):
+            gy = offset + y
+            ang = math.sin(gy / 70) * 1.6 + math.cos(x / 25)
+            mag = 6 + 4 * abs(math.sin(gy / 110))
+            dx, dy = mag * math.cos(ang), mag * math.sin(ang)
+            hx, hy = math.cos(ang + 2.6) * 3, math.sin(ang + 2.6) * 3
+            gx, gy2 = math.cos(ang - 2.6) * 3, math.sin(ang - 2.6) * 3
+            c = ACCENT if mag > 8.5 else INK
+            arrows[c] += (f'M{x - dx / 2:.0f},{y - dy / 2:.0f}l{dx:.0f},{dy:.0f}'
+                          f'm{hx:.0f},{hy:.0f}l{-hx:.0f},{-hy:.0f}l{gx:.0f},{gy2:.0f}')
+    body = ''.join(f'<path d="{d}" fill="none" stroke="{c}" stroke-width="1.2" stroke-linecap="round"/>'
+                   for c, d in arrows.items() if d)
+    return svg(height, body, width), ''
+
+
+def diffusion(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Diffusion: samples along a curve, alternately noised and denoised as one goes down, like a diffusion model."""
+    phase = 0 if side == 'left' else math.pi
+    xs = lambda gy: width / 2 + width * .25 * math.sin(phase + gy / 90)  # noqa: E731
+    pts = {ACCENT: '', ACCENT2: '', INK: ''}
+    curve, step = '', 13
+    for k in range(math.ceil(offset / step), int((offset + height) // step) + 1):
+        y = k * step - offset
+        gy = offset + y
+        noise = (1 + math.cos(gy / 160)) / 2          # 0: clean, 1: pure noise
+        r = _rng('diffusion', side, k)
+        x = min(max(xs(gy) + r.gauss(0, 1) * noise * width * .3, 2), width - 2)
+        c = INK if noise > .66 else ACCENT2 if noise > .33 else ACCENT
+        pts[c] += f'M{x - 2:.0f},{y:.0f}a2,2 0 1,0 4,0a2,2 0 1,0 -4,0'
+        if noise < .3:
+            curve += f'{"M" if not curve or curve.endswith("|") else "L"}{xs(gy):.0f},{y:.0f}'
+        elif curve and not curve.endswith('|'):
+            curve += '|'
+    body = f'<path d="{curve.replace("|", "")}" fill="none" stroke="{SOFT}" stroke-width="1"/>'
+    body += ''.join(f'<path d="{d}" fill="{c}"/>' for c, d in pts.items() if d)
+    return svg(height, body, width), ''
+
+
+def latent(side, colour, i, height, top, offset=0, width=WIDTH):
+    """Tenseur latent: a column of small cells shaded like a feature map, its pattern drifting down the margin."""
+    shades = [ACCENT, "#d58a6f", ACCENT2, SOFT, "#eaeffc"]
+    paths, step, size = {c: '' for c in shades}, 11, 7
+    for k in range(math.ceil(offset / step), int((offset + height) // step) + 1):
+        y = k * step - offset
+        if y + size > height:
+            break
+        gy = offset + y
+        for c_i, x in enumerate((width * .3, width * .3 + 10, width * .3 + 20)):
+            v = (math.sin(gy / 45 + c_i * 1.3) + math.sin(gy / 17 - c_i) * .5 + 1.5) / 3
+            if v < .25:
+                continue
+            c = shades[min(4, int((1 - v) * 5))]
+            paths[c] += f'M{x:.0f},{y:.0f}h{size}v{size}h-{size}z'
+    body = ''.join(f'<path d="{d}" fill="{c}"/>' for c, d in paths.items() if d)
+    return svg(height, body, width), ''
+
+
+STYLES.update({"histogram": histogram, "scatter": scatter, "density": density, "signal": signal,
+               "network": network, "mesh": mesh, "circuit": circuit, "streamlines": streamlines,
+               "diffusion": diffusion, "latent": latent})
+CONTINUOUS = {"scatter", "network", "mesh", "circuit", "streamlines", "diffusion", "latent"}

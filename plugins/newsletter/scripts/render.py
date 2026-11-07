@@ -175,17 +175,19 @@ def papers(src, dst, lang, deco=None):
         else:
             fig = draw("left" if row % 2 == 0 else "right", "", row, min(height, 120), 0)[0]
             pair = (fig, '&nbsp;') if row % 2 == 0 else ('&nbsp;', fig)
-        offset[0] += height + 3
+        offset[0] += height
         return pair
 
     def card_height(p):
-        """A card's row on a computer, under-estimated: 80 px of fixed parts, 18 px per title line, 16 px per abstract
-        line (measured on 2026-11-07: 196 px for a 2-line title and a 5-line abstract)."""
-        title = math.ceil(len(p["title"]) / 72)
+        """A card's row on a computer, to the pixel when its line counts are right (measured on 2026-11-07): 88 px of
+        fixed parts, a title of 17 px plus 19 px per extra line, an abstract of 17.2 px per line. Line counts are
+        estimated low (a title line holds 80 to 90 characters, an abstract line about 100), so a wrong guess leaves a
+        small gap in the margin, never a taller card."""
+        title = math.ceil(len(p["title"]) / 90)
         abstract = math.ceil(len(excerpt(p["abstract" if lang == "en" else "abstract_fr"], chars)) / 100)
-        return 80 + 18 * title + 16 * abstract - 3
+        return 88 + 17 + 19 * (title - 1) + round(17.2 * abstract)
 
-    head_margins, stats_margins = margins(-1, 94), margins(0, 150)
+    head_margins, stats_margins = margins(-1, 84), margins(0, 153)
     counts = {k: 0 for k in LEFT + RIGHT}
     items = []
     for i, p in enumerate(c["papers"], 1):
@@ -207,7 +209,7 @@ def papers(src, dst, lang, deco=None):
     ctx = {**WORDS[lang], "lang": lang, "issue": c["issue"], "date": day(c["date"], lang), "count": len(items),
            "papers": items, "themes_left": [theme(k) for k in LEFT], "themes_right": [theme(k) for k in RIGHT],
            "logo": logo(look.get('logo', 'logos/papers.svg'), look.get('logo_width', 150)),
-           "logo_width": look.get('logo_width', 150), "gap": gap,
+           "logo_width": look.get('logo_width', 62), "logo_cell": look.get('logo_cell', 150), "gap": gap,
            "margin": decorations.WIDTH, "frame_width": 640 + 2 * (decorations.WIDTH + gap),
            "head_left": head_left, "head_right": head_right, "stats_left": stats_left, "stats_right": stats_right}
     size = finish("papers", ctx, dst)
