@@ -125,8 +125,8 @@ section stays an empty list: the template writes a default message.
 ```
 
    `left`: line 1 is the date, line 2 the place, or « Date limite » when the date shown is a deadline.
-   `reg: true` adds « Inscription » under the date. The logo (an SVG of `logos/`), the footer and the events
-   title come from `university` in the config.
+   `reg: true` adds « Inscription » under the date. The logo (an SVG of `logos/`), the events title and the
+   margin decoration come from `university` in the config.
 2. In `/tmp/newsletter-repo/plugins/newsletter`, run
    `python3 scripts/render.py university /tmp/contenu.json /tmp/newsletter.html`: it prints `OK`. On an error, fix
    the JSON and run again.

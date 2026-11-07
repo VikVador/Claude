@@ -34,6 +34,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from light import force_light  # noqa: E402
+import decorations  # noqa: E402
 
 TEMPLATES = os.path.join(HERE, '..', 'templates')
 MAX_KB = 100  # Gmail clips emails above 102 KB
@@ -206,12 +207,15 @@ def logo(who):
     return svg.replace('<svg ', f'<svg width="{w}" height="{h}" style="display:block;" ', 1)
 
 
-def university(src, dst):
+def university(src, dst, deco=None):
     c = json.load(open(src, encoding='utf-8'))
     who = identity()
+    style = deco or who.get("decoration", "none")
+    draw = decorations.STYLES[style]
+    margin, gap = (0, 0) if style == "none" else (decorations.WIDTH, 16)
     titles = {**TITLES, "events": who.get("events_title", TITLES["events"])}
     unescape = lambda s: H.unescape(s) if isinstance(s, str) else s  # noqa: E731  (old files wrote &amp;)
-    sections = []
+    sections, offset = [], 82  # offset: top of the current block in the email, for decorations.py
     for k in ORDER:
         raw = [{f: unescape(v) for f, v in it.items()} for it in (c.get(k) or [])]
         sec = {"key": k, "title": titles[k], "colour": COLOURS[k], "empty": not raw, "empty_text": EMPTY[k],
@@ -230,11 +234,22 @@ def university(src, dst):
                 lines.append({"text": "Inscription", "br": "<br>", "colour": HL, "weight": ""})
             sec["rows"].append({**it, "link": it.get("link") or "#", "sep": sep, "height": height,
                                 "lines": lines, "speaker": it.get("speaker", ""), "desc_mt": 4 if nl > 1 else 2})
+        # Height of the section, a little under the real one (40 top + title and underline 46 + rows), so that its
+        # decoration fills the margin without ever making the section taller.
+        rows_h = 52 if not raw else 66 * len(sec["deadlines"]) + sum(r["height"] for r in sec["rows"])
+        h, n = 40 + 46 + rows_h - 6, len(sections) + 1
+        (sec["left"], sec["left_css"]), (sec["right"], sec["right_css"]) = (
+            draw("left", COLOURS[k], n, h, 40, offset), draw("right", COLOURS[k], n, h, 40, offset))
+        offset += h + 6
         sections.append(sec)
+    (hl, hl_css), (hr, hr_css) = draw("left", HL, 0, 82, 0), draw("right", HL, 0, 82, 0)
     size = finish("university", {"week": nodetect(unescape(c["week"])), "sections": sections,
                                  "logo": logo(who), "logo_width": who.get("logo_width", "150"),
-                                 "footer": who.get("footer", "")}, dst)
-    print(f"OK university: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, 0 image")
+                                 "margin": margin, "gap": gap, "frame_width": 640 + 2 * (margin + gap),
+                                 "header_left": hl, "header_left_css": hl_css,
+                                 "header_right": hr, "header_right_css": hr_css}, dst)
+    print(f"OK university: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, "
+          f"decoration {style}, 0 image")
 
 
 if __name__ == "__main__":
@@ -243,5 +258,6 @@ if __name__ == "__main__":
     ap.add_argument("src")
     ap.add_argument("dst")
     ap.add_argument("--lang", choices=["en", "fr"], default="en")
+    ap.add_argument("--decoration", choices=sorted(decorations.STYLES), help="university: override the config")
     a = ap.parse_args()
-    papers(a.src, a.dst, a.lang) if a.name == "papers" else university(a.src, a.dst)
+    papers(a.src, a.dst, a.lang) if a.name == "papers" else university(a.src, a.dst, a.decoration)
