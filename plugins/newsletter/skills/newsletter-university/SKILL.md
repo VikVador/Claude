@@ -114,7 +114,7 @@ section stays an empty list: the template writes a default message.
 
 ```json
 {
-  "week": "Résumé de la semaine du 2 au 8 novembre 2026",
+  "week": "Semaine du 2 au 8 novembre 2026",
   "deadlines": [{"date": "12 nov.", "title": "...", "desc": "Une phrase.", "button": "S'inscrire", "link": "https://..."}],
   "seminars": [{"left": ["16 nov.", "<short>"], "title": "...", "speaker": "Nom · Affiliation", "desc": "Une phrase.", "link": "https://..."}],
   "workshops": [{"left": ["12 janv. 2027", "Vienne"], "title": "...", "speaker": "Organisateur", "desc": "Deux phrases max.", "reg": true, "link": "https://..."}],
@@ -142,7 +142,7 @@ section stays an empty list: the template writes a default message.
    - `from`: `sending.from`; `to` and `bcc` from the plan, never another address;
    - `subject`: `Newsletter | <university.name> | Semaine du 2 au 8 novembre`, the real dates of the period, no
      year; across two months write both (`Semaine du 26 octobre au 1er novembre`);
-   - `html`: the **whole** `/tmp/newsletter.html`; `text`: `Newsletter hebdomadaire – ouvre ce mail en HTML pour
+   - `html`: the **whole** `/tmp/newsletter.html`; `text`: `Newsletter – ouvre ce mail en HTML pour
      voir la mise en page.`; no attachment;
    - `idempotencyKey`: `university-<YYYY-MM-DD of the Monday>`.
 3. Check that an email id came back. On an error without id, fix and retry **once** with the same key.
