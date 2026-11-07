@@ -1,0 +1,19 @@
+# Who receives the Daily Paper Digest.
+# active: true to receive it, false to pause. language: en or fr.
+
+subscribers:
+  - email: ndw2022@nyu.edu
+    active: true
+    language: en
+  - email: fadobbati@uliege.be
+    active: true
+    language: en
+  - email: js16011@nyu.edu
+    active: true
+    language: en
+  - email: yy6080@nyu.edu
+    active: true
+    language: en
+  - email: gandry@uliege.be
+    active: true
+    language: en

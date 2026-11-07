@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- Newsletter hebdomadaire ULiège: filled by scripts/render.py only, never by hand. No image: everything is drawn
+     with tables and bgcolor. render.py forces the light colours in every mail client. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newsletter hebdomadaire</title>
+</head>
+<body style="margin:0; background-color:#FFFFFF; font-family:'Inter',-apple-system,'Segoe UI',Arial,sans-serif; color:#26343A;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+  <tr>
+    <td align="center" style="padding:24px 12px 40px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:640px; margin:0 auto; border-collapse:collapse;">
+        <tr>
+          <td style="vertical-align:top;">
+
+            <!-- HEADER -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:separate; border:1px solid #26343A; border-left:4px solid #00707F; border-radius:8px;">
+              <tr>
+                <td style="border-radius:7px 0 0 7px; padding:20px 18px 18px 22px; vertical-align:middle; width:80px;">
+                  <div style="font-size:30px; line-height:30px; font-weight:800; letter-spacing:-.6px; color:#1D3B4A;">Liège</div>
+                  <div style="font-size:13px; line-height:15px; font-weight:600; letter-spacing:.3px; color:#6B7480; margin-top:3px;">université</div>
+                </td>
+                <td style="border-radius:0 7px 7px 0; padding:20px 20px 18px 18px; vertical-align:middle; border-left:1px solid #E3E6EB;">
+                  <div style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1D3B4A;">Newsletter hebdomadaire</div>
+                  <div style="font-size:13px; color:#6B7480; margin-top:6px;">{{{week}}}</div>
+                </td>
+              </tr>
+            </table>
+
+            <!-- SECTIONS: one per key, in this order: deadlines, seminars, workshops, events, brief, infos -->
+            {{#sections}}
+            <div id="sec-{{key}}" style="margin:40px 0 0;">
+              <table role="presentation" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding:0 10px 0 0; vertical-align:middle;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr><td width="10" height="10" style="width:10px; height:10px; border:2px solid {{colour}}; border-radius:7px; font-size:0; line-height:0;">&nbsp;</td></tr></table>
+                  </td>
+                  <td style="vertical-align:middle; font-size:15px; font-weight:600; letter-spacing:.2px; color:#1D3B4A;">{{title}}</td>
+                </tr>
+              </table>
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 14px;"><tr><td width="24" height="2" style="background-color:#00707F; width:24px; height:2px; font-size:0; line-height:0;">&nbsp;</td></tr></table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:separate; border:1px solid #26343A; border-radius:8px;">
+                <tr>
+                  <td style="padding:0; border-radius:7px;">
+
+                    {{#empty}}<div style="padding:18px 20px; font-size:12px; color:#6B7480;">{{empty_text}}</div>{{/empty}}
+
+                    <!-- "À ne pas manquer": date | title + sentence | button -->
+                    {{#deadlines}}
+                    <table style="width:100%; border-collapse:collapse; table-layout:fixed; {{sep}}">
+                      <tr style="height:66px;">
+                        <td style="padding:14px 0 14px 18px; width:84px; vertical-align:middle; font-size:12px; line-height:17px;"><span style="color:#00707F; font-weight:600;">{{{date}}}</span></td>
+                        <td style="padding:14px 12px; vertical-align:middle;">
+                          <div style="font-size:14px; font-weight:600; color:#1D3B4A; line-height:19px;">{{title}}</div>
+                          <div style="font-size:12px; color:#26343A; line-height:17px; margin-top:2px;">{{desc}}</div>
+                        </td>
+                        <td width="1" style="background-color:#E3E6EB; width:1px; padding:0; font-size:0; line-height:0;">&nbsp;</td>
+                        <td style="width:96px; text-align:center; vertical-align:middle; padding:0 10px;">
+                          <a href="{{link}}" style="display:inline-block; border:1px solid #00707F; color:#00707F; font-size:12px; padding:5px 10px; border-radius:14px; text-decoration:none; white-space:nowrap;">{{button}}</a>
+                        </td>
+                      </tr>
+                    </table>
+                    {{/deadlines}}
+
+                    <!-- Other sections: date and place | title, speaker, description | chevron; the whole row is a link -->
+                    {{#rows}}
+                    <a href="{{link}}" style="display:block; text-decoration:none; color:inherit;">
+                      <table style="width:100%; border-collapse:collapse; table-layout:fixed; {{sep}}">
+                        <tr style="height:{{height}}px;">
+                          <td style="padding:14px 0 14px 18px; width:84px; vertical-align:middle; font-size:12px; line-height:17px;">{{#lines}}{{{br}}}<span style="color:{{colour}};{{weight}}">{{{text}}}</span>{{/lines}}</td>
+                          <td style="padding:14px 12px; vertical-align:middle;">
+                            <div style="font-size:14px; font-weight:600; color:#1D3B4A; line-height:19px;">{{title}}</div>
+                            {{#speaker}}<div style="font-size:12px; color:#009CA6; line-height:17px; margin-top:2px;">{{speaker}}</div>{{/speaker}}
+                            <div style="font-size:12px; color:#26343A; line-height:18px; margin-top:{{desc_mt}}px;">{{desc}}</div>
+                          </td>
+                          <td style="width:22px; vertical-align:middle; text-align:center; font-size:24px; line-height:24px; color:#B9BFCA; padding-right:8px;">&rsaquo;</td>
+                        </tr>
+                      </table>
+                    </a>
+                    {{/rows}}
+
+                  </td>
+                </tr>
+              </table>
+            </div>
+            {{/sections}}
+
+            <!-- FOOTER -->
+            <div style="text-align:center; margin-top:44px; padding-top:22px; border-top:1px solid #E3E6EB; font-size:12px; color:#6B7480;">
+              Résumé de la newsletter de l'Université de Liège, généré par Victor Mangeleer et Claude.
+            </div>
+
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
