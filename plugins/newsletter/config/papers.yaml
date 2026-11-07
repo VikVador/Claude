@@ -33,7 +33,7 @@ look:
   logo: logos/papers.svg     # header logo, inline SVG
   logo_width: 124            # logo in pixels (the height follows the SVG viewBox)
   logo_cell: 150             # width of its header cell, as for the university newsletter
-  abstract_chars: 480        # characters of the abstract shown on each card, about 5 lines on a computer
+  abstract_sentences: 4      # sentences of the abstract shown on each card, then an ellipsis
   decoration: circuit        # margins (scripts/decorations.py): circuit, network, mesh, streamlines, diffusion,
                              # latent, scatter (continuous) or histogram, density, signal (one per card) or none
 

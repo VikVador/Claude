@@ -122,12 +122,13 @@ def day(iso, lang, short=False):
 
 
 def excerpt(text, n):
-    """The first n characters of an abstract, cut at a word, with an ellipsis (about 5 lines on a computer)."""
+    """The first n sentences of an abstract, then an ellipsis if there are more. A sentence ends with . ! or ? before a
+    space and a capital letter or a digit, so that "et al." or "e.g." inside a sentence never cuts it."""
     text = re.sub(r'\s+', ' ', text).strip()
-    if len(text) <= n:
+    sentences = re.split(r'(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ0-9])', text)
+    if len(sentences) <= n:
         return text
-    cut = text[:n].rsplit(' ', 1)[0].rstrip(' ,;:.')
-    return cut + '…'
+    return ' '.join(sentences[:n]).rstrip('.') + '…'
 
 
 def check_papers(c, lang):
@@ -163,7 +164,7 @@ def papers(src, dst, lang, deco=None):
     if errors:
         sys.exit("\n".join(errors))
     look = config_block('papers', 'look')
-    chars = int(look.get('abstract_chars', 480))
+    sentences = int(look.get('abstract_sentences', 4))
     style = deco or look.get('decoration', 'scatter')
     draw = decorations.STYLES[style]
     offset = [0]
@@ -181,13 +182,13 @@ def papers(src, dst, lang, deco=None):
         return pair
 
     def card_height(p):
-        """A card's row on a computer, to the pixel when its line counts are right (measured on 2026-11-07): 70.5 px of
-        fixed parts, a title of 17 px plus 19 px per extra line, an abstract of 17.2 px per line. Line counts are
-        estimated low (a title line holds 80 to 90 characters, an abstract line about 100), so a wrong guess leaves a
-        small gap in the margin, never a taller card."""
+        """A card's row on a computer, to the pixel when its line counts are right (measured on 2026-11-07): 68.5 px of
+        fixed parts, 18.85 px per title line, 17.25 px per abstract line. Line counts are estimated low (a title line
+        holds 80 to 90 characters, an abstract line 87 to 99), so a wrong guess leaves a small gap in the margin,
+        never a taller card."""
         title = math.ceil(len(p["title"]) / 90)
-        abstract = math.ceil(len(excerpt(p["abstract" if lang == "en" else "abstract_fr"], chars)) / 100)
-        return round(70.5 + 17 + 19 * (title - 1) + 17.2 * abstract)
+        abstract = math.ceil(len(excerpt(p["abstract" if lang == "en" else "abstract_fr"], sentences)) / 99)
+        return round(68.5 + 18.85 * title + 17.25 * abstract)
 
     head_margins, stats_margins = margins(-1, 87), margins(0, 153)
     counts = {k: 0 for k in LEFT + RIGHT}
@@ -198,7 +199,7 @@ def papers(src, dst, lang, deco=None):
         items.append({**p, "number": i, "et_al": bool(p.get("et_al")) or len(p["authors"]) > 2,
                       "authors": [{"name": n, "sep": ", " if j < len(names) - 1 else ""} for j, n in enumerate(names)],
                       "published": day(p.get("published", ""), lang, short=True),
-                      "abstract": excerpt(p["abstract" if lang == "en" else "abstract_fr"], chars),
+                      "abstract": excerpt(p["abstract" if lang == "en" else "abstract_fr"], sentences),
                       **dict(zip(("left", "right"), margins(i + 1, card_height(p))))})
 
     def theme(k):

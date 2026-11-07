@@ -127,7 +127,7 @@ If the clone fails, go on without exclusion and add ` | no history check` to the
    Per paper: `url`, `title`, `authors`, `et_al`, `doi` (bare; arXiv: `10.48550/arXiv.<id>`; the OpenReview id if
    no DOI), `doi_url`, `published` (ISO), `label`, `abstract`.
 2. **abstract**: the paper's abstract **word for word**, from its page (arXiv, publisher, OpenReview), never
-   rewritten nor shortened by you: `render.py` shows its first lines (`look.abstract_chars`). Plain text
+   rewritten nor shortened by you: `render.py` shows its first sentences (`look.abstract_sentences`). Plain text
    (`render.py` escapes `& < >`). If only part of it is readable, give that part.
 3. **abstract_fr**: a faithful French translation of the same abstract, sentence by sentence, nothing added nor
    left out, if `plan.json` has a `fr` email.
