@@ -138,9 +138,8 @@ If the clone fails, go on without exclusion and add ` | no history check` to the
 
 ## 5. SEND
 
-1. **Recipients**: the emails of `/tmp/plan.json`, as they are: one per language, its `to` and its `bcc`. The owner
-   is in `to` of each one (with French subscribers, I get both copies). `cut` lists the subscribers over
-   `max_bcc`: say it in the report.
+1. **Recipients**: the emails of `/tmp/plan.json`, as they are: one per language, its `to` and its `bcc`. Each
+   person gets only the language they chose. `cut` lists the subscribers over `max_bcc`: say it in the report.
 2. **Subject**: `Newsletter | Papers | #XXX`, plus ` | no history check` if § 1 failed, plus ` | N papers` if under
    `papers.min`.
 3. **Send** each email once with the Resend connector, `send-email`: `from` = `sending.from`; `to`, `bcc`, `subject`

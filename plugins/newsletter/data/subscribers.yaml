@@ -3,7 +3,8 @@
 # email:       the address in base64, so that bots do not harvest it.
 #              Encode a new one with: python3 scripts/state.py encode <address>
 # newsletters: science (Daily Paper Digest), university (weekly university newsletter), or both: [science, university]
-# language:    en or fr, the language of the Daily Paper Digest copy (the university newsletter has one fixed language)
+# language:    en or fr: each person receives the Daily Paper Digest in this language only (the university newsletter
+#              has one fixed language)
 # active:      true to receive it, false to pause
 # owner:       true for me: in `to` of every email, gets the problem reports, and the only recipient in test mode
 

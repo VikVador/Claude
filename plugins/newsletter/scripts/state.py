@@ -2,8 +2,8 @@
 
 Usage (from plugins/newsletter/):
   python3 scripts/state.py plan config/<newsletter>.yaml
-                          who gets which email: the owner (in `to`, gets the reports) and, out of test mode, the
-                          active subscribers of that newsletter in `bcc`, one email per language (JSON)
+                          who gets which email, one per language (JSON): each person only in the language they
+                          chose; the owner gets the reports and is the only recipient in test mode
   python3 scripts/state.py encode <address>         the base64 to write in data/subscribers.yaml
   python3 scripts/state.py decode <base64>          the address back
   python3 scripts/state.py status                   papers digest: next issue, sent today?, last dominant labels
@@ -150,8 +150,13 @@ def plan(config):
             seen.add(s['email'].lower())
             bcc = emails.setdefault(lang_of(s), [])
             (bcc if len(bcc) < cap else cut).append(s['email'])
+    # Everyone gets only the language they chose. The owner is in `to` of their own language's email; an email in
+    # another language goes `to` the sender address itself, its readers all in `bcc`.
+    sender = re.search(r'<([^>]+)>', str(cfg.get('from', ''))) or re.search(r'(\S+@\S+)', str(cfg.get('from', '')))
+    sender = sender.group(1) if sender else owner['email']
     print(json.dumps({'newsletter': name, 'test': test, 'owner': owner['email'],
-                      'emails': [{'language': k, 'to': [owner['email']], 'bcc': v} for k, v in emails.items()],
+                      'emails': [{'language': k, 'to': [owner['email'] if k == lang_of(owner) else sender], 'bcc': v}
+                                 for k, v in emails.items()],
                       'cut': cut}, indent=1, ensure_ascii=False))
 
 
