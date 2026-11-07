@@ -73,11 +73,11 @@ python3 scripts/state.py status
    `last_two_dominant_labels` must differ from today's dominant label; `backup` counts the already-checked candidates
    of `data/papers/backup.json`: take them first if they still fit.
 3. `python3 scripts/state.py exclude > /tmp/exclude.txt`: the strict exclusion list.
-4. `python3 scripts/state.py plan config/papers.yaml > /tmp/plan.json`: the `owner` (gets every issue and the
-   reports) and one email per language to send, each with its `to` and `bcc` (only the owner in test mode). Its
-   languages are the ones to write (§ 4).
+4. `python3 scripts/state.py plan config/papers.yaml > /tmp/plan.json`: the `owner` and one email per language to
+   send, each with its `subject`, `to` and `bcc` (only the owner in test mode). Its languages are the ones to write
+   (§ 4).
 
-If the clone fails, go on without exclusion and add ` | no history check` to the subject (§ 5).
+If the clone fails, go on without exclusion and say it in the report.
 
 ---
 
@@ -141,10 +141,11 @@ If the clone fails, go on without exclusion and add ` | no history check` to the
 
 1. **Recipients**: the emails of `/tmp/plan.json`, as they are: one per language, its `to` and its `bcc`. Each
    person gets only the language they chose. `cut` lists the subscribers over `max_bcc`: say it in the report.
-2. **Subject**: `Newsletter | Papers | #XXX`, plus ` | no history check` if § 1 failed, plus ` | N papers` if under
-   `papers.min`.
+2. **Subject**: the `subject` of the plan email, as it is: `Newsletter | Scientific Papers | 07/11/2026` or
+   `Newsletter | Papiers scientifiques | 07/11/2026`, the day it is sent. Never add anything to it: an issue under
+   `papers.min` or without history check is said in the report.
 3. **Send** each email once with the Resend connector, `send-email`: `from` = `sending.from`; `to`, `bcc`, `subject`
-   as above; `html` = the **whole** `digest-<lang>.html`, never cut; `text` = `Daily Paper Digest #XXX` then one line
+   from the plan; `html` = the **whole** `digest-<lang>.html`, never cut; `text` = `Daily Paper Digest #XXX` then one line
    per paper, `N. Title: link`; `idempotencyKey` = `papers-<issue>-<lang>`.
 4. Check that an email id came back. On an error without id, fix and retry **once** with the same key.
 
@@ -160,15 +161,18 @@ git add data && git commit -m "📰 Papers #<issue>" && git push
 
 `record` appends the issue to `data/papers/sent.json` and replaces `data/papers/backup.json` by the `backup` list.
 If the push is rejected, `git pull --rebase` and push once more. If you cannot push (no GitHub credentials), send
-the owner a text email, subject `Newsletter | Papers | #XXX | not recorded`, with the content of the two
-files, so that I commit them by hand.
+the owner a text email, with the subject of the owner's plan email, that starts with `Not recorded` and gives the
+content of the two files, so that I commit them by hand.
 
 ---
 
 ## 7. WHEN SOMETHING FAILS
 
-- **No relevant paper at all**: no email to the subscribers; send the owner a text email, subject
-  `Newsletter | Papers | DD-MM-YYYY | not generated`, one sentence on why.
+- **No digest possible** (no relevant paper at all, collection or render failing for good): send the **notice**
+  instead, to the same people. For each email of the plan, `python3 scripts/render.py papers --notice
+  /tmp/notice-<lang>.html --lang <lang>`, then send it like § 5 (same `subject`, `to`, `bcc`; `text` = the lines of
+  `NOTICE` in `render.py`; `idempotencyKey` = `papers-<issue>-<lang>`). The notice is the digest's look with one fixed
+  text: a problem today, write to the owner's address, thank you. Record nothing; say why in the report.
 - **Resend connector missing or refusing**: do not work around it (no other mail tool); stop, give the error in the
   report.
 - **`onboarding@resend.dev` refused for a recipient**: the sending domain is not verified yet; say so in the report.
@@ -181,8 +185,8 @@ Never write to anyone else, never ask a question.
 ## 8. CHECKLIST
 
 - [ ] Fresh clone, `config/papers.yaml` read, not already sent today?
-- [ ] Between `papers.min` and `papers.max` (or the subject says how many), none excluded, each checked by its id?
+- [ ] Between `papers.min` and `papers.max` (or the report says how many), none excluded, each checked by its id?
 - [ ] Dominant label different from the last two (or relaxed to reach the minimum)?
 - [ ] Ordered by the projects, numbered #1 to #N, every needed language rendered `OK`?
-- [ ] Each email of the plan sent once with an id back, to its `to` and `bcc` only?
+- [ ] Each email of the plan sent once with its own `subject` and an id back, to its `to` and `bcc` only?
 - [ ] `state.py record` run and pushed, or the "not recorded" email sent?

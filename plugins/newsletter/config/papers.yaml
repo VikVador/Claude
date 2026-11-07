@@ -5,6 +5,9 @@
 sending:
   from: "Daily Paper Digest <onboarding@resend.dev>"   # a verified Resend domain, e.g. papers@newsletter.<domain>
   newsletter: science                                  # the key of data/subscribers.yaml `newsletters`
+  subject_en: "Newsletter | Scientific Papers"         # + " | DD/MM/YYYY", the day it is sent (in `timezone`)
+  subject_fr: "Newsletter | Papiers scientifiques"
+  timezone: America/New_York
   test: true                                           # true: only the owner receives it; false: every subscriber
   max_bcc: 49                                          # Resend: 50 recipients per email, `to` included
 

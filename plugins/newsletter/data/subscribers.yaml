@@ -2,35 +2,29 @@
 #
 # email:       the address in base64, so that bots do not harvest it.
 #              Encode a new one with: python3 scripts/state.py encode <address>
-# newsletters: science (Daily Paper Digest), university (weekly university newsletter), or both: [science, university]
-# language:    en or fr: each person receives the Daily Paper Digest in this language only (the university newsletter
-#              has one fixed language)
+# newsletters: each newsletter received and its language, en or fr: {science: en}, {university: fr} or both
+#              {science: en, university: fr}. science is the Daily Paper Digest, university the weekly university
+#              newsletter; each person receives each newsletter in its language only
 # active:      true to receive it, false to pause
 # owner:       true for me: in `to` of every email, gets the problem reports, and the only recipient in test mode
 
 subscribers:
   - email: dm1hbmdlbGVlckB1bGllZ2UuYmU=
-    newsletters: [science, university]
-    language: fr
+    newsletters: {science: en, university: fr}
     active: true
     owner: true
   - email: bmR3MjAyMkBueXUuZWR1
-    newsletters: [science]
-    language: en
+    newsletters: {science: en}
     active: true
   - email: ZmFkb2JiYXRpQHVsaWVnZS5iZQ==
-    newsletters: [science]
-    language: en
+    newsletters: {science: en}
     active: true
   - email: anMxNjAxMUBueXUuZWR1
-    newsletters: [science]
-    language: en
+    newsletters: {science: en}
     active: true
   - email: eXk2MDgwQG55dS5lZHU=
-    newsletters: [science]
-    language: en
+    newsletters: {science: en}
     active: true
   - email: Z2FuZHJ5QHVsaWVnZS5iZQ==
-    newsletters: [science]
-    language: en
+    newsletters: {science: en}
     active: true

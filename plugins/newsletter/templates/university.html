@@ -4,11 +4,11 @@
      Layout: one row per block (header, then one per section), each with a left margin, the content and a right
      margin; the margins carry the decorations of scripts/decorations.py, drawn twice: wide on a computer, narrow
      on a phone, where the text also gets slightly smaller (<style> below). -->
-<html lang="fr">
+<html lang="{{lang}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Newsletter hebdomadaire</title>
+<title>{{t_head}}</title>
 <style>
   /* Phones (under 600 px): narrow margins with their own small drawing, smaller text, rows as tall as their text. */
   @media (max-width: 600px) {
@@ -48,7 +48,7 @@
                     {{{logo}}}
                   </td>
                   <td style="padding:20px 20px 18px 18px; vertical-align:middle; border-left:1px solid #E3E6EB;">
-                    <div class="t-head" style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1D3B4A;">Newsletter hebdomadaire</div>
+                    <div class="t-head" style="font-size:18px; font-weight:300; letter-spacing:.2px; color:#1D3B4A;">{{t_head}}</div>
                     <div class="t-text" style="font-size:13px; color:#6B7480; margin-top:6px;">{{{week}}}</div>
                   </td>
                 </tr>
@@ -113,6 +113,20 @@
           <td class="margin" width="{{margin}}" valign="top" style="width:{{margin}}px; {{right_css}}">{{{right}}}</td>
         </tr>
         {{/sections}}
+
+        <!-- ================================ NOTICE ================================
+             only when the newsletter could not be made: render.py --notice, the fixed text of NOTICE -->
+        {{#notice}}
+        <tr>
+          <td class="margin" width="{{margin}}" valign="top" style="width:{{margin}}px; {{notice_left_css}}">{{{notice_left}}}</td>
+          <td class="content" valign="top" style="padding:24px {{gap}}px 0;">
+            <div style="border:1px solid #26343A; border-radius:8px; overflow:hidden;">
+              <div class="t-text" style="padding:18px 20px; font-size:13px; line-height:1.6; color:#26343A;">{{{notice_text}}}</div>
+            </div>
+          </td>
+          <td class="margin" width="{{margin}}" valign="top" style="width:{{margin}}px; {{notice_right_css}}">{{{notice_right}}}</td>
+        </tr>
+        {{/notice}}
 
       </table>
     </td>

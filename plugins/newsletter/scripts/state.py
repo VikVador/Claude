@@ -2,8 +2,8 @@
 
 Usage (from plugins/newsletter/):
   python3 scripts/state.py plan config/<newsletter>.yaml
-                          who gets which email, one per language (JSON): each person only in the language they
-                          chose; the owner gets the reports and is the only recipient in test mode
+                          who gets which email, one per language (JSON), with its subject: each person only in the
+                          language they chose for this newsletter; the owner is the only recipient in test mode
   python3 scripts/state.py encode <address>         the base64 to write in data/subscribers.yaml
   python3 scripts/state.py decode <base64>          the address back
   python3 scripts/state.py status                   papers digest: next issue, sent today?, last dominant labels
@@ -52,10 +52,10 @@ def dominant(issue):
     return c.most_common(1)[0][0] if c else None
 
 
-def today():
+def today(tz='America/New_York'):
     try:
         from zoneinfo import ZoneInfo
-        return dt.datetime.now(ZoneInfo('America/New_York')).date().isoformat()
+        return dt.datetime.now(ZoneInfo(tz)).date().isoformat()
     except Exception:
         return dt.date.today().isoformat()
 
@@ -95,11 +95,14 @@ def scalar(v):
     v = v.strip().strip('"\'')
     if v.startswith('[') and v.endswith(']'):
         return [x.strip().strip('"\'') for x in v[1:-1].split(',') if x.strip()]
+    if v.startswith('{') and v.endswith('}'):
+        pairs = (x.split(':', 1) for x in v[1:-1].split(',') if ':' in x)
+        return {k.strip().strip('"\''): w.strip().strip('"\'') for k, w in pairs}
     return {'true': True, 'false': False}.get(v.lower(), v)
 
 
 def subscribers():
-    """Parse data/subscribers.yaml: a list of {email, newsletters, language, active, owner}, its only shape."""
+    """Parse data/subscribers.yaml: a list of {email, newsletters: {name: language}, active, owner}, its only shape."""
     out, cur = [], None
     for line in open(SUBSCRIBERS, encoding='utf-8'):
         line = line.split('#', 1)[0].rstrip()
@@ -113,9 +116,16 @@ def subscribers():
             cur[m.group(2)] = scalar(m.group(3))
     for s in out:
         s['email'] = decode(str(s.get('email', '')))
-        n = s.get('newsletters', [])
-        s['newsletters'] = n if isinstance(n, list) else [n]
+        n = s.get('newsletters', {})
+        if not isinstance(n, dict):  # old shape: a list of names and one `language` for all
+            n = {k: s.get('language', 'en') for k in (n if isinstance(n, list) else [n])}
+        s['newsletters'] = n
     return out
+
+
+def owner():
+    """The owner's address: the contact written in the problem notice."""
+    return next((s['email'] for s in subscribers() if s.get('owner') is True), '')
 
 
 def sending(config):
@@ -133,14 +143,14 @@ def sending(config):
 def plan(config):
     cfg = sending(config)
     name, test, cap = cfg['newsletter'], cfg.get('test', True), int(cfg.get('max_bcc', 49))
-    fixed = cfg.get('language')  # a newsletter written in one language only
+    date = dt.date.fromisoformat(today(cfg.get('timezone', 'America/New_York'))).strftime('%d/%m/%Y')
     subs = [s for s in subscribers() if s.get('active') is True and name in s['newsletters']
             and EMAIL.match(s['email'])]
     owners = [s for s in subs if s.get('owner') is True]
     if not owners:
         sys.exit(f"no active owner subscribed to {name!r} in data/subscribers.yaml")
     owner = owners[0]
-    lang_of = lambda s: fixed or s.get('language', 'en')  # noqa: E731
+    lang_of = lambda s: s['newsletters'][name]  # noqa: E731
     emails, seen = {lang_of(owner): []}, {owner['email'].lower()}
     cut = []
     if not test:
@@ -155,7 +165,8 @@ def plan(config):
     sender = re.search(r'<([^>]+)>', str(cfg.get('from', ''))) or re.search(r'(\S+@\S+)', str(cfg.get('from', '')))
     sender = sender.group(1) if sender else owner['email']
     print(json.dumps({'newsletter': name, 'test': test, 'owner': owner['email'],
-                      'emails': [{'language': k, 'to': [owner['email'] if k == lang_of(owner) else sender], 'bcc': v}
+                      'emails': [{'language': k, 'subject': f"{cfg[f'subject_{k}']} | {date}",
+                                  'to': [owner['email'] if k == lang_of(owner) else sender], 'bcc': v}
                                  for k, v in emails.items()],
                       'cut': cut}, indent=1, ensure_ascii=False))
 

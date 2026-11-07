@@ -2,7 +2,9 @@
 
 Usage:
   python3 render.py papers content.json digest.html --lang en|fr
-  python3 render.py university contenu.json newsletter.html
+  python3 render.py university contenu.json newsletter.html --lang en|fr
+  python3 render.py papers --notice notice.html --lang en|fr        the problem notice instead of the content (no
+  python3 render.py university --notice notice.html --lang en|fr    content.json): same look, the text of NOTICE
 
 The HTML structure lives in ../templates/<name>.html; this script only fills it. On a problem it prints the list of
 problems and exits with 1: fix the JSON and run again, never edit the HTML by hand.
@@ -36,6 +38,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from light import force_light  # noqa: E402
 import decorations  # noqa: E402
+from state import owner  # noqa: E402
 
 TEMPLATES = os.path.join(HERE, '..', 'templates')
 MAX_KB = 100  # Gmail clips emails above 102 KB
@@ -104,6 +107,23 @@ WORDS = {
     "fr": dict(t_issue="Numéro", t_new="nouveaux papiers", t_published="Publié le", t_title="Newsletter journalière",
                t_review="Revue du"),
 }
+# The text sent instead of a newsletter that could not be made: always this one, in the reader's language.
+NOTICE = {
+    "en": ["Hello,", "There was a problem with today's newsletter. For any question, you can contact {contact}.",
+           "Thank you and have a nice day!"],
+    "fr": ["Bonjour,", "Aujourd'hui, il y a eu un souci avec la newsletter. Pour toute question, vous pouvez contacter "
+           "{contact}.", "Merci et bonne journée !"],
+}
+
+
+def notice_text(lang, colour="#c2603d"):
+    """NOTICE in HTML: one paragraph per line, the owner's address of data/subscribers.yaml as a mail link."""
+    mail = owner()
+    link = f'<a href="mailto:{mail}" style="color:{colour}; text-decoration:underline;">{H.escape(mail)}</a>'
+    paras = [H.escape(x, quote=False).replace('{contact}', link) for x in NOTICE[lang]]
+    return ''.join(f'<p style="margin:{0 if i == 0 else 10}px 0 0 0;">{x}</p>' for i, x in enumerate(paras))
+
+
 MONTHS = {
     "en": "January February March April May June July August September October November December".split(),
     "fr": "janvier février mars avril mai juin juillet août septembre octobre novembre décembre".split(),
@@ -159,8 +179,9 @@ def logo(path, width):
 
 
 def papers(src, dst, lang, deco=None):
-    c = json.load(open(src, encoding='utf-8'))
-    errors = check_papers(c, lang)
+    notice = src is None
+    c = {"issue": "", "date": dt.date.today().isoformat(), "papers": []} if notice else json.load(open(src, encoding='utf-8'))
+    errors = [] if notice else check_papers(c, lang)
     if errors:
         sys.exit("\n".join(errors))
     look = config_block('papers', 'look')
@@ -190,7 +211,8 @@ def papers(src, dst, lang, deco=None):
         abstract = math.ceil(len(excerpt(p["abstract" if lang == "en" else "abstract_fr"], sentences)) / 99)
         return round(68.5 + 18.85 * title + 17.25 * abstract)
 
-    head_margins, stats_margins = margins(-1, 87), margins(0, 153)
+    head_margins = margins(-1, 87)
+    stats_margins = margins(0, NOTICE_PAPERS) if notice else margins(0, 153)
     counts = {k: 0 for k in LEFT + RIGHT}
     items = []
     for i, p in enumerate(c["papers"], 1):
@@ -214,22 +236,39 @@ def papers(src, dst, lang, deco=None):
            "logo": logo(look.get('logo', 'logos/papers.svg'), look.get('logo_width', 150)),
            "logo_width": look.get('logo_width', 62), "logo_cell": look.get('logo_cell', 150), "gap": gap,
            "margin": decorations.WIDTH, "frame_width": 640 + 2 * (decorations.WIDTH + gap),
-           "head_left": head_left, "head_right": head_right, "stats_left": stats_left, "stats_right": stats_right}
+           "head_left": head_left, "head_right": head_right, "stats_left": stats_left, "stats_right": stats_right,
+           "notice": notice, "notice_text": notice_text(lang) if notice else ""}
     size = finish("papers", ctx, dst)
-    print(f"OK {lang}: {len(items)} papers, {size:.0f} KB, dominant label {max(counts, key=counts.get)}")
+    print(f"OK {lang}: notice, {size:.0f} KB" if notice else
+          f"OK {lang}: {len(items)} papers, {size:.0f} KB, dominant label {max(counts, key=counts.get)}")
 
 
 # ---------------------------------------------------------------- university ------------------------------------------
 ORDER = ["deadlines", "seminars", "workshops", "events", "brief", "infos"]
-TITLES = {"deadlines": "À ne pas manquer", "seminars": "Séminaires & talks", "workshops": "Workshops & conférences",
-          "events": "Événements", "brief": "En bref", "infos": "Infos pratiques"}
+TITLES = {
+    "fr": {"deadlines": "À ne pas manquer", "seminars": "Séminaires & talks", "workshops": "Workshops & conférences",
+           "events": "Événements", "brief": "En bref", "infos": "Infos pratiques"},
+    "en": {"deadlines": "Don't miss", "seminars": "Seminars & talks", "workshops": "Workshops & conferences",
+           "events": "Events", "brief": "In brief", "infos": "Practical info"},
+}
+UNI_WORDS = {"fr": dict(t_head="Newsletter hebdomadaire", t_reg="Inscription"),
+             "en": dict(t_head="Weekly newsletter", t_reg="Registration")}
 COLOURS = {"deadlines": "#F48245", "seminars": "#00707F", "workshops": "#FAA919", "events": "#0066B2",
            "brief": "#2CA449", "infos": "#585EA9"}
-EMPTY = {"deadlines": "Aucune date limite dans les 10 prochains jours.",
-         "seminars": "Rien à signaler pour le moment : je n'ai trouvé aucun séminaire dans tes domaines à travers mes recherches.",
-         "workshops": "Rien à signaler pour le moment : je n'ai trouvé aucun workshop ni conférence dans tes domaines à travers mes recherches.",
-         "events": "Aucun événement à venir cette semaine.", "brief": "Rien de particulier cette semaine.",
-         "infos": "Aucune info pratique cette semaine."}
+EMPTY = {
+    "fr": {"deadlines": "Aucune date limite dans les 10 prochains jours.",
+           "seminars": "Rien à signaler pour le moment : je n'ai trouvé aucun séminaire dans tes domaines à travers mes recherches.",
+           "workshops": "Rien à signaler pour le moment : je n'ai trouvé aucun workshop ni conférence dans tes domaines à travers mes recherches.",
+           "events": "Aucun événement à venir cette semaine.", "brief": "Rien de particulier cette semaine.",
+           "infos": "Aucune info pratique cette semaine."},
+    "en": {"deadlines": "No deadline in the next 10 days.",
+           "seminars": "Nothing to report for now: my searches found no seminar in your fields.",
+           "workshops": "Nothing to report for now: my searches found no workshop or conference in your fields.",
+           "events": "No upcoming event this week.", "brief": "Nothing special this week.",
+           "infos": "No practical info this week."},
+}
+NOTICE_PAPERS = 152              # height of the notice card's row on a computer (153 px measured on 2026-11-07)
+NOTICE_UNIVERSITY = (164, 124)   # the same in the university newsletter: computer, phone (165 and 126 measured)
 SPEC = {"seminars": (96, 1, True), "workshops": (92, 2, True), "events": (92, 2, True),
         "brief": (66, 1, True), "infos": (66, 1, False)}  # row height, description lines, first line bold
 HL, MUTED = "#00707F", "#6B7480"
@@ -252,8 +291,9 @@ def identity():
     return out
 
 
-def university(src, dst, deco=None):
-    c = json.load(open(src, encoding='utf-8'))
+def university(src, dst, lang="fr", deco=None):
+    notice = src is None
+    c = {"week": day(dt.date.today().isoformat(), lang)} if notice else json.load(open(src, encoding='utf-8'))
     who = identity()
     style = deco or who.get("decoration", "none")
     draw = decorations.STYLES[style]
@@ -269,12 +309,13 @@ def university(src, dst, deco=None):
             return wide, css
         return (f'<div class="wide">{wide}</div>'
                 f'<div class="narrow" style="display:none; max-height:0; overflow:hidden;">{small}</div>', css)
-    titles = {**TITLES, "events": who.get("events_title", TITLES["events"])}
+    events = who.get("events_title" if lang == "fr" else f"events_title_{lang}", TITLES[lang]["events"])
+    titles = {**TITLES[lang], "events": events}
     unescape = lambda s: H.unescape(s) if isinstance(s, str) else s  # noqa: E731  (old files wrote &amp;)
     sections, offset = [], 82  # offset: top of the current block in the email, for decorations.py
-    for k in ORDER:
+    for k in ([] if notice else ORDER):
         raw = [{f: unescape(v) for f, v in it.items()} for it in (c.get(k) or [])]
-        sec = {"key": k, "title": titles[k], "colour": COLOURS[k], "empty": not raw, "empty_text": EMPTY[k],
+        sec = {"key": k, "title": titles[k], "colour": COLOURS[k], "empty": not raw, "empty_text": EMPTY[lang][k],
                "deadlines": [], "rows": []}
         for i, it in enumerate(raw):
             sep = '' if i == 0 else 'border-top:1px solid #E3E6EB;'
@@ -287,7 +328,7 @@ def university(src, dst, deco=None):
             lines += [{"text": H.escape(x, quote=False), "br": "<br>", "colour": MUTED, "weight": ""}
                       for x in it["left"][1:]]
             if it.get("reg"):
-                lines.append({"text": "Inscription", "br": "<br>", "colour": HL, "weight": ""})
+                lines.append({"text": UNI_WORDS[lang]["t_reg"], "br": "<br>", "colour": HL, "weight": ""})
             sec["rows"].append({**it, "link": it.get("link") or "#", "sep": sep, "height": height,
                                 "lines": lines, "speaker": it.get("speaker", ""), "desc_mt": 4 if nl > 1 else 2})
         # Height of the section, a little under the real one (40 top + title and underline 46 + rows), so that its
@@ -301,22 +342,34 @@ def university(src, dst, deco=None):
         offset += h + 6
         sections.append(sec)
     (hl, hl_css), (hr, hr_css) = both("left", HL, 0, 82, 76, 0, 0), both("right", HL, 0, 82, 76, 0, 0)
-    size = finish("university", {"week": nodetect(unescape(c["week"])), "sections": sections,
+    (nl, nl_css), (nr, nr_css) = (both("left", HL, 1, *NOTICE_UNIVERSITY, 24, 82 + 6), both("right", HL, 1, *NOTICE_UNIVERSITY, 24, 82 + 6))
+    size = finish("university", {**UNI_WORDS[lang], "lang": lang, "week": nodetect(unescape(c["week"])), "sections": sections,
+                                 "notice": notice, "notice_text": notice_text(lang, HL) if notice else "",
+                                 "notice_left": nl, "notice_left_css": nl_css, "notice_right": nr, "notice_right_css": nr_css,
                                  "logo": logo(who["logo"], who.get("logo_width", 150)), "logo_width": who.get("logo_width", "150"),
                                  "margin": margin, "gap": gap, "frame_width": 640 + 2 * (margin + gap),
                                  "narrow": narrow, "narrow_gap": narrow_gap,
                                  "header_left": hl, "header_left_css": hl_css,
                                  "header_right": hr, "header_right_css": hr_css}, dst)
-    print(f"OK university: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, "
+    if notice:
+        return print(f"OK university {lang}: notice, {size:.0f} KB")
+    print(f"OK university {lang}: {sum(len(s['deadlines']) + len(s['rows']) for s in sections)} items, {size:.0f} KB, "
           f"decoration {style}, 0 image")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("name", choices=["papers", "university"])
-    ap.add_argument("src")
-    ap.add_argument("dst")
-    ap.add_argument("--lang", choices=["en", "fr"], default="en")
+    ap.add_argument("src", nargs="?", help="content.json (left out with --notice)")
+    ap.add_argument("dst", nargs="?")
+    ap.add_argument("--notice", metavar="DST", help="render the problem notice to DST instead of the content")
+    ap.add_argument("--lang", choices=["en", "fr"], default=None, help="en or fr (default: en for papers, fr for university)")
     ap.add_argument("--decoration", choices=sorted(decorations.STYLES), help="override the config's decoration")
     a = ap.parse_args()
-    papers(a.src, a.dst, a.lang, a.decoration) if a.name == "papers" else university(a.src, a.dst, a.decoration)
+    src, dst = (None, a.notice) if a.notice else (a.src, a.dst)
+    if not dst:
+        ap.error("give content.json and the output, or --notice <output>")
+    if a.name == "papers":
+        papers(src, dst, a.lang or "en", a.decoration)
+    else:
+        university(src, dst, a.lang or "fr", a.decoration)

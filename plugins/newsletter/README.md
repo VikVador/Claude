@@ -15,7 +15,7 @@ Two newsletters, prepared and sent by Claude from a scheduled task, through the
 | `templates/` | The HTML structure of each email, always shown light (no automatic dark mode).                      | me, rarely            |
 | `logos/`     | The logos drawn in the emails (`papers.svg`: the digest histogram; `uliege.svg`), as SVG inlined by `render.py`: no image to attach.                | me, rarely            |
 | `config/`    | Every setting, one YAML per newsletter: sender, test mode, research interests, sources, bounds; for the university one, its name and mailbox. | me, to tune or reuse |
-| `data/`      | `subscribers.yaml`: every recipient, me included (address in base64, newsletters, language, active, owner); the papers already sent (`papers/sent.json`) and the ones kept for the next issue (`papers/backup.json`). | Claude, after each issue; me for the subscribers |
+| `data/`      | `subscribers.yaml`: every recipient, me included (address in base64, newsletters with the language of each, active, owner); the papers already sent (`papers/sent.json`) and the ones kept for the next issue (`papers/backup.json`). | Claude, after each issue; me for the subscribers |
 | `scripts/`   | `render.py` fills a template from a JSON, checks it and forces the light colours; `decorations.py` draws the margins: shards for the university newsletter, printed-circuit traces for the digest (`decoration` in each config); `state.py` reads and writes the state. | rarely |
 | `skills/`    | How to do it: how to search, select, write, send and record. No setting inside.                     | rarely                |
 
@@ -28,7 +28,12 @@ Two newsletters, prepared and sent by Claude from a scheduled task, through the
 ## Change something
 
 - **A subscriber**: add an entry to `data/subscribers.yaml`: `email` (from `python3 scripts/state.py encode <address>`),
-  `newsletters: [science]`, `[university]` or both, `language: en/fr`, `active: true/false`.
+  `newsletters: {science: en}`, `{university: fr}` or both (`{science: en, university: fr}`), each in its language,
+  `active: true/false`.
+- **The subjects**: `sending.subject_en` and `subject_fr` in each config; the date of the day it is sent is added
+  (`Newsletter | Scientific Papers | 07/11/2026`).
+- **The problem notice** (sent instead of a newsletter that could not be made): `NOTICE` in `scripts/render.py`;
+  see it with `python3 scripts/render.py papers --notice out.html --lang fr`.
 - **A theme, a source, a number of papers**: `config/papers.yaml` (themes give the bars of the statistics card).
 - **The sender**: `sending.from` in both configs, once the domain is verified in Resend; then `sending.test: false`
   to send to every subscriber, not only the owner.
