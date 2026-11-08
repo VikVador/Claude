@@ -1,6 +1,6 @@
 ---
 name: create-slides
-description: "Use when I ask for slides, a deck, a talk or a presentation (diapos, présentation, slides pour la réunion), for a progress meeting or a talk to people who do not know my work, built from the results of the session or a project; also to change, rebuild or publish one of my talks. Opens with a fixed list of questions with defaults, builds the deck from my Marp template in VikVador/Talks-template, drafts it as a private artifact and publishes the PDF to VikVador/Talks only if asked. Use it instead of PowerPoint or generic slide-deck tools unless a .pptx file is asked for."
+description: "Use when I ask for slides, a deck, a talk or a presentation (diapos, présentation, slides pour la réunion), for a progress meeting or a talk to people who do not know my work, built from the results of the session or a project; also to change, rebuild or publish one of my talks. Opens with a fixed list of questions with defaults, builds the deck from my Marp template in VikVador/Talks-template, drafts it as a private artifact and publishes it online on VikVador/Talks (GitHub Pages) only if asked. Use it instead of PowerPoint or generic slide-deck tools unless a .pptx file is asked for."
 ---
 
 ```text
@@ -21,7 +21,7 @@ who do not know my work. Every part of the deck is an option, chosen in a fixed 
 | Repository | Visibility | Holds |
 | ---------- | ---------- | ----- |
 | [VikVador/Talks-template](https://github.com/VikVador/Talks-template) | private (licensed font) | the template, the palettes, the theme, `projects/` (one folder per project: recap videos, their stills and `project.yaml`), the logos, the team photos, the scripts; never a talk |
-| [VikVador/Talks](https://github.com/VikVador/Talks) | public | the published talks: one folder per talk with its PDF and its figures, listed in the README |
+| [VikVador/Talks](https://github.com/VikVador/Talks) | public | the online talks: one folder per talk (`talk.md`, `figures/`), built and published on GitHub Pages by its Action at each push, listed in the README |
 
 In Talks-template, `template.md` shows every slide rule in a yellow box and `docs/skill-brief.md` holds the workflow
 and the decisions behind it. **Those two files win** over anything you remember: never change the design or the
@@ -38,7 +38,7 @@ a mechanism.
 3. Write the deck
 4. Check the figures
 5. Draft as an artifact, iterate
-6. Publish in Talks (only if asked)
+6. Publish online (only if asked)
 7. Checklist
 
 ---
@@ -51,7 +51,7 @@ a mechanism.
 3. **Never invent** a result, a number or a citation: a visible placeholder instead, and say so.
 4. **One experiment = an analysis slide, then a result slide** (figure as large as possible, caption, one box) (§ 3).
 5. **Figures drawn for the slide** (about 1080 × 350 px), then **one agent reviews only the figures** (§ 4).
-6. **Draft as a private artifact**, iterate at the same link (§ 5); **publish in Talks only if question 10 says yes**.
+6. **Draft as a private artifact**, iterate at the same link (§ 5); **publish online in Talks only if question 10 says yes** (§ 6).
 
 ---
 
@@ -199,30 +199,41 @@ Then:
 2. **Publish it as an artifact** (private): `OUTDIR/index.html` as the page, every other file of `OUTDIR` in `files`
    under its path inside `OUTDIR`. Give me the link.
 3. **Iterate with me on that artifact**: after each change, rebuild, stage into the same `OUTDIR` and publish the same
-   file path, so the link stays the same. It holds the licensed font: it stays private; share the PDF instead.
+   file path, so the link stays the same. It holds the licensed font: it stays private; share the online link instead (§ 6).
 4. **Never commit a talk to Talks-template**: its draft folder stays local (git ignores `talks/`). A private talk
    lives as its artifact; a public one goes to Talks (§ 6).
 
 ---
 
-## 6. PUBLISH IN TALKS (ONLY IF ASKED)
+## 6. PUBLISH ONLINE (ONLY IF ASKED)
 
-Only if question 10 says yes (or I ask later), once the deck is approved:
+Only if question 10 says yes (or I ask later), once the deck is approved. `VikVador/Talks` is a GitHub Pages site: at
+each push on `main`, its Action builds every `talks/*/talk.md` with Marp and publishes it at
+`https://vikvador.github.io/Talks/talks/<talk>/talk.html`. **You push only the sources**, never a built file.
 
-1. `bash scripts/build.sh talks/<talk>/talk.md --pdf` and check that the PDF uses Arial Nova (`pdffonts`) and that
-   each recap video became its stills, under one page number.
-2. In a clone of `VikVador/Talks` (on my Mac `~/Desktop/talks`), on `main`, create one folder named after the talk,
-   `talks/YYYY-MM-DD-<name>/` (`<name>` = the file name I gave), holding exactly:
-   - `YYYY-MM-DD-<name>.pdf`, the PDF, with the same name as its folder;
-   - `figures/`, every figure and animation of the talk (a copy of its local `figures/`).
+1. Pull a clone of `VikVador/Talks` on `main`: on my Mac `~/Desktop/talks`; elsewhere
+   `gh repo clone VikVador/Talks ~/talks`.
+2. Copy the talk folder from Talks-template, **`talk.md` and `figures/` only**, unchanged:
+   `talks/YYYY-MM-DD-<name>/`. Its paths (`../../media/…`, the theme) resolve in Talks as in the template.
+3. The theme (`theme/*.css`) and the title video (`media/title/`) are already in Talks. Any other media of the deck
+   (recap videos, faces, logos): ask me first, then copy it under the same path as in Talks-template. **Never the
+   fonts** (`theme/fonts/`, licensed): online, the slides use Inter.
+4. Add one line at the top of the README list, the name linking to the slides:
+   `- 2026-11-12: [Weekly meeting with Gilles Louppe](https://vikvador.github.io/Talks/talks/2026-11-12-weekly-gilles/talk.html)`
+5. Commit and push **directly on `main`**: no branch, no pull request.
+6. Wait for the Action (about a minute), then check the link answers 200 and give it to me:
 
-   **Nothing else goes public**: never the Markdown, the fonts, the shared media, the recap videos or the team photos.
-3. Add one row at the top of the README table (keep the invisible spacer images in its header):
-   `| 2026-11-12 | [Weekly meeting with Gilles Louppe](talks/2026-11-12-weekly-gilles/) | [PDF](talks/2026-11-12-weekly-gilles/2026-11-12-weekly-gilles.pdf) |`
-4. Commit and push **directly on `main`** of Talks: no branch, no pull request. Give me the links to the folder and to
-   the PDF.
+   ```bash
+   sleep 10 && gh run watch -R VikVador/Talks --exit-status "$(gh run list -R VikVador/Talks -L 1 --json databaseId --jq '.[0].databaseId')"
+   curl -sI <link> | head -1
+   ```
 
-If the theme or the template had to change, ask me first, then tag Talks-template `theme-vN`.
+**Good to know**
+
+- The theme changed in Talks-template: copy its `theme/*.css` and `theme/video-controls.js` (never `theme/fonts/`) to
+  Talks in the same commit. The template itself changed: ask me first, then tag Talks-template `theme-vN`.
+- The Action adds the play/pause bar of the videos, as `build.sh` does locally.
+- A PDF is optional: `bash scripts/build.sh talks/<talk>/talk.md --pdf` needs a browser (my Mac, not a cluster).
 
 ---
 
@@ -234,4 +245,4 @@ If the theme or the template had to change, ask me first, then tag Talks-templat
 - [ ] Do the figures fill their room, with captions labelled Figure A, B, … and boxes ending at the same height?
 - [ ] Did one agent review the figures only, and were its findings fixed?
 - [ ] Are the rule boxes, guides and RULE comments gone, and do the Summary and Sources collect what they should?
-- [ ] Is the draft a private artifact, and did anything go to Talks only if question 10 said yes?
+- [ ] Is the draft a private artifact, and did the talk go online only if question 10 said yes, with its link checked?
