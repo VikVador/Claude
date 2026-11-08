@@ -40,6 +40,8 @@ order and delete the optional ones the skill does not need. This file is not a s
 |              | move out IN SHORT or the rules that prevent damage or ask for my approval.                                 |
 | Editing      | Only in a clone of VikVador/Claude, on a branch, through a pull request; bump `plugin.json`. Never in    |
 |              | `~/.claude/plugins/`: that copy is overwritten at the next update.                                         |
+| Subagents    | A skill that launches one names its model (`sonnet`, `haiku`) and, for a closed check, the effort `low`;  |
+|              | the brief opens with the skill name and the version of `plugin.json`, so a result is tied to its rules.   |
 
 ## Skeleton
 

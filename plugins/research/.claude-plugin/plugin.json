@@ -1,6 +1,6 @@
 {
   "name": "research",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "Claude Code skills for PhD research in ocean deep learning: the NYU Torch and Lucia clusters, project context and library catch-up, scientific figures, mechanism diagrams, analysis reports, talks (progress meetings and others), short project updates to post, CI checks of pull requests, remote Claude sessions on clusters, and one format for every answer.",
   "author": { "name": "Victor Mangeleer" }
 }

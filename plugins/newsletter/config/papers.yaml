@@ -120,6 +120,13 @@ keywords:                    # queries combine one domain and one method keyword
   method: [neural emulator, latent diffusion, data assimilation, autoencoder, uncertainty quantification,
            flow matching, posterior sampling]
 
+collect:                     # scripts/collect.py keeps a title with a domain and a method term, or two method terms
+  domain: [ocean, marine, sea surface, sea ice, sea level, climate, weather, atmospher, earth system, geophysic,
+           biogeochem, reanalysis, satellite, argo, hypox, oxygen, chlorophyll, hydrodynamic]
+  method: [emulat, forecast, assimilat, latent, autoencoder, diffusion, score-based, flow matching, interpolant,
+           generative, posterior, inverse problem, uncertainty, foundation model, surrogate, probabilistic]
+  crossref_rows: 100         # rows asked per journal group and per domain keyword (titles only, then filtered)
+
 # ---------------------------------------------------------------- sources ---------------------------------------------
 # One subagent per group, all in parallel. Paywalled papers are fine: an abstract alone is enough.
 sources:
