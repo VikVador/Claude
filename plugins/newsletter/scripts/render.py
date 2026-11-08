@@ -11,7 +11,7 @@ problems and exits with 1: fix the JSON and run again, never edit the HTML by ha
 
 papers content.json (plain text everywhere: render.py escapes & < > itself):
 {
-  "model": "Opus 5.5", "issue": "038", "date": "2026-11-07",
+  "issue": "038", "date": "2026-11-07",
   "papers": [{
     "url": "https://arxiv.org/abs/2611.01234", "title": "...",
     "authors": ["First Author", "Second Author", "Third Author"], "et_al": true,

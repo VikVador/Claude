@@ -5,8 +5,8 @@ covers the setup; these are the Lucia facts, checked on 2026-10-28 and 2026-11-0
 
 - `frontal.lucia.cenaero.be` is a DNS round robin: an editor can reconnect to the other login node (`frontal01` /
   `frontal02`). Go to the node `claude-remote status` names with `ssh <node>` before stopping or attaching.
-- Claude uses ~250 MB here; the `cluster-remote` skill says ~350 MB [verify]. The login nodes have no per-user cap: the limit
-  is ours, heavy work goes through Slurm.
+- Claude uses 250 to 350 MB (~250 MB measured here). The login nodes have no per-user cap: the limit is ours, heavy
+  work goes through Slurm.
 - The docs allow "lightweight tasks" and say nothing on long, light processes such as tmux: ask support in case of
   doubt.
 - `tmux` is `/usr/bin/tmux` 2.7 and `python3` is `/usr/bin/python3` 3.6.8 on both login nodes. The plugin hooks of

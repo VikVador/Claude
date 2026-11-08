@@ -145,7 +145,7 @@ Related: the `cluster-lucia` and `cluster-torch` skills for the rules of their l
 - **tmux is per node.** An editor can reconnect to another login node: `claude-remote status` then says "not running"
   and names the node where the session was started. Go there with `ssh <node>` before stopping or attaching,
   otherwise you start a **second** session.
-- **Login nodes are for light work.** Claude itself is light (~350 MB), but heavy work (training, analysis,
+- **Login nodes are for light work.** Claude itself is light (250 to 350 MB), but heavy work (training, analysis,
   transfers) goes through the scheduler or the transfer nodes. Check the rules of the cluster (its own skill).
 
 ---

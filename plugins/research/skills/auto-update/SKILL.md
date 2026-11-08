@@ -16,19 +16,20 @@ description: "Use when a session starts or resumes after a while in a Heimdall, 
 # AUTO UPDATE
 
 I work on several projects at once (Heimdall on Torch, Neptune on Lucia), with one Claude session per project. The
-libraries they share (`albus`, `shaggy`) change often, and so do the projects. Before
-working again after a while, each session catches up, for two goals:
+libraries they share (`albus`, `shaggy`) change often, and so do the projects. Before working again after a while,
+each session catches up, for two goals:
 
 - **Same libraries everywhere**: the project environment always runs the latest `albus` and `shaggy`.
 - **The best of both projects**: Heimdall and Neptune share most of their design (encoders, losses, training). Each
   session reads what was done in the other project, and proposes to bring here what would help.
 
-| File                 | Use                                                                    | When                   |
-| -------------------- | ---------------------------------------------------------------------- | ---------------------- |
-| `check.py`           | **Run** `python <skill folder>/check.py` with the Python of the project environment | § 0 to § 3, § 5 |
-| `hooks/auto-update.py`| runs by itself on every message (plugin hook), never by hand           | reminds you every 6 h  |
+| File                   | Use                                                                 | When                  |
+| ---------------------- | ------------------------------------------------------------------- | --------------------- |
+| `check.py`             | **Run** `python <skill folder>/check.py` (Python of the environment) | § 0 to § 3, § 5       |
+| `hooks/auto-update.py` | runs by itself on every message (plugin hook), never by hand        | reminds you every 6 h |
 
-Related: the `research` skill for what albus and shaggy contain; `cluster-torch` and `cluster-lucia` for where to install.
+Related: the `research` skill for what albus and shaggy contain; the `cluster-torch` and `cluster-lucia` skills for
+where to install.
 
 **Contents**
 
@@ -59,8 +60,9 @@ Related: the `research` skill for what albus and shaggy contain; `cluster-torch`
 ## 1. WHEN
 
 - The hook `auto-update.py` of this plugin adds a reminder to the first message of a session in a folder of Heimdall,
-  Neptune, albus or shaggy (found from its git remote) when it was not brought up to date for **6 hours** or more (time in UTC kept in `~/.claude/up-to-date/<folder>.txt`, written when
-  reminding, so the reminder comes only once). It gives the time of the last check, to pass to `--since`.
+  Neptune, albus or shaggy (found from its git remote) when it was not brought up to date for **6 hours** or more
+  (time in UTC kept in `~/.claude/up-to-date/<folder>.txt`, written when reminding, so the reminder comes only once).
+  It gives the time of the last check, to pass to `--since`.
 - The check is quick (a few seconds); I change the libraries often, so do it every time it is asked.
 - Also when I ask what changed, or before a task that relies on the latest version of a library.
 - Not for scheduled or automatic messages, nor in the middle of a task: do it at the first natural pause.
@@ -92,12 +94,17 @@ pip check                                          # a new dependency? install i
 python -c "import albus, shaggy"                   # the environment still imports
 ```
 
-| Cluster | Where to run it                                                                                                  |
-| ------- | ---------------------------------------------------------------------------------------------------------------- |
-| Torch   | in a short CPU job, overlay mounted `:rw` with `--fakeroot` (login nodes: 2 GB), read the `cluster-torch` skill first:   |
-|         | `srun --account=torch_pr_347_general -c4 --mem=16G -t0:30:00 apptainer exec --fakeroot --overlay <overlay>:rw <image> bash -c "source /ext3/env.sh; pip ..."` |
-| Lucia   | in the micromamba environment of the project, read the `cluster-lucia` skill first                                       |
-| Other   | in the environment named by the `CLAUDE.md` of the project                                                       |
+| Cluster | Where to run it                                                                                      |
+| ------- | ---------------------------------------------------------------------------------------------------- |
+| Torch   | a short CPU job, overlay `:rw` with `--fakeroot` (login nodes: 2 GB); the `cluster-torch` skill first |
+| Lucia   | in the micromamba environment of the project; the `cluster-lucia` skill first                        |
+| Other   | in the environment named by the `CLAUDE.md` of the project                                           |
+
+On Torch, the job that runs the three commands above:
+
+```bash
+srun --account=torch_pr_347_general -c4 --mem=16G -t0:30:00 apptainer exec --fakeroot --overlay <overlay>:rw <image> bash -c "source /ext3/env.sh; pip ..."
+```
 
 Then run `check.py` again with the environment mounted read-only: it must say `up to date`.
 
@@ -123,7 +130,7 @@ state (`open`, `merged`, `closed`), `NEW` when updated since the last check, lin
 
 ---
 
-## 4. WHAT TO TELL THE USER
+## 4. WHAT TO TELL ME
 
 Before answering my message, a block in my language, in the long format of the `auto-message-format` skill (after
 the recap of a dictated message, if any):
