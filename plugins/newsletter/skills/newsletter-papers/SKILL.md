@@ -27,6 +27,7 @@ clone: the installed plugin copy is stale.
 | -------------------------- | --------------------------------------------------------------------------- | ----------- |
 | `config/papers.yaml`       | **Read**: sending, bounds, research group, projects, themes, sources        | § 1         |
 | `scripts/state.py`         | **Run**: next issue, exclusion list, sending plan, record                   | § 1, 6      |
+| `scripts/collect.py`       | **Run**: the arXiv and journal candidates, titles filtered, abstracts fetched | § 2       |
 | `scripts/render.py`        | **Run** `python3 scripts/render.py papers content.json <out> --lang <en/fr>`| § 4         |
 | `templates/papers.html`    | the structure of the email, filled by `render.py`: never edited by hand     | never       |
 | `data/papers/*.json`, `data/subscribers.yaml` | the state, read and written by `state.py`                | never by hand |
@@ -83,12 +84,18 @@ If the clone fails, go on without exclusion and say it in the report.
 
 ## 2. COLLECT
 
-1. Launch one subagent per group of `sources`, **in parallel, with the model `sonnet`** (bounded reading, fixed
-   rules and return format: half the price of Opus); the `Labs` groups only on the days of `subagents.labs_on`.
-   Give each one: its sources, the windows (`windows_days`), its bounds (`subagents`), the `themes`, the
-   `keywords`, the exclusion list, the reading rules below and the return format. Without a subagent tool, do the
-   groups one after the other with the same bounds.
-2. Under `papers.min` relevant candidates after this first wave: `papers.extra_waves` targeted wave(s), then accept.
+1. **The script first**, about a minute, no page read by you:
+   `python3 scripts/collect.py config/papers.yaml --exclude /tmp/exclude.txt > /tmp/candidates.json`. It reads the
+   arXiv listings and Crossref for the journals of `sources`, keeps the titles with a `collect.domain` and a
+   `collect.method` term (or two method terms), drops the excluded ids and fetches the authors, dates and abstracts.
+   Read its `sources` list: a source in `error` goes to a subagent.
+2. **Subagents for the rest**, in parallel, **with the model `sonnet`** (bounded reading, fixed rules and return
+   format): one per `Labs` group on the days of `subagents.labs_on`, one per source in `error`, and one for the
+   candidates whose `abstract` is empty (it reads their pages and returns the abstracts). Each brief opens with
+   `newsletter-papers <version of plugin.json>`, then gives: the sources, the windows (`windows_days`), the bounds
+   (`subagents`), the `themes`, the `keywords`, the exclusion list, the reading rules below and the return format.
+   Without a subagent tool, do them yourself with the same bounds.
+3. Under `papers.min` relevant candidates after this first wave: `papers.extra_waves` targeted wave(s), then accept.
 
 **Reading rules** (give them to every subagent, word for word)
 

@@ -145,7 +145,7 @@ environments (e.g. a run on another cluster) → one line each, saying which. No
 - **Mathematics**: only when a formula says something the words do not; the message never needs it. When used,
   always in LaTeX, the same everywhere: `\( … \)` inline and `\[ … \]` apart, rendered by MathJax (`build.py` loads
   it), e.g. `\(\sigma/\tau\)`, `\(D \times N\)`; never Unicode maths (ρ₀, σ/τ typed as characters) and never `<sub>`.
-  Follow the notation of my slides (`template.md` on the template branch of VikVador/Talks): plain variables `x, y, c`, time as a subscript
+  Follow the notation of my slides (`template.md` of VikVador/Talks): plain variables `x, y, c`, time as a subscript
   `x_t`, windows `x_{1:L}`, a learned distribution `p_\theta`, conditioning `\mid`. Plain numbers with their unit
   stay in the text: "2,8 fois", "4 h", "18 432 tokens".
 - **Spell out every variable and acronym** at its first use, in the text and in the figures: "la température de

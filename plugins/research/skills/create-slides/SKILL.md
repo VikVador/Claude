@@ -1,6 +1,6 @@
 ---
 name: create-slides
-description: "Use when I ask for slides, a deck, a talk or a presentation (diapos, présentation, slides pour la réunion), for a progress meeting or a talk to people who do not know my work, built from the session or a project; also to change, rebuild or publish one of my talks. Opens with a fixed list of questions, builds the deck from the template branch of my Marp repository, drafts it as a private artifact and publishes it on GitHub Pages only if asked. Use it instead of PowerPoint or generic slide tools unless a .pptx file is asked for."
+description: "Use when I ask for slides, a deck, a talk or a presentation (diapos, présentation, slides pour la réunion), for a progress meeting or a talk to people who do not know my work, built from the session or a project; also to change, rebuild or publish one of my talks. Opens with a fixed list of questions, builds the deck from my Marp repository (VikVador/Talks), drafts it as a private artifact and publishes it on GitHub Pages only if asked. Use it instead of PowerPoint or generic slide tools unless a .pptx file is asked for."
 ---
 
 ```text
@@ -20,10 +20,11 @@ This skill is the **procedure**: the questions, the draft, the checks, the publi
 the design or the rules without asking me. The same steps make a progress-meeting deck or a talk to people who do not
 know my work: every part of the deck is an option, chosen in a fixed list of questions before any slide.
 
-| Branch of [VikVador/Talks](https://github.com/VikVador/Talks) | Holds |
-| -------- | ----- |
-| `template` | everything to make a talk: `template.md`, the theme, `projects/` (recap videos and `project.yaml`), `media/` (title animation), `logos/`, `team/` (faces and `people.yaml`), `animations/`, the scripts; the local drafts in `talks/`, ignored by git |
-| `main` | only the published talks, `talks/YYYY-MM-DD-name/` (`talk.md` and `figures/`), the shared files they use (title animation, recap videos, logos, faces) at the same paths, and the README list; GitHub Pages builds them with the theme of `template` |
+| In [VikVador/Talks](https://github.com/VikVador/Talks), one branch, `main` | Holds |
+| --------------------------------------------------------------------- | ----- |
+| `template.md`, `theme/`, `projects/`, `media/`, `logos/`, `team/`, `animations/`, `scripts/` | everything to make a talk: the rules, the theme, the recap videos and their `project.yaml`, the title animation, the logos, the faces and `people.yaml`, the scripts |
+| `drafts/YYYY-MM-DD-name/` | the talk being written (`talk.md` and `figures/`), ignored by git |
+| `talks/YYYY-MM-DD-name/` | the published talks, same layout, listed in the README and built by GitHub Pages at each push |
 
 Related: the `create-figure` skill for what goes in a figure and its size on a slide, the `create-diagram` skill for a
 diagram of a mechanism.
@@ -43,7 +44,7 @@ diagram of a mechanism.
 
 ## 0. IN SHORT
 
-1. **The template branch**: pull it, read `template.md` in full before any slide (§ 1).
+1. **The repository**: pull `main`, read `template.md` in full before any slide (§ 1).
 2. **First reply = the questions list**, in its fixed format, then stop and wait; after my answer, send the updated
    list and draft only on my go (§ 2).
 3. **Never invent** a result, a number or a citation: a visible placeholder instead, and say so.
@@ -56,13 +57,14 @@ diagram of a mechanism.
 
 ## 1. GET THE TEMPLATE
 
-1. Find a clone of `VikVador/Talks` on the branch `template`: on my Mac `~/Desktop/victor-slides`; elsewhere, a
-   folder whose remote is `VikVador/Talks`. None → `gh repo clone VikVador/Talks ~/talks -- -b template`.
-2. `git switch template && git pull`, then `npm install` if `node_modules/` is missing.
+1. Find a clone of `VikVador/Talks`: on my Mac `~/Desktop/victor-slides`; elsewhere, a folder whose remote is
+   `VikVador/Talks`. None → `gh repo clone VikVador/Talks ~/talks`.
+2. `git switch main && git pull`, then `npm install` if `node_modules/` is missing.
 3. **Read `template.md` in full** before writing a single slide, every time: its slides are the rules, its last slide
    draws the structure of a deck.
 4. List the projects: one folder per project in `projects/`, each with a `project.yaml` (`title`, `university`,
-   `logo`, `paper`, `videos` in order with their `stills`). Question 4 offers exactly these, nothing hard-coded.
+   `logo`, `paper`, `repository`, `videos` in order with their `stills`). Question 4 offers exactly these, nothing
+   hard-coded.
 
 ---
 
@@ -75,7 +77,8 @@ Read my request first: what it already answers gets its `[x]`; everything else g
   which render the checked text struck through.
 - Every point you propose (Progress, experiments, What's next) starts with a **bold keyword**, so I can cite it.
 - The points of questions 5, 6 and 7 come from the session: figures made, numbers, problems met, open choices.
-- Question 4 lists one line per folder of `projects/` (its `title`, `university`); question 9 has one line
+- Question 4 lists one line per folder of `projects/` (its `title`, `university`); the project whose `repository`
+  is a git remote of the session gets `[x]`, none otherwise; question 9 has one line
   "Pour le projet …" per project selected in question 4, and none if no project is selected.
 
 ````markdown
@@ -138,20 +141,20 @@ Then:
 1. An unanswered question keeps its `[x]`. Apply my answers, send the **whole updated list**, and ask
    "Es-tu d'accord avec l'ensemble des choix ?".
 2. Draft only after my yes. A new title or a new project without its name or university: ask, never guess.
-3. Faces only of the people I name. The talk folder is `talks/YYYY-MM-DD-<short name>/`, from today's date and
+3. Faces only of the people I name. The talk folder is `drafts/YYYY-MM-DD-<short name>/`, from today's date and
    the title or project.
 
 ---
 
 ## 3. WRITE THE DECK
 
-- Copy `template.md` into `talks/YYYY-MM-DD-<name>/talk.md`, keep its front matter (set `theme` and `title`) and
+- Copy `template.md` into `drafts/YYYY-MM-DD-<name>/talk.md`, keep its front matter (set `theme` and `title`) and
   the title slide chosen in question 2, exactly, with the credit of the animation (only the title text changes, if
   question 1 says so). Delete every other slide you do not use.
 - **Remove every yellow `rule` box, every `guides` div and every `<!-- RULE … -->` comment**: Marp would turn the
   comments into speaker notes, and `publish.sh` refuses a deck that still has them.
 - Paths from a talk: shared files as `../../media/…`, `../../projects/…`, `../../logos/…`, `../../team/…`; the talk's
-  own figures in `talks/…/figures/`, linked as `figures/…`. These paths are the same on `main`.
+  own figures in `drafts/…/figures/`, linked as `figures/…`. These paths stay the same once published in `talks/`.
 - Structure (the last slide of the template draws it): title → for each project, its project slide and, for a
   project of `projects/`, all its recap videos in the order of `videos` → Progress → the experiments → Summary →
   What's next; then Sources. No project: no project slide.
@@ -174,11 +177,12 @@ Then:
 1. **Draw every result figure for its room on the slide**: about **1080 × 350 px** under a one-line caption and a
    one-line box, so `figsize` about 9.8 × 3.2 in, PNG at dpi 256 (the `create-figure` skill, § 2). One figure per message:
    never a multi-row figure shrunk to fit, never "top row / bottom row" in the text.
-2. `bash scripts/build.sh talks/<talk>/talk.md`, serve the repository root (`python3 -m http.server 8765`), open
-   `http://127.0.0.1:8765/talks/<talk>/talk.html` and look at every slide: nothing overflows, every box ends at the
+2. `bash scripts/build.sh drafts/<talk>/talk.md`, serve the repository root (`python3 -m http.server 8765`), open
+   `http://127.0.0.1:8765/drafts/<talk>/talk.html` and look at every slide: nothing overflows, every box ends at the
    same height, the videos play, the maths renders.
-3. **Then launch one agent for the figures only, with the model `sonnet`**: give it the PNGs of `figures/` and a
-   screenshot of each result slide, and ask it to list, per figure, legends or labels drawn over the data,
+3. **Then launch one agent for the figures only, with the model `sonnet` and the effort `low`** (a closed list to
+   check): its brief opens with `create-slides <version of plugin.json>`, then gives it the PNGs of `figures/` and a
+   screenshot of each result slide, and asks it to list, per figure, legends or labels drawn over the data,
    overlapping or cut text, ticks unreadable at the size shown, and a figure that leaves the slide half empty.
    Nothing else.
 4. Fix what it finds (redraw with the `create-figure` skill), rebuild, and only then show me the draft.
@@ -187,14 +191,14 @@ Then:
 
 ## 5. DRAFT AS AN ARTIFACT, ITERATE
 
-1. Stage it: `bash scripts/artifact.sh talks/<talk>/talk.md OUTDIR`, with `OUTDIR` an **absolute** folder of your
+1. Stage it: `bash scripts/artifact.sh drafts/<talk>/talk.md OUTDIR`, with `OUTDIR` an **absolute** folder of your
    scratchpad, e.g. `<scratchpad>/talk-<talk>` (the script empties it first).
 2. **Publish it as an artifact** (private): `OUTDIR/index.html` as the page, every other file of `OUTDIR` in `files`
    under its path inside `OUTDIR`. Give me the link.
 3. **Iterate with me on that artifact**: after each change, rebuild, stage into the same `OUTDIR` and publish the same
    file path, so the link stays the same.
-4. **Never commit a talk on `template`**: git ignores `talks/` there. A private talk lives as its artifact only; a PDF
-   (`bash scripts/build.sh talks/<talk>/talk.md --pdf`, each recap video becomes its stills) only if I ask for one.
+4. **Never commit a draft**: git ignores `drafts/`. A private talk lives as its artifact only; a PDF
+   (`bash scripts/build.sh drafts/<talk>/talk.md --pdf`, each recap video becomes its stills) only if I ask for one.
 
 ---
 
@@ -202,15 +206,14 @@ Then:
 
 Only if question 10 says yes (or I ask later), once the deck is approved:
 
-1. From the clone on `template`: `bash scripts/publish.sh talks/<talk> "<Talk name>"`, with the name I gave. It
-   copies `talk.md`, `figures/` and every shared file the talk uses to `main` at the same paths, adds
-   `- YYYY-MM-DD: [<Talk name>](<page>)` at the top of the README list, commits and pushes `main`: no branch, no pull
-   request.
-2. The workflow `Pages` of `main` builds the talk with the theme of `template` (about a minute): check it with
-   `gh run list -R VikVador/Talks -L 1`, open the page and look at it.
+1. On `main`: `bash scripts/publish.sh drafts/<talk> "<Talk name>"`, with the name I gave. It moves the folder to
+   `talks/<talk>/`, adds `- YYYY-MM-DD: [<Talk name>](<page>)` under `## Talks` in the README, commits and pushes
+   `main`: no branch, no pull request.
+2. The workflow `Pages` builds the talk (about a minute): check it with `gh run list -R VikVador/Talks -L 1`, open
+   the page and look at it.
 3. Give me the link of the page: `https://vikvador.github.io/Talks/talks/<talk>/talk.html`.
 
-To change the template, the theme, the projects or the scripts: ask me first, then commit on `template`. Every
+To change the template, the theme, the projects or the scripts: ask me first, then commit on `main`. Every
 published talk is rebuilt with the new theme at the next push on `main`: look at them after a change of the theme.
 
 ---
@@ -223,4 +226,4 @@ published talk is rebuilt with the new theme at the next push on `main`: look at
 - [ ] Do the figures fill their room, with captions labelled Figure A, B, … and boxes ending at the same height?
 - [ ] Did one agent review the figures only, and were its findings fixed?
 - [ ] Are the rule boxes, guides and RULE comments gone, and do the Summary and Sources collect what they should?
-- [ ] Is the draft a private artifact, and did anything go to `main` only if question 10 said yes?
+- [ ] Is the draft a private artifact, and did anything go to `talks/` only if question 10 said yes?

@@ -1,6 +1,6 @@
 ---
 name: auto-update
-description: "Use when a session starts or resumes after a while in a Heimdall, Neptune, albus or shaggy folder (the hook auto-update.py reminds you), when asked what changed in the libraries or the projects, before a task that needs the latest albus or shaggy, and to write the library versions next to a result. Checks and updates albus and shaggy, reads the last pull requests of Heimdall and Neptune, and gives a very short Quoi de neuf with a question for each change worth reusing."
+description: "Use when a session starts or resumes after a while in a folder of one of my projects or libraries (Heimdall, Neptune, albus, shaggy: the hook auto-update.py reminds you), when asked what changed in the libraries or the projects, before a task that needs the latest version of a library, and to write the library versions next to a result. Checks and updates the libraries, reads the last pull requests of the projects, and gives a very short Quoi de neuf with a question for each change worth reusing."
 ---
 
 ```text
@@ -15,20 +15,22 @@ description: "Use when a session starts or resumes after a while in a Heimdall, 
 
 # AUTO UPDATE
 
-I work on several projects at once (Heimdall on Torch, Neptune on Lucia), with one Claude session per project. The
-libraries they share (`albus`, `shaggy`) change often, and so do the projects. Before working again after a while,
-each session catches up, for two goals:
+I work on several projects at once, with one Claude session per project, and they share libraries that change
+often. The projects and the libraries are listed in `projects.json` at the root of the plugin (today Heimdall on
+Torch and Neptune on Lucia; `albus` and `shaggy`): the hook and `check.py` read it, so a new project or library is
+added there. Before working again after a while, each session catches up, for two goals:
 
-- **Same libraries everywhere**: the project environment always runs the latest `albus` and `shaggy`.
-- **The best of both projects**: Heimdall and Neptune share most of their design (encoders, losses, training). Each
-  session reads what was done in the other project, and proposes to bring here what would help.
+- **Same libraries everywhere**: the project environment always runs the latest version of each library.
+- **The best of every project**: my projects share most of their design (encoders, losses, training). Each session
+  reads what was done in the other projects, and proposes to bring here what would help.
 
 | File                   | Use                                                                 | When                  |
 | ---------------------- | ------------------------------------------------------------------- | --------------------- |
 | `check.py`             | **Run** `python <skill folder>/check.py` (Python of the environment) | § 0 to § 3, § 5       |
 | `hooks/auto-update.py` | runs by itself on every message (plugin hook), never by hand        | reminds you every 6 h |
+| `../../projects.json`  | the projects and libraries followed: edit it to add one                | a new project         |
 
-Related: the `research` skill for what albus and shaggy contain; the `cluster-torch` and `cluster-lucia` skills for
+Related: the `research` skill for what the libraries contain; the `cluster-torch` and `cluster-lucia` skills for
 where to install.
 
 **Contents**
@@ -46,11 +48,11 @@ where to install.
 
 1. **Run** `python <skill folder>/check.py --since <time of the last check>` with the Python of the **project
    environment** (standard library only, Python 3.6 or later, 3.8 or later to compare the libraries; it reads the
-   public GitHub API without any token). Only in a folder of Heimdall, Neptune, albus or shaggy: anywhere else,
-   skip this skill.
+   public GitHub API without any token). Only in a folder of a project or library of `projects.json`: anywhere
+   else, skip this skill.
 2. **A library is behind** → update it in the environment (§ 2), unless a job uses the environment or the project
    pins a commit.
-3. **Read** the last 3 pull requests of Heimdall and Neptune, to know what was done on the other side (§ 3).
+3. **Read** the last 3 pull requests of every project, to know what was done on the other side (§ 3).
 4. **Tell** me in a very short "Quoi de neuf", with **one short question** per change of the other project that
    could help here (§ 4), then answer my message.
 5. **Write the versions** (`python <skill folder>/check.py --versions`) next to every result: report, run, log (§ 5).
@@ -59,10 +61,10 @@ where to install.
 
 ## 1. WHEN
 
-- The hook `auto-update.py` of this plugin adds a reminder to the first message of a session in a folder of Heimdall,
-  Neptune, albus or shaggy (found from its git remote) when it was not brought up to date for **6 hours** or more
-  (time in UTC kept in `~/.claude/up-to-date/<folder>.txt`, written when reminding, so the reminder comes only once).
-  It gives the time of the last check, to pass to `--since`.
+- The hook `auto-update.py` of this plugin adds a reminder to the first message of a session in a folder of a
+  project or library of `projects.json` (found from its git remote) when it was not brought up to date for
+  **6 hours** or more (time in UTC kept in `~/.claude/up-to-date/<folder>.txt`, written when reminding, so the
+  reminder comes only once). It gives the time of the last check, to pass to `--since`.
 - The check is quick (a few seconds); I change the libraries often, so do it every time it is asked.
 - Also when I ask what changed, or before a task that relies on the latest version of a library.
 - Not for scheduled or automatic messages, nor in the middle of a task: do it at the first natural pause.
@@ -72,7 +74,7 @@ where to install.
 ## 2. LIBRARIES
 
 `check.py` compares the commit each library was installed from (`direct_url.json` of pip) with its branch on GitHub
-(`albus@main`, `shaggy@master`), and lists the commits and the files changed in between.
+(the `branch` of `projects.json`), and lists the commits and the files changed in between.
 
 **Find the environment** in the `CLAUDE.md` of the project (overlay on Torch, micromamba on Lucia, ...). No
 environment in the folder → run `python3 <skill folder>/check.py --no-libraries` and skip this section.
@@ -116,15 +118,15 @@ a clone of VikVador/Claude through a pull request.
 
 ## 3. PULL REQUESTS
 
-`check.py` prints the last **3** pull requests of `VikVador/Heimdall` and `VikVador/Neptune` (by creation): number,
-state (`open`, `merged`, `closed`), `NEW` when updated since the last check, link and the "Summary" section.
+`check.py` prints the last **3** pull requests of every project of `projects.json` (by creation): number, state
+(`open`, `merged`, `closed`), `NEW` when updated since the last check, link and the "Summary" section.
 
-**Why**: so that the session knows what was done on the other side, and both projects take the best of each other.
+**Why**: so that the session knows what was done on the other side, and the projects take the best of each other.
 
 - Read every summary. When a `NEW` one touches a piece both projects share (encoders, losses, training, tools moved
   to `shaggy`, data), open it (`gh pr view <n> -R VikVador/<project>`, or the link) and read its changes.
 - In the pull requests of the **current** project, note what changed (another session may have done it).
-- In the pull requests of the **other** project, look for what would help here: a fix, a speed-up, a better setting,
+- In the pull requests of the **other** projects, look for what would help here: a fix, a speed-up, a better setting,
   a lesson from an experiment. Check first whether the current project already has it (same name, same code).
 - Read only: never comment, review, approve or merge, and never port a change without my answer.
 

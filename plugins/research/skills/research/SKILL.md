@@ -22,15 +22,16 @@ me, and check the libraries before writing code: what you need may already exist
 
 > **Keep this file up to date.** People, links and library APIs change. If the date above is more than one month
 > old, before relying on this file:
-> 1. launch **an agent with the model `haiku`** to open every link below and list those that fail or redirect,
->    and **an agent with the model `sonnet`** to check the module tables of `references/libraries.md` against the
->    installed libraries;
+> 1. launch **an agent with the model `haiku` and the effort `low`** to open every link below and list those that
+>    fail or redirect, and **an agent with the model `sonnet`** to check the module tables of
+>    `references/libraries.md` against the installed libraries;
 > 2. propose the changes to me, then, after my approval, make them in a clone of VikVador/Claude through a pull
 >    request, never in `~/.claude/plugins/`: that copy is overwritten at the next update.
 
-| File                      | Use      | When                                                                      |
-| ------------------------- | -------- | ------------------------------------------------------------------------- |
-| `references/libraries.md` | **Read** | before writing code that a library could cover, or when its API is needed |
+| File                      | Use                                                        | When                                              |
+| ------------------------- | ---------------------------------------------------------- | ------------------------------------------------- |
+| `references/libraries.md` | **Read**                                                   | before writing code a library could cover, or for its API |
+| `runs.py`                 | **Run** `python <skill folder>/runs.py <entity/project>`   | to check or compare my WandB runs (§ 5)           |
 
 Related: the `auto-update` skill updates `shaggy` and `albus` and asks to update § 3 when their API changes; the
 `cluster-torch` and `cluster-lucia` skills for the clusters.
@@ -63,6 +64,9 @@ Related: the `auto-update` skill updates `shaggy` and `albus` and asks to update
 ---
 
 ## 1. PROJECTS
+
+The hooks and scripts of the plugin follow `projects.json` at its root (projects, libraries, their repositories and
+branches): a new project or library goes there first, then in the tables below.
 
 | Project  | Where        | Repository                                                           | Cluster   |
 | -------- | ------------ | -------------------------------------------------------------------- | --------- |
@@ -191,13 +195,16 @@ is not written down: **[verify]** (§ 6).
 | `Informations/Steps Update`        | optimizer updates done   |
 | `Informations/Samples Seen`        | samples seen             |
 
-```python
-import wandb
+`runs.py` does the reading, with the Python of the project environment, and prints what matters:
 
-api = wandb.Api()
-runs = api.runs("sail-nyu/heimdall-training-encoders")
-history = runs[0].history(keys=["Training/Loss", "Validation/Loss"])  # pandas DataFrame
+```bash
+python <skill folder>/runs.py sail-nyu/heimdall-training-encoders              # every run: state, updates, losses, verdict
+python <skill folder>/runs.py sail-nyu/heimdall-training-encoders --run <name>  # one run: curves (20 points), diagnostics
 ```
+
+The verdict names a run that diverged (loss not finite, or 3 times above its minimum), that overfits (validation
+rising while training falls) or whose gradient norm spikes. For anything else, the API directly:
+`wandb.Api().runs("sail-nyu/<project>")`, then `run.history(keys=[...])`.
 
 ### Rules
 
