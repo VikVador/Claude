@@ -22,8 +22,8 @@ know my work: every part of the deck is an option, chosen in a fixed list of que
 
 | Branch of [VikVador/Talks](https://github.com/VikVador/Talks) | Holds |
 | -------- | ----- |
-| `template` | everything to make a talk: `template.md`, the theme, `projects/` (recap videos and `project.yaml`), `media/` (title animation), `logos/`, `animations/`, the scripts; the local drafts in `talks/`, ignored by git |
-| `main` | only the published talks, `talks/YYYY-MM-DD-name/` (`talk.md` and `figures/`), the shared files they use at the same paths, and the README list; GitHub Pages builds them with the theme of `template` |
+| `template` | everything to make a talk: `template.md`, the theme, `projects/` (recap videos and `project.yaml`), `media/` (title animation), `logos/`, `team/` (faces and `people.yaml`), `animations/`, the scripts; the local drafts in `talks/`, ignored by git |
+| `main` | only the published talks, `talks/YYYY-MM-DD-name/` (`talk.md` and `figures/`), the shared files they use (title animation, recap videos, logos, faces) at the same paths, and the README list; GitHub Pages builds them with the theme of `template` |
 
 Related: the `create-figure` skill for what goes in a figure and its size on a slide, the `create-diagram` skill for a
 diagram of a mechanism.
@@ -63,8 +63,6 @@ diagram of a mechanism.
    draws the structure of a deck.
 4. List the projects: one folder per project in `projects/`, each with a `project.yaml` (`title`, `university`,
    `logo`, `paper`, `videos` in order with their `stills`). Question 4 offers exactly these, nothing hard-coded.
-5. The faces of the colleagues (`team/`, `team/people.yaml`) are not in git: they exist only in my clone. Missing →
-   question 9 stays "Ne citer personne".
 
 ---
 
