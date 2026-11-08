@@ -83,10 +83,11 @@ If the clone fails, go on without exclusion and say it in the report.
 
 ## 2. COLLECT
 
-1. Launch one subagent per group of `sources`, **in parallel**; the `Labs` groups only on the days of
-   `subagents.labs_on`. Give each one: its sources, the windows (`windows_days`), its bounds (`subagents`), the
-   `themes`, the `keywords`, the exclusion list, the reading rules below and the return format. Without a subagent
-   tool, do the groups one after the other with the same bounds.
+1. Launch one subagent per group of `sources`, **in parallel, with the model `sonnet`** (bounded reading, fixed
+   rules and return format: half the price of Opus); the `Labs` groups only on the days of `subagents.labs_on`.
+   Give each one: its sources, the windows (`windows_days`), its bounds (`subagents`), the `themes`, the
+   `keywords`, the exclusion list, the reading rules below and the return format. Without a subagent tool, do the
+   groups one after the other with the same bounds.
 2. Under `papers.min` relevant candidates after this first wave: `papers.extra_waves` targeted wave(s), then accept.
 
 **Reading rules** (give them to every subagent, word for word)
@@ -108,6 +109,8 @@ If the clone fails, go on without exclusion and say it in the report.
 ---
 
 ## 3. SELECT AND ORDER
+
+Select and order yourself, with the model of the session: never hand this step to a subagent.
 
 - **Reliable**: keep a paper only if its DOI, arXiv id or OpenReview id was checked; a preprint without DOI is fine.
 - **New**: drop every id of the exclusion list (case-insensitive); one entry when a preprint and its published

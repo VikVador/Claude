@@ -60,7 +60,8 @@ Related: the `auto-update` skill (pull requests of the projects); the cluster sk
    Exit code 0: every check passed. Any other code: a check failed or was cancelled (also when no check started
    after the wait: then look with `gh run list -R <owner>/<repo> -L 3` before concluding).
 3. Do not poll by hand and do not wait idle: the notification brings you back. If the main conversation is busy,
-   a background agent can do the watch and the diagnosis of § 2, and report back.
+   **a background agent with the model `sonnet`** can do the watch and the diagnosis of § 2 (first error, cause,
+   local reproduction) and report back; push the fix of § 3 yourself.
 4. No `.github/workflows` in the repository → nothing to watch; say so once.
 
 ---

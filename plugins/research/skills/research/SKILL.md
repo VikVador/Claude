@@ -22,8 +22,9 @@ me, and check the libraries before writing code: what you need may already exist
 
 > **Keep this file up to date.** People, links and library APIs change. If the date above is more than one month
 > old, before relying on this file:
-> 1. launch an agent to open every link below and to check the module tables of `references/libraries.md` against
->    the installed libraries;
+> 1. launch **an agent with the model `haiku`** to open every link below and list those that fail or redirect,
+>    and **an agent with the model `sonnet`** to check the module tables of `references/libraries.md` against the
+>    installed libraries;
 > 2. propose the changes to me, then, after my approval, make them in a clone of VikVador/Claude through a pull
 >    request, never in `~/.claude/plugins/`: that copy is overwritten at the next update.
 

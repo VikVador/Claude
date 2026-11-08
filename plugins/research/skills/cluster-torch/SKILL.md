@@ -22,8 +22,10 @@ How Torch works and what not to do there, so that jobs run and nothing gets lost
 2026-10-22 to 2026-10-27).
 
 > **Keep this file up to date.** If the date above is **more than one month old**, before relying on this file:
-> 1. launch an agent to re-read the [NYU RTS docs](https://services.rt.nyu.edu/docs/hpc/getting_started/intro/)
->    ([source](https://github.com/NYU-RTS/rts-docs)), and check your memory for what was learned on Torch since;
+> 1. launch **an agent with the model `sonnet`** to re-read the
+>    [NYU RTS docs](https://services.rt.nyu.edu/docs/hpc/getting_started/intro/)
+>    ([source](https://github.com/NYU-RTS/rts-docs)) and to list every value that differs from this file; check
+>    your memory for what was learned on Torch since;
 > 2. propose the changes to me; once I agree, make them in a clone of VikVador/Claude, on a branch, through a pull
 >    request, with the new date. Never in `~/.claude/plugins/`: that copy is overwritten at the next update.
 

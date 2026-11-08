@@ -177,9 +177,10 @@ Then:
 2. `bash scripts/build.sh talks/<talk>/talk.md`, serve the repository root (`python3 -m http.server 8765`), open
    `http://127.0.0.1:8765/talks/<talk>/talk.html` and look at every slide: nothing overflows, every box ends at the
    same height, the videos play, the maths renders.
-3. **Then launch one agent for the figures only**: give it the PNGs of `figures/` and a screenshot of each result
-   slide, and ask it to list, per figure, legends or labels drawn over the data, overlapping or cut text, ticks
-   unreadable at the size shown, and a figure that leaves the slide half empty. Nothing else.
+3. **Then launch one agent for the figures only, with the model `sonnet`**: give it the PNGs of `figures/` and a
+   screenshot of each result slide, and ask it to list, per figure, legends or labels drawn over the data,
+   overlapping or cut text, ticks unreadable at the size shown, and a figure that leaves the slide half empty.
+   Nothing else.
 4. Fix what it finds (redraw with the `create-figure` skill), rebuild, and only then show me the draft.
 
 ---
