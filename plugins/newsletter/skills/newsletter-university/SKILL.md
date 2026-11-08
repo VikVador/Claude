@@ -115,10 +115,10 @@ section stays an empty list: the template writes a default message.
 
 ## 5. WRITE AND RENDER
 
-0. `python3 scripts/state.py plan config/university.yaml > /tmp/plan.json`: one email per language, each with its
+1. `python3 scripts/state.py plan config/university.yaml > /tmp/plan.json`: one email per language, each with its
    `subject`, `to` and `bcc`. Write the content in each of its languages (usually only `fr`): the same items, translated
    faithfully, in `/tmp/contenu-<lang>.json`.
-1. Write `/tmp/contenu-<lang>.json` (UTF-8, plain text: `render.py` escapes `&` itself); in English the dates read
+2. Write `/tmp/contenu-<lang>.json` (UTF-8, plain text: `render.py` escapes `&` itself); in English the dates read
    `12 Nov`, the week `Week of 2–8 November 2026`:
 
 ```json
@@ -136,7 +136,7 @@ section stays an empty list: the template writes a default message.
    `left`: line 1 is the date, line 2 the place, or « Date limite » when the date shown is a deadline.
    `reg: true` adds « Inscription » (Registration) under the date. The logo (an SVG of `logos/`), the events title and the
    margin decoration come from `university` in the config.
-2. In `/tmp/newsletter-repo/plugins/newsletter`, run for each language
+3. In `/tmp/newsletter-repo/plugins/newsletter`, run for each language
    `python3 scripts/render.py university /tmp/contenu-<lang>.json /tmp/newsletter-<lang>.html --lang <lang>`: it
    prints `OK`. On an error, fix the JSON and run again.
 

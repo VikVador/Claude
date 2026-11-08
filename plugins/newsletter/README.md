@@ -5,8 +5,8 @@ Two newsletters, prepared and sent by Claude from a scheduled task, through the
 
 | Newsletter         | Skill               | When         | To                         | Language |
 | ------------------ | ------------------- | ------------ | -------------------------- | -------- |
-| Daily Paper Digest | `newsletter-papers` | every day    | me and the subscribers     | en or fr |
-| University weekly  | `newsletter-university` | every Monday | me and the subscribers | fixed (fr) |
+| Daily Paper Digest | `newsletter-papers`     | every day    | me and the subscribers | en or fr, per subscriber |
+| University weekly  | `newsletter-university` | every Monday | me and the subscribers | fr or en, per subscriber |
 
 ## Folders
 

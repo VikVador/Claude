@@ -258,7 +258,7 @@ Before a job:
   2026-10-28), then planned 2027-02-22, 2027-05-10, 2027-09-13, 2027-11-29 [verify].
 - Lucia is mainly meant for large jobs; short wall times favour the rotation of the jobs.
 - Security: never share credentials or keys, report a lost key to support at once; Lucia is not a backup system.
-- Remote Claude session: `references/remote-session.md` (memory used, ~250 or ~350 MB [verify]).
+- Remote Claude session: `references/remote-session.md`.
 
 ---
 
@@ -270,7 +270,6 @@ Before a job:
 | 2   | Policy for conda / pip, recommended PyTorch install? | **open**, ask support (§ 8)     |
 | 3   | Cancellation of underused GPUs?                      | **open**; no preemption (§ 4)   |
 | 4   | Long, light processes on login nodes (tmux, Claude)? | **open**, ask support           |
-| 5   | Memory of Claude on a login node: ~250 or ~350 MB?   | **open**, measure it (§ 10)     |
-| 6   | NVLink; DTN or Globus; 2FA, VSCode?                  | **open**, not documented        |
-| 7   | Maintenance dates of 2027?                           | **open**, docs banner (§ 10)    |
-| 8   | Does the GPU job template run?                       | **open**, try it on `debug-gpu` |
+| 5   | NVLink; DTN or Globus; 2FA, VSCode?                  | **open**, not documented        |
+| 6   | Maintenance dates of 2027?                           | **open**, docs banner (§ 10)    |
+| 7   | Does the GPU job template run?                       | **open**, try it on `debug-gpu` |

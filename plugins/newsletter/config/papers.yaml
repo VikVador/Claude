@@ -13,7 +13,7 @@ sending:
 
 # ---------------------------------------------------------------- bounds ----------------------------------------------
 papers:
-  min: 8                     # under it: one extra search wave, then accept and say it in the subject
+  min: 8                     # under it: one extra search wave, then accept and say it in the report
   max: 15                    # over it: keep the best, the next ones go to the back-up
   extra_waves: 1
   backup: 2                  # candidates kept in data/papers/backup.json for the next issue
