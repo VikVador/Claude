@@ -210,7 +210,10 @@ Fixed by `style.css`, in the reef palette of my slides, one job per colour:
    elements empty for now.
 3. Read the French draft once more as the reader: does each section give its message in its first sentences? Is
    every sentence needed at that point? Is anything said twice? Fix it, then **translate into English as the last
-   step**: fill every `lang="en"` element next to its French one; nothing else changes.
+   step, with one subagent with the model `sonnet`** (a mechanical step, all output tokens): run
+   `cp body.html body.fr.html`, then give it `body.html` and this rule: "fill every empty `lang="en"` element with a
+   faithful translation of its French sibling, English number format (18,432; 2.5 times); change nothing else".
+   Then `diff body.fr.html body.html`: every changed line must be a `lang="en"` one; delete `body.fr.html`.
 4. `python <skill folder>/build.py body.html report.html`.
 5. When a browser is available, look at the page at phone width (about 400 px) and at computer width (about
    1440 px), in both languages: no horizontal scroll, remarks in place, the two boxes one under the other.

@@ -62,6 +62,11 @@ Related: the `newsletter-papers` skill for the daily paper digest.
 
 ## 1. READ THE BROADCAST EMAILS
 
+**One subagent reads, you choose**: hand § 1 and § 2 to **one subagent with the model `sonnet`**, with the period,
+`mailbox`, `sources`, `page_reads` and the rules of both sections, word for word: the full emails and pages then stay
+out of your context. It returns, per item, the fields below, duplicates merged. Filter (§ 3) and sort (§ 4) yourself.
+If the subagent cannot use the Microsoft 365 connector, read the emails yourself and hand it § 2 only.
+
 - With the Microsoft 365 connector, list the messages of `mailbox.folder_id` received in the period and read each
   one **in full** (the kind of emails of `mailbox.examples`).
 - For each item, note: title, date, place, speaker, registration needed or not, deadline, direct link, and a summary

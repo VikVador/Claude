@@ -22,8 +22,8 @@ the [CÉCI](https://www.ceci-hpc.be) pages (marked (CÉCI)) and Neptune. [verify
 `sinfo`, `sacctmgr`, `scontrol`, `mmlsquota`, `sbatch --test-only`, no job run).
 
 > **Keep this file up to date.** If the date above is more than one month old, before relying on this file:
-> 1. launch an agent to re-read the [Lucia docs](https://doc.lucia.cenaero.be) and the
->    [CÉCI pages](https://www.ceci-hpc.be/clusters/lucia/), and check that nothing changed;
+> 1. launch **an agent with the model `sonnet`** to re-read the [Lucia docs](https://doc.lucia.cenaero.be) and the
+>    [CÉCI pages](https://www.ceci-hpc.be/clusters/lucia/), and to list every value that differs from this file;
 > 2. check your memory for anything useful learned on Lucia since then;
 > 3. propose the changes to me; after my yes, make them in a clone of VikVador/Claude, on a branch, through a pull
 >    request, never in `~/.claude/plugins/`.
