@@ -188,7 +188,7 @@ Fixed by `style.css`, in the reef palette of my slides, one job per colour:
 
 ## 4. FIGURES
 
-- Matplotlib figures following the `create-figure` skill (and its `plot_style.py`), saved as PNG at `dpi=110` or more,
+- Matplotlib figures following the `create-figure` skill (and its `plot_style.py`), saved as PNG at `dpi=256`,
   without a title of their own: `<figure><div class="plate"><img …></div><figcaption>…</figcaption></figure>`.
 - **Captions**: the style adds "Fig. A.", "Fig. B.", … in order. Then two parts:
   1. what the figure shows, in a few words, in semibold (it plays the role of the figure title);

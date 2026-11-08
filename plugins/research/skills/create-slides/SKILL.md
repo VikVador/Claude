@@ -172,7 +172,7 @@ Then:
 ## 4. CHECK THE FIGURES
 
 1. **Draw every result figure for its room on the slide**: about **1080 × 350 px** under a one-line caption and a
-   one-line box, so `figsize` about 9.8 × 3.2 in at dpi 110 (the `create-figure` skill, § 2). One figure per message:
+   one-line box, so `figsize` about 9.8 × 3.2 in, PNG at dpi 256 (the `create-figure` skill, § 2). One figure per message:
    never a multi-row figure shrunk to fit, never "top row / bottom row" in the text.
 2. `bash scripts/build.sh talks/<talk>/talk.md`, serve the repository root (`python3 -m http.server 8765`), open
    `http://127.0.0.1:8765/talks/<talk>/talk.html` and look at every slide: nothing overflows, every box ends at the

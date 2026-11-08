@@ -30,6 +30,8 @@ plt.rcParams.update({
     "axes.spines.right": False,
     "axes.grid": False,
     "figure.dpi": 110,
+    "savefig.dpi": 256,              # every saved figure: PNG at 256 dpi, sharp on Retina screens
+    "savefig.format": "png",
     "figure.constrained_layout.use": True,
     "figure.constrained_layout.h_pad": 0.08,
     "figure.constrained_layout.w_pad": 0.08,

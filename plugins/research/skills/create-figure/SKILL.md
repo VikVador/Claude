@@ -68,8 +68,9 @@ slide, the `create-diagram` skill for diagrams and animations that explain a mec
    from plot_style import GROUPS, SPLITS, MUTED  # sets the style on import
    ```
 4. **Draw** following § 4 to § 7, at the size of § 2.
-5. **Save** as PNG at `dpi=110` or more, then **open the PNG with the Read tool and look at it**: overlapping or cut
-   text, unreadable ticks, a colorbar of the wrong size, a legend on the data.
+5. **Save** as PNG at **`dpi=256`** (the default of `plot_style.py`: sharp in full screen on a Retina display), then
+   **open the PNG with the Read tool and look at it**: overlapping or cut text, unreadable ticks, a colorbar of the
+   wrong size, a legend on the data.
 6. **Run the checklist** (§ 9), fix, save and look again, until every box is ticked.
 
 To fix an existing figure, start at step 5: look at it, run the checklist, then go back to the step that failed.
@@ -88,8 +89,8 @@ To fix an existing figure, start at step 5: look at it, run the checklist, then 
 | Same choices everywhere | one variable, model or zone keeps the same colour, name and order in the whole report       |
 | Table or figure         | a table for exact numbers, a heatmap or lines for a pattern, never bars with printed values |
 | Metrics                 | from the project's metrics library (e.g. `albus`) rather than from a new implementation     |
-| Size in a report        | the text column (960 px): `figsize` about 10 to 11 inches wide, PNG at `dpi=110` or more    |
-| Size on a slide         | a result slide (16:9, 1280×720) leaves the figure about **1080 × 350 px** above a one-line caption and box: draw it for that room, `figsize` about 9.8 × 3.2 inches at `dpi=110` (wide, about 3:1), font sizes kept; one figure per message, never a multi-row figure shrunk to fit |
+| Size in a report        | the text column (960 px): `figsize` about 10 to 11 inches wide, PNG at `dpi=256`            |
+| Size on a slide         | a result slide (16:9, 1280×720) leaves the figure about **1080 × 350 px** above a one-line caption and box: draw it for that room, `figsize` about 9.8 × 3.2 inches, PNG at `dpi=256` (wide, about 3:1), font sizes kept; one figure per message, never a multi-row figure shrunk to fit |
 
 ---
 
@@ -222,7 +223,7 @@ plot_zones(ax, extent=[-20, 40, 30, 70], zones={"North Sea": [-4, 9, 51, 61]})  
 fig, ax = plt.subplots(figsize=(10.5, 5), **on_map)
 vmin, vmax = color_limits(sst)  # extreme=True for an extreme event, diverging=True for a signed field
 plot_map(ax, lon, lat, sst, r"Sea surface temperature [$^\circ\mathrm{C}$]", vmin, vmax, cmap="cividis")
-fig.savefig("sst.png", dpi=110)
+fig.savefig("sst.png", dpi=256)
 ```
 
 - `cartopy` (and `cmocean`) missing from the environment: ask me before adding them to `pyproject.toml` and
