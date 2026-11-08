@@ -40,9 +40,9 @@ Your first reply, before writing anything, is this list, in French, in exactly t
 
 - Options are written `` `[x]` `` (proposed) or `` `[ ]` `` in inline code: never Markdown task lists, which render the
   checked text struck through.
-- Question 1: one line per project of Talks-template (`projects/*/project.yaml`, its `title`, with an emoji that fits
-  it); tick the project(s) the session is about, several if needed (one section each). "Autre" means we work on
-  something else: I give its name.
+- Question 1: one line per project of the template branch of VikVador/Talks (`projects/*/project.yaml`, its
+  `title`, with an emoji that fits it); tick the project(s) the session is about, several if needed (one section
+  each). "Autre" means we work on something else: I give its name.
 - Questions 2 and 3: propose every point and every question worth sharing that you find in the session, each starting
   with a **bold keyword**, one per project ticked in 1. For each, say its figure: an existing one (its file), one to
   generate (what it would show), or none. Always end with "Autre", for what I want to add.
@@ -57,7 +57,7 @@ Your first reply, before writing anything, is this list, in French, in exactly t
 Réponds seulement sur ce que tu veux changer : sans réponse, je garde les cases cochées.
 
 **1. Projet**
-- `[ ]` <title of a project of Talks-template> <emoji>
+- `[ ]` <title of a project of projects/> <emoji>
 - `[ ]` Autre (préciser le nom) : …
 
 **2. Points à partager**
