@@ -84,10 +84,11 @@ If the clone fails, go on without exclusion and say it in the report.
 
 ## 2. COLLECT
 
-1. **The script first**: `python3 scripts/collect.py config/papers.yaml --exclude /tmp/exclude.txt > /tmp/candidates.json`
-   (about a minute, no page read by you). It reads the arXiv listings and Crossref for the journals of `sources`,
-   keeps the titles with a `collect.domain` and a `collect.method` term (or two method terms), drops the excluded ids and
-   fetches the authors, dates and abstracts. Read its `sources` list: a source in `error` goes to a subagent.
+1. **The script first**, about a minute, no page read by you:
+   `python3 scripts/collect.py config/papers.yaml --exclude /tmp/exclude.txt > /tmp/candidates.json`. It reads the
+   arXiv listings and Crossref for the journals of `sources`, keeps the titles with a `collect.domain` and a
+   `collect.method` term (or two method terms), drops the excluded ids and fetches the authors, dates and abstracts.
+   Read its `sources` list: a source in `error` goes to a subagent.
 2. **Subagents for the rest**, in parallel, **with the model `sonnet`** (bounded reading, fixed rules and return
    format): one per `Labs` group on the days of `subagents.labs_on`, one per source in `error`, and one for the
    candidates whose `abstract` is empty (it reads their pages and returns the abstracts). Each brief opens with
