@@ -1,0 +1,11 @@
+{
+  "_comment": "The projects and libraries the research plugin follows: the hook auto-update.py and check.py read it. Add a project or a library here first; the research skill describes them.",
+  "projects": {
+    "Heimdall": {"repository": "VikVador/Heimdall", "cluster": "torch"},
+    "Neptune": {"repository": "VikVador/Neptune", "cluster": "lucia"}
+  },
+  "libraries": {
+    "albus": {"repository": "VikVador/Albus", "branch": "main"},
+    "shaggy": {"repository": "VikVador/Shaggy", "branch": "master"}
+  }
+}

@@ -63,7 +63,8 @@ diagram of a mechanism.
 3. **Read `template.md` in full** before writing a single slide, every time: its slides are the rules, its last slide
    draws the structure of a deck.
 4. List the projects: one folder per project in `projects/`, each with a `project.yaml` (`title`, `university`,
-   `logo`, `paper`, `videos` in order with their `stills`). Question 4 offers exactly these, nothing hard-coded.
+   `logo`, `paper`, `repository`, `videos` in order with their `stills`). Question 4 offers exactly these, nothing
+   hard-coded.
 
 ---
 
@@ -76,7 +77,8 @@ Read my request first: what it already answers gets its `[x]`; everything else g
   which render the checked text struck through.
 - Every point you propose (Progress, experiments, What's next) starts with a **bold keyword**, so I can cite it.
 - The points of questions 5, 6 and 7 come from the session: figures made, numbers, problems met, open choices.
-- Question 4 lists one line per folder of `projects/` (its `title`, `university`); question 9 has one line
+- Question 4 lists one line per folder of `projects/` (its `title`, `university`); the project whose `repository`
+  is a git remote of the session gets `[x]`, none otherwise; question 9 has one line
   "Pour le projet …" per project selected in question 4, and none if no project is selected.
 
 ````markdown

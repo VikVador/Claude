@@ -65,6 +65,9 @@ Related: the `auto-update` skill updates `shaggy` and `albus` and asks to update
 
 ## 1. PROJECTS
 
+The hooks and scripts of the plugin follow `projects.json` at its root (projects, libraries, their repositories and
+branches): a new project or library goes there first, then in the tables below.
+
 | Project  | Where        | Repository                                                           | Cluster   |
 | -------- | ------------ | -------------------------------------------------------------------- | --------- |
 | Heimdall | NYU, M²LInES | [github.com/VikVador/Heimdall](https://github.com/VikVador/Heimdall) | NYU Torch |

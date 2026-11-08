@@ -9,16 +9,15 @@ import json
 import re
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 # fmt: off
 #
-# ----- Libraries compared with their branch on GitHub, projects whose pull requests are read
+# ----- Libraries compared with their branch on GitHub, projects whose pull requests are read: projects.json of the plugin
 #
-LIBRARIES = {
-    "albus"  : ("VikVador/Albus",  "main"),
-    "shaggy" : ("VikVador/Shaggy", "master"),
-}
-PROJECTS     = ["VikVador/Heimdall", "VikVador/Neptune"]
+_PROJECTS    = json.loads((Path(__file__).resolve().parents[2] / "projects.json").read_text())
+LIBRARIES    = {name: (item["repository"], item["branch"]) for name, item in _PROJECTS["libraries"].items()}
+PROJECTS     = [item["repository"] for item in _PROJECTS["projects"].values()]
 NUMBER_PULLS = 3
 MAX_FILES    = 15
 # fmt: on

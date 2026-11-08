@@ -17,16 +17,16 @@ from pathlib import Path
 HOURS  = 6
 STAMPS = Path.home() / ".claude" / "up-to-date"
 #
-# ----- Only folders of these repositories are brought up to date (git remote, any case)
+# ----- Only folders of the projects and libraries of projects.json are brought up to date (git remote, any case)
 #
-REPOSITORIES = r"github\.com[:/]VikVador/(Heimdall|Neptune|albus|shaggy)(\.git)?/?\s"
-FORMAT       = "%Y-%m-%dT%H:%M"
+PROJECTS = Path(__file__).resolve().parent.parent / "projects.json"
+FORMAT   = "%Y-%m-%dT%H:%M"
 # fmt: on
 
 REMINDER = (
     "This project folder was {last}. Follow the auto-update skill before answering: "
-    "check whether albus and shaggy in the project environment are behind GitHub (update them if so), read the "
-    "last pull requests of Heimdall and Neptune (python check.py{since}), give a very short 'Quoi de "
+    "check whether the libraries of projects.json in the project environment are behind GitHub (update them if so), "
+    "read the last pull requests of its projects (python check.py{since}), give a very short 'Quoi de "
     "neuf' first (with a short question for each change of the other project worth reusing here), then "
     "answer the message."
 )
@@ -45,6 +45,20 @@ def stamp_of(folder: str) -> Path:
     return STAMPS / f"{name}.txt"
 
 
+def repositories() -> str:
+    r"""Give the pattern matching a git remote of one of the projects or libraries of projects.json.
+
+    Returns:
+        pattern : Regular expression, e.g. "github\\.com[:/](VikVador/Heimdall|VikVador/Neptune)(\\.git)?/?\\s".
+    """
+    try:
+        data = json.loads(PROJECTS.read_text())
+        names = [item["repository"] for group in ("projects", "libraries") for item in data[group].values()]
+    except (OSError, ValueError, KeyError, TypeError):
+        return r"(?!)"  # no readable list: remind nowhere
+    return r"github\.com[:/](" + "|".join(re.escape(name) for name in names) + r")(\.git)?/?\s"
+
+
 def is_project(folder: str) -> bool:
     r"""Tell whether a folder belongs to one of the projects or libraries kept up to date.
 
@@ -52,7 +66,7 @@ def is_project(folder: str) -> bool:
         folder : Working directory of the session.
 
     Returns:
-        project : Whether one of its git remotes is in REPOSITORIES.
+        project : Whether one of its git remotes is a repository of projects.json.
     """
     try:
         remotes = subprocess.run(
@@ -64,7 +78,7 @@ def is_project(folder: str) -> bool:
         ).stdout
     except (OSError, subprocess.SubprocessError):
         return False
-    return re.search(REPOSITORIES, remotes + "\n", re.I) is not None
+    return re.search(repositories(), remotes + "\n", re.I) is not None
 
 
 def main() -> None:

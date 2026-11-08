@@ -41,7 +41,8 @@ Your first reply, before writing anything, is this list, in French, in exactly t
 - Options are written `` `[x]` `` (proposed) or `` `[ ]` `` in inline code: never Markdown task lists, which render the
   checked text struck through.
 - Question 1: one line per project of VikVador/Talks (`projects/*/project.yaml`, its `title`, with an emoji that
-  fits it); tick the project(s) the session is about, several if needed (one section each). "Autre" means we work
+  fits it); tick the project(s) the session is about (the one whose `repository` is a git remote of the session,
+  and any other the session worked on), several if needed (one section each). "Autre" means we work
   on something else: I give its name. Read the titles from a clone if there is one (on my Mac
   `~/Desktop/victor-slides`); otherwise, without cloning: `gh api repos/VikVador/Talks/contents/projects -q '.[].name'`,
   then each `https://raw.githubusercontent.com/VikVador/Talks/main/projects/<folder>/project.yaml`.
